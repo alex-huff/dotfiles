@@ -193,8 +193,7 @@ bindsym $mod+r mode "resize"
 
 focus_follows_mouse no
 
-default_border pixel 4
-default_floating_border pixel 4
+for_window [class="^.*"] border pixel 0
 gaps inner 18
 gaps outer 0
 
