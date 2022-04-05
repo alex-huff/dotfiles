@@ -198,7 +198,7 @@ gaps inner 18
 gaps outer 0
 
 client.focused          #79aeb2 #79aeb2 #ffffff #2e9ef4 #79aeb2
-client.unfocused        #ffffff #4a6274 #ffffff #292d2e #4a6274
+client.unfocused        #4a6274 #4a6274 #ffffff #292d2e #4a6274
 client.focused_inactive #4a6274 #4a6274 #ffffff #292d2e #4a6274
 
 # Start i3bar to display a workspace bar (plus the system information i3status
