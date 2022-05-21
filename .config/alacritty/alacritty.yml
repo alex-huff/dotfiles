@@ -17,7 +17,8 @@ font:
     #   - (Windows) Consolas
     # family: Source Code Pro
     # family: Comic Mono
-    family: Fantasque Sans Mono
+    # family: Fantasque Sans Mono
+    family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
@@ -38,7 +39,8 @@ font:
     # value specified for the normal font.
     # family: Source Code Pro
     # family: Comic Mono
-    family: Fantasque Sans Mono
+    # family: Fantasque Sans Mono
+    family: iosevka    
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
@@ -59,7 +61,8 @@ font:
     # value specified for the normal font.
     # family: Source Code Pro
     # family: Comic Mono
-    family: Fantasque Sans Mono
+    # family: Fantasque Sans Mono
+    family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
@@ -80,7 +83,8 @@ font:
     # value specified for the normal font.
     # family: Source Code Pro
     # family: Comic Mono
-    family: Fantasque Sans Mono
+    # family: Fantasque Sans Mono
+    family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
@@ -94,7 +98,7 @@ font:
     style: Bold Italic
 
   # Point size
-  size: 14.0
+  size: 16.0
 
 draw_bold_text_with_bright_colors: true
 
