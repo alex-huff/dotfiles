@@ -1,2 +1,1 @@
-set relativenumber
-syntax on
+source ~/.vimrc
