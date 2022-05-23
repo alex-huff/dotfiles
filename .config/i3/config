@@ -53,7 +53,7 @@ bindsym XF86AudioPrev exec playerctl previous && $refresh_i3status
 floating_modifier $mod
 
 # lock the system
-bindsym $mod+Control+l exec i3lock
+bindsym $mod+Control+l exec i3lock -c 008080
 
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
