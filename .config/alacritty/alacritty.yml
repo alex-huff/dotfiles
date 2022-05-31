@@ -18,6 +18,7 @@ font:
     # family: Source Code Pro
     # family: Comic Mono
     family: RecMonoCasual
+    # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
@@ -41,6 +42,7 @@ font:
     # family: Source Code Pro
     # family: Comic Mono
     family: RecMonoCasual
+    # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka    
     # family: CodeNewRoman Nerd Font
@@ -64,6 +66,7 @@ font:
     # family: Source Code Pro
     # family: Comic Mono
     family: RecMonoCasual
+    # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
@@ -87,6 +90,7 @@ font:
     # family: Source Code Pro
     # family: Comic Mono
     family: RecMonoCasual
+    # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
