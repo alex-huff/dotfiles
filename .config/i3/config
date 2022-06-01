@@ -222,8 +222,9 @@ bar
 	font pango:Comic Mono 14
 	position bottom
 	tray_output primary
-	status_command ~/.config/i3/bumblebee-status/bumblebee-status -m cpu \
+	status_command ~/.config/i3/bumblebee-status/bumblebee-status -m hostname kernel cpu \
 		memory battery date time pasink \
 		-p root.path=/ time.format="%I:%M:%S %p" date.format="%a, %b %d %Y" \
+                pasink.percent_change=1 \
 		-t catppuccinIceburg
 }
