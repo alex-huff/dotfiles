@@ -223,7 +223,7 @@ bar
 	position bottom
 	tray_output primary
 	status_command ~/.config/i3/bumblebee-status/bumblebee-status -m hostname kernel cpu \
-		disk memory battery date time pasink \
+		memory disk date time pasink battery \
 		-p root.path=/ time.format="%I:%M:%S %p" date.format="%a, %b %d %Y" \
                 disk.path=$I3_DISK_PATH pasink.percent_change=1 \
 		-t catppuccinIceburg
