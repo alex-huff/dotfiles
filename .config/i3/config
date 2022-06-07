@@ -9,6 +9,8 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh # polybar
+
 set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
@@ -199,25 +201,25 @@ client.focused          #1e1e2e #4c4f69 #f5e0dc #2e9ef4 #4c4f69
 client.unfocused        #4c4f69 #1e1e2e #f5e0dc #292d2e #24273a
 client.focused_inactive #4c4f69 #1e1e2e #f5e0dc #292d2e #24273a
 
-bar 
-{
-        colors 
-        {
-                background         #1e1e2e
+# bar 
+# {
+#         colors 
+#         {
+#                 background         #1e1e2e
 
-                focused_workspace  #4c4f69 #4c4f69 #f5e0dc
-                active_workspace   #4c4f69 #4c4f69 #f5e0dc
-                inactive_workspace #24273a #24273a #f5e0dc
-                urgent_workspace   #f38ba8 #f38ba8 #f5e0dc
-                binding_mode       #f38ba8 #f38ba8 #f5e0dc
-        }
+#                 focused_workspace  #4c4f69 #4c4f69 #f5e0dc
+#                 active_workspace   #4c4f69 #4c4f69 #f5e0dc
+#                 inactive_workspace #24273a #24273a #f5e0dc
+#                 urgent_workspace   #f38ba8 #f38ba8 #f5e0dc
+#                 binding_mode       #f38ba8 #f38ba8 #f5e0dc
+#         }
 
-	font pango:Comic Mono 14
-	position bottom
-	tray_output primary
-	status_command ~/.config/i3/bumblebee-status/bumblebee-status -m hostname kernel cpu \
-		memory disk date time pasink battery \
-		-p root.path=/ time.format="%I:%M:%S %p" date.format="%a, %b %d, %Y" \
-                disk.path=$I3_DISK_PATH pasink.percent_change=1 \
-		-t catppuccinIceburg
-}
+# 	font pango:Comic Mono 14
+# 	position bottom
+# 	tray_output primary
+# 	status_command ~/.config/i3/bumblebee-status/bumblebee-status -m hostname kernel cpu \
+# 		memory disk date time pasink battery \
+# 		-p root.path=/ time.format="%I:%M:%S %p" date.format="%a, %b %d, %Y" \
+#                 disk.path=${I3_DISK_PATH} pasink.percent_change=1 \
+# 		-t catppuccinIceburg
+# }
