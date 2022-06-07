@@ -19,6 +19,6 @@ case ${TERM} in
     ;;
 esac
 
-PATH=$PATH:~/.pfetch
+export PATH=${PATH}:~/.pfetch
 # eval "$(starship init bash)"
 pfetch
