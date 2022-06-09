@@ -9,7 +9,7 @@ def recurseThroughFiles(path='.'):
             if not os.path.exists(installPath):
                 os.makedirs(installPath)
             recurseThroughFiles(dirEntry.path)
-            return
+            continue
         absoluteSourcePath = os.path.abspath(dirEntry.path)
         if not linksToFile(installPath, absoluteSourcePath): # if link not already made
             try:
