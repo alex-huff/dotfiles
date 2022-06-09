@@ -1,6 +1,5 @@
 import os
 import sys
-from pathlib import Path
 
 def recurseThroughFiles(path='.'):
     for dirEntry in os.scandir(path):
