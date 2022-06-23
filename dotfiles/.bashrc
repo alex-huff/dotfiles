@@ -25,4 +25,3 @@ export PATH=${PATH}:~/.pfetch
 export PATH=${PATH}:~/.cargo/bin
 export PATH=${PATH}:~/.local/bin
 # eval "$(starship init bash)"
-pfetch
