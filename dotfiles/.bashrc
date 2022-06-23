@@ -19,6 +19,8 @@ case ${TERM} in
     ;;
 esac
 
+set -o vi
+
 export PATH=${PATH}:~/.pfetch
 export PATH=${PATH}:~/.cargo/bin
 export PATH=${PATH}:~/.local/bin
