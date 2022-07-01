@@ -24,4 +24,6 @@ set -o vi
 export PATH=${PATH}:~/.pfetch
 export PATH=${PATH}:~/.cargo/bin
 export PATH=${PATH}:~/.local/bin
+export QT_QPA_PLATFORMTHEME=gtk2
+
 # eval "$(starship init bash)"
