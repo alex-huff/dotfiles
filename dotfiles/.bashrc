@@ -5,8 +5,8 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-alias ls='lsd --color=auto'
-alias cat='bat'
+alias ls="lsd --color=auto"
+alias cat="bat"
 # PS1='[\u@\h \W]\$ '
 PS1='\[\033[0;36m\]\u\[\033[0;34m\]@\[\033[0;36m\]\h\[\033[00m\]:\[\033[0;34m\]\w\[\033[00m\]\$ '
 
@@ -22,9 +22,10 @@ esac
 
 set -o vi
 
-export PATH=${PATH}:~/.pfetch
-export PATH=${PATH}:~/.cargo/bin
-export PATH=${PATH}:~/.local/bin
-export QT_QPA_PLATFORMTHEME=gtk2
+export PATH=~/".pfetch:$PATH"
+export PATH=~/".cargo/bin:$PATH"
+export PATH=~/".local/bin:$PATH"
+export QT_QPA_PLATFORMTHEME="gtk2"
+export BAT_THEME="Catppuccin"
 
 # eval "$(starship init bash)"
