@@ -5,8 +5,16 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-alias ls="lsd --color=auto"
-alias cat="bat"
+if command -v lsd &> /dev/null
+then
+    alias ls="lsd --color=auto"
+fi
+
+if command -v bat &> /dev/null
+then
+    alias cat="bat"
+fi
+
 # PS1='[\u@\h \W]\$ '
 PS1='\[\033[0;36m\]\u\[\033[0;34m\]@\[\033[0;36m\]\h\[\033[00m\]:\[\033[0;34m\]\w\[\033[00m\]\$ '
 
