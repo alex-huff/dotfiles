@@ -16,8 +16,8 @@ font:
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
     # family: Source Code Pro
-    # family: Comic Mono
-    family: RecMonoCasual
+    family: Comic Mono
+    # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
@@ -40,8 +40,8 @@ font:
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    # family: Comic Mono
-    family: RecMonoCasual
+    family: Comic Mono
+    # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
@@ -64,8 +64,8 @@ font:
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    # family: Comic Mono
-    family: RecMonoCasual
+    family: Comic Mono
+    # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
@@ -88,8 +88,8 @@ font:
     # If the bold italic family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    # family: Comic Mono
-    family: RecMonoCasual
+    family: Comic Mono
+    # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
@@ -130,7 +130,7 @@ color_schemes:
     vi_mode_cursor:
       text: '#EFF1F5' # base
       cursor: '#7287FD' # lavender
-
+    
     # Search colors
     search:
       matches:
