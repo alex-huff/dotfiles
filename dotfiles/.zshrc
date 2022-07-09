@@ -1,6 +1,4 @@
-#
-# ~/.bashrc
-#
+# Created by newuser for 5.9
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
@@ -15,8 +13,7 @@ then
     alias cat="bat"
 fi
 
-# PS1='[\u@\h \W]\$ '
-PS1='\[\033[0;36m\]\u\[\033[0;34m\]@\[\033[0;36m\]\h\[\033[00m\]:\[\033[0;34m\]\w\[\033[00m\]\$ '
+PS1='%F{cyan}%n%F{blue}@%F{cyan}%m%F{default}:%F{blue}%~%F{default}$ '
 
 ### CHANGE TITLE OF TERMINALS
 case ${TERM} in
