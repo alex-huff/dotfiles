@@ -56,6 +56,6 @@ zstyle ':vcs_info:git:*' formats ' %F{cyan}on %F{blue} %F{cyan}%b'
  
 # Set up the prompt (with git branch name)
 setopt PROMPT_SUBST
-PS1='%F{cyan}%n%F{blue}@%F{cyan}%m%F{default}:%F{blue}%~${vcs_info_msg_0_} %F{default} '
+PS1='%F{cyan}%n%F{blue}@%F{cyan}%m%F{default}:%F{blue}%~${vcs_info_msg_0_} %F{default}> '
 
 # eval "$(starship init bash)"
