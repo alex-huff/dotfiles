@@ -43,6 +43,9 @@ rehash_precmd()
 
 add-zsh-hook -Uz precmd rehash_precmd
 
+zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+fpath=(~/.zsh $fpath)
+
 autoload -Uz compinit vcs_info
 compinit
 
