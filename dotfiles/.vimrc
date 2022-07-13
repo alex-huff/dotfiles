@@ -4,13 +4,13 @@ colorscheme catppuccin_mocha
 highlight Normal ctermbg=NONE
 highlight nonText ctermbg=NONE
 
-call plug #begin('~/.vim/plugged')
+call plug#begin('~/.vim/plugged')
 
 Plug 'rust-lang/rust.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'dense-analysis/ale'
 
-call plug #end()
+call plug#end()
 
 let g:rustfmt_autosave = 1
 let g:rustfmt_emit_files = 1
