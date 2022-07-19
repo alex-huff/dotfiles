@@ -13,16 +13,6 @@ then
     alias cat="bat"
 fi
 
-### CHANGE TITLE OF TERMINALS
-case ${TERM} in
-  xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|alacritty|st|konsole*)
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
-        ;;
-  screen*)
-    PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
-    ;;
-esac
-
 set -o vi
 
 # Rehash pacman command cache when it goes out of date
