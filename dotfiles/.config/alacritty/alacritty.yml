@@ -16,7 +16,7 @@ font:
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
     # family: Source Code Pro
-    family: ComicMono Nerd Font
+    family: Victor Mono
     # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
@@ -40,7 +40,7 @@ font:
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    family: ComicMono Nerd Font 
+    family: Victor Mono
     # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
@@ -64,7 +64,7 @@ font:
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    family: ComicMono Nerd Font 
+    family: Victor Mono
     # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
@@ -88,7 +88,7 @@ font:
     # If the bold italic family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    family: ComicMono Nerd Font
+    family: Victor Mono
     # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
