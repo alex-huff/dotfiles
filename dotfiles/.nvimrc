@@ -11,6 +11,7 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
 Plug 'kyazdani42/nvim-web-devicons'
+Plug 'feline-nvim/feline.nvim'
 
 call plug#end()
 
@@ -24,10 +25,27 @@ nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 let g:catppuccin_flavour = "mocha" " latte, frappe, macchiato, mocha
 
 lua << EOF
-require("catppuccin").setup()
+require("catppuccin").setup(
+	{
+		transparent_background = true,
+	}
+)
 EOF
 
 colorscheme catppuccin
+
+" Setup feline status bar
+lua << EOF
+local ctp_feline = require('catppuccin.groups.integrations.feline')
+
+ctp_feline.setup({})
+
+require("feline").setup(
+	{
+		components = ctp_feline.get(),
+	}
+)
+EOF
 
 " Setup coc and rust
 let g:rustfmt_autosave = 1
@@ -42,7 +60,7 @@ set nobackup
 set nowritebackup
 
 " Give more space for displaying messages.
-set cmdheight=2
+" set cmdheight=2
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
