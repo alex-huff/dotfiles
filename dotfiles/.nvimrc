@@ -11,7 +11,7 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
 Plug 'kyazdani42/nvim-web-devicons'
-Plug 'feline-nvim/feline.nvim'
+Plug 'nvim-lualine/lualine.nvim'
 
 call plug#end()
 
@@ -27,24 +27,22 @@ let g:catppuccin_flavour = "mocha" " latte, frappe, macchiato, mocha
 lua << EOF
 require("catppuccin").setup(
 	{
-		transparent_background = true,
+		-- transparent_background = true,
 	}
 )
 EOF
 
 colorscheme catppuccin
 
-" Setup feline status bar
+" Setup lualine
 lua << EOF
-local ctp_feline = require('catppuccin.groups.integrations.feline')
-
-ctp_feline.setup({})
-
-require("feline").setup(
+require('lualine').setup
+{
+	options =
 	{
-		components = ctp_feline.get(),
+		theme = "catppuccin"
 	}
-)
+}
 EOF
 
 " Setup coc and rust
