@@ -195,8 +195,8 @@ focus_follows_mouse no
 
 default_border pixel 6
 # for_window [class="^.*"] border pixel 0
-# gaps inner 18
-# gaps outer 0
+gaps inner 18
+gaps outer 0
 
 client.focused          #1e1e2e #4c4f69 #f5e0dc #2e9ef4 #4c4f69
 client.unfocused        #4c4f69 #1e1e2e #f5e0dc #292d2e #24273a
