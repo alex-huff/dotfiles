@@ -1,5 +1,5 @@
 window:
-  # opacity: .8
+  opacity: .85
 
   padding:
     x: 6
