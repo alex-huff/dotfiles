@@ -31,6 +31,8 @@ rehash_precmd()
     fi
 }
 
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 add-zsh-hook -Uz precmd rehash_precmd
 
 zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
