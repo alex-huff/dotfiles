@@ -1,0 +1,3 @@
+[submodule "dotfiles/.zsh/zsh-autosuggestions"]
+	path = dotfiles/.zsh/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
