@@ -31,7 +31,13 @@ rehash_precmd()
     fi
 }
 
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+setopt appendhistory
+
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+bindkey '^ ' autosuggest-accept
 
 add-zsh-hook -Uz precmd rehash_precmd
 
