@@ -1863,7 +1863,7 @@ menu,
   padding: 6px;
   background-color: #302D41;
   background-clip: border-box;
-  border-radius: 12px;
+  border-radius: 0px;
   border: 1px solid #363653;
 }
 
@@ -1882,7 +1882,7 @@ menu menuitem,
   color: white;
   font: initial;
   text-shadow: none;
-  border-radius: 6px;
+  border-radius: 0px;
 }
 
 menu menuitem:hover,
@@ -1964,7 +1964,7 @@ menu > arrow.top,
 .menu > arrow.top,
 .context-menu > arrow.top {
   margin-top: 0;
-  border-radius: 6px;
+  border-radius: 0px;
   -gtk-icon-source: -gtk-icontheme("pan-up-symbolic");
 }
 
@@ -1973,7 +1973,7 @@ menu > arrow.bottom,
 .context-menu > arrow.bottom {
   margin-top: 8px;
   margin-bottom: -12px;
-  border-radius: 6px;
+  border-radius: 0px;
   -gtk-icon-source: -gtk-icontheme("pan-down-symbolic");
 }
 
