@@ -44,7 +44,7 @@ configuration {
 		parse-user:   true;
 		/** Parse system desktop files. */
 		parse-system: true;
-    }
+	}
 
 	/*---------- Run settings ----------*/
 	run-command: "{cmd}";
@@ -79,7 +79,7 @@ configuration {
 
 	/*---------- Misc setting ----------*/
 	terminal: "rofi-sensible-terminal";
-	font: "Mono 12";
+	font: "ComicMono Nerd Font 14";
 	sort: false;
 	threads: 0;
 	click-to-exit: true;
@@ -87,17 +87,17 @@ configuration {
 /*	pid: "/run/user/1000/rofi.pid";*/
 
 	/*---------- File browser settings ----------*/
-    filebrowser {
+	filebrowser {
 /*	  directory: "/home";*/
-      directories-first: true;
-      sorting-method:    "name";
-    }
+		directories-first: true;
+		sorting-method:    "name";
+	}
 
 	/*---------- Other settings ----------*/
-    timeout {
-      action: "kb-cancel";
-      delay:  0;
-    }
+	timeout {
+		action: "kb-cancel";
+		delay:  0;
+	}
 
 	/*---------- Keybindings ----------*/
 	kb-primary-paste: "Control+V,Shift+Insert";

@@ -16,5 +16,6 @@ theme='style-2'
 
 ## Run
 rofi \
-    -show drun \
-    -theme ${dir}/${theme}.rasi
+    -show emoji \
+    -theme ${dir}/${theme}.rasi \
+    -modi emoji
