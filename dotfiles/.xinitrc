@@ -32,6 +32,13 @@ fi
 
 setxkbmap -layout "us,us" -variant ",dvorak" -option "grp:alt_space_toggle" -option "caps:super"
 
+if [ -d $HOME/.screenlayout ] ; then
+    for f in $HOME/.screenlayout/?*.sh ; do
+        [ -x "$f" ] && . "$f"
+    done
+    unset f
+fi
+    
 nitrogen --restore &
 picom --unredir-if-possible &
 # exec qtile start
