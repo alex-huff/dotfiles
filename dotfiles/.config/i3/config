@@ -57,6 +57,9 @@ floating_modifier $mod
 # lock the system
 bindsym $mod+Control+l exec i3lock -c 1e1e2e
 
+# toggle bar
+bindsym $mod+Control+b exec $HOME/.config/polybar/toggle.sh 
+
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 
