@@ -1,11 +1,10 @@
 {
-    "colors": 
-    {
+    "colors": {
         "AlternateBase": "#181825",
         "Base": "#11111b",
         "BrightText": "#f38ba8",
         "Button": "#181825",
-        "ButtonText": "#f5e0dc#",
+        "ButtonText": "#ffffff",
         "Highlight": "#89b4fa",
         "HighlightedText": "#11111b",
         "Link": "#89b4fa",
@@ -18,5 +17,6 @@
         "fadeColor": "#181825"
     },
     "name": "Catppuccin",
+    "qssFilePath": "themeStyle.css",
     "widgets": "Fusion"
 }
