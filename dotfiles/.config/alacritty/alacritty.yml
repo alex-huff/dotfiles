@@ -16,7 +16,7 @@ font:
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
     # family: Source Code Pro
-    family: VictorMono Nerd Font Mono 
+    # family: VictorMono Nerd Font Mono 
     # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
@@ -24,7 +24,7 @@ font:
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    # family: JetBrains Mono
+    family: JetBrains Mono Nerd Font
     # family: VictorMono Nerd Font Mono
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
@@ -40,7 +40,7 @@ font:
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    family: VictorMono Nerd Font Mono
+    # family: VictorMono Nerd Font Mono
     # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
@@ -48,7 +48,7 @@ font:
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    # family: JetBrains Mono
+    family: JetBrains Mono Nerd Font
     # family: VictorMono Nerd Font Mono
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
@@ -64,7 +64,7 @@ font:
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    family: VictorMono Nerd Font Mono
+    # family: VictorMono Nerd Font Mono
     # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
@@ -72,7 +72,7 @@ font:
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    # family: JetBrains Mono
+    family: JetBrains Mono Nerd Font
     # family: VictorMono Nerd Font Mono
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
@@ -88,7 +88,7 @@ font:
     # If the bold italic family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    family: VictorMono Nerd Font Mono
+    # family: VictorMono Nerd Font Mono
     # family: RecMonoCasual
     # family: monofur
     # family: Fantasque Sans Mono
@@ -96,7 +96,7 @@ font:
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    # family: JetBrains Mono
+    family: JetBrains Mono Nerd Font
     # family: VictorMono Nerd Font Mono
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
