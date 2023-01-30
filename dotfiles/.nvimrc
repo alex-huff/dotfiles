@@ -1,4 +1,4 @@
-set relativenumber
+set number relativenumber
 syntax on
 
 call plug#begin()
