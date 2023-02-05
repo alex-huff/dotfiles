@@ -1,3 +1,6 @@
 [submodule "dotfiles/.zsh/zsh-autosuggestions"]
 	path = dotfiles/.zsh/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule "dotfiles/.config/alacritty/alacritty"]
+	path = dotfiles/.config/alacritty/catppuccin
+	url = https://github.com/catppuccin/alacritty.git
