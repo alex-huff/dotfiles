@@ -5,5 +5,6 @@
 [[ -f ~/.zshrc ]] && . ~/.zshrc
 
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
-  exec sway
+  mv sway.log sway.log.old
+  exec sway &> sway.log
 fi
