@@ -27,7 +27,7 @@ let g:catppuccin_flavour = "mocha" " latte, frappe, macchiato, mocha
 lua << EOF
 require("catppuccin").setup(
 	{
-		-- transparent_background = true,
+		transparent_background = true,
 	}
 )
 EOF
