@@ -198,7 +198,7 @@ bar
 
 	font pango:JetBrainsMono Nerd Font 14
 	position top
-	output DP-6
+	output $barscreen
 	tray_output *
 	tray_padding 4
  	status_command ~/.config/i3/bumblebee-status/bumblebee-status -m cpu \
