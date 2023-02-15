@@ -169,6 +169,9 @@ mode "resize"
 bindsym $mod+r mode "resize"
 
 focus_follows_mouse no
+smart_borders on
+workspace_auto_back_and_forth yes
+tiling_drag off
 
 # default_border pixel 4
 for_window [class="^.*"] border pixel 5
