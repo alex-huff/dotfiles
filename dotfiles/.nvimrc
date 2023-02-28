@@ -56,6 +56,8 @@ set hidden
 " Some servers have issues with backup files, see #649.
 set nobackup
 set nowritebackup
+set tabstop=4
+set shiftwidth=0
 
 " Give more space for displaying messages.
 " set cmdheight=2
