@@ -58,6 +58,7 @@ set nobackup
 set nowritebackup
 set tabstop=4
 set shiftwidth=0
+set listchars=space:_,tab:>~ list
 
 " Give more space for displaying messages.
 " set cmdheight=2
