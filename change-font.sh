@@ -1,7 +1,7 @@
 #!/bin/sh
 
-from='JetBrainsMono Nerd Font'
-to='RecMonoCasual'
+from='RecMonoCasual'
+to='Rec Mono Casual'
 
 find dotfiles -type f -exec file {} + | awk -F: '/ASCII text/ { print $1 }
                                                  /JSON text data/ { print $1 }

@@ -5,7 +5,7 @@ exec_always
 }
 set $mod Mod4
 
-font pango:RecMonoCasual 12
+font pango:Rec Mono Casual 12
 include device.cfg
 
 # Start XDG autostart .desktop files using dex. See also
@@ -199,7 +199,7 @@ bar
                 binding_mode       #f38ba8 #f38ba8 #f5e0dc
         }
 
-	font pango:RecMonoCasual 14
+	font pango:Rec Mono Casual 14
 	position top
 	output $barscreen
 	tray_output *

@@ -21,7 +21,7 @@ configuration {
 
 /*****----- Global Properties -----*****/
 * {
-    font:                        "RecMonoCasual 10";
+    font:                        "Rec Mono Casual 10";
     background:                  #030B16;
     background-alt:              #0A1B37;
     foreground:                  #FFFFFF;
