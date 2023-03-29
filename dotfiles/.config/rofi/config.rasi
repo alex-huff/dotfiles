@@ -83,7 +83,7 @@ configuration {
 
 	/*---------- Misc setting ----------*/
 	terminal: "rofi-sensible-terminal";
-	font: "JetBrainsMono Nerd Font 14";
+	font: "RecMonoCasual 14";
 	sort: false;
 	threads: 0;
 	click-to-exit: true;

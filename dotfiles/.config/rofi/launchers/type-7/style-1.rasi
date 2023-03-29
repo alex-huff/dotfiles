@@ -21,7 +21,7 @@ configuration {
 
 /*****----- Global Properties -----*****/
 * {
-    font:                        "JetBrainsMono Nerd Font 10";
+    font:                        "RecMonoCasual 10";
     background:                  #11092D;
     background-alt:              #281657;
     foreground:                  #FFFFFF;
