@@ -1,7 +1,7 @@
 #!/bin/sh
 
-from='RecMonoCasual'
-to='Rec Mono Casual'
+from='Recursive Casual'
+to='Recursive Monospace Casual'
 
 find dotfiles -type f -exec file {} + | awk -F: '/ASCII text/ { print $1 }
                                                  /JSON text data/ { print $1 }

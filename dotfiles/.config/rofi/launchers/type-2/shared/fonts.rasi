@@ -8,5 +8,5 @@
  **/
 
 * {
-    font: "Rec Mono Casual 14";
+    font: "Recursive Monospace Casual 14";
 }

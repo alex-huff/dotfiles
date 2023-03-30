@@ -14,7 +14,7 @@ configuration {
 
 /*****----- Global Properties -----*****/
 * {
-    font:                        "Rec Mono Casual 10";
+    font:                        "Recursive Monospace Casual 10";
     background:                  #11092D;
     background-alt:              #281657;
     foreground:                  #FFFFFF;
