@@ -1,7 +1,7 @@
 #!/bin/sh
 
-from='Recursive Casual'
-to='Recursive Monospace Casual'
+from='Recursive Monospace Casual'
+to='RecMonoCasual Nerd Font'
 
 find dotfiles -type f -exec file {} + | awk -F: '/ASCII text/ { print $1 }
                                                  /JSON text data/ { print $1 }
