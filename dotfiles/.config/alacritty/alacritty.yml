@@ -17,14 +17,14 @@ font:
     #   - (Windows) Consolas
     # family: Source Code Pro
     # family: VictorMono Nerd Font Mono 
-    # family: RecMonoCasual Nerd Font
+    # family: VictorMono Nerd Font Mono
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    family: RecMonoCasual Nerd Font
+    family: VictorMono Nerd Font Mono
     # family: VictorMono Nerd Font Mono
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
@@ -41,14 +41,14 @@ font:
     # value specified for the normal font.
     # family: Source Code Pro
     # family: VictorMono Nerd Font Mono
-    # family: RecMonoCasual Nerd Font
+    # family: VictorMono Nerd Font Mono
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    family: RecMonoCasual Nerd Font
+    family: VictorMono Nerd Font Mono
     # family: VictorMono Nerd Font Mono
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
@@ -65,14 +65,14 @@ font:
     # value specified for the normal font.
     # family: Source Code Pro
     # family: VictorMono Nerd Font Mono
-    # family: RecMonoCasual Nerd Font
+    # family: VictorMono Nerd Font Mono
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    family: RecMonoCasual Nerd Font
+    family: VictorMono Nerd Font Mono
     # family: VictorMono Nerd Font Mono
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
@@ -89,14 +89,14 @@ font:
     # value specified for the normal font.
     # family: Source Code Pro
     # family: VictorMono Nerd Font Mono
-    # family: RecMonoCasual Nerd Font
+    # family: VictorMono Nerd Font Mono
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    family: RecMonoCasual Nerd Font
+    family: VictorMono Nerd Font Mono
     # family: VictorMono Nerd Font Mono
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
