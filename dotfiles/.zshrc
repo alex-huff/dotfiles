@@ -60,3 +60,7 @@ setopt PROMPT_SUBST
 PS1='%F{blue}%~${vcs_info_msg_0_} %F{black}>%F{default} '
 
 # eval "$(starship init bash)"
+
+# zsh-syntax-highlighting
+source ~/.zsh/theming/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
+source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

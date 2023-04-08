@@ -4,3 +4,9 @@
 [submodule "dotfiles/.config/alacritty/alacritty"]
 	path = dotfiles/.config/alacritty/catppuccin
 	url = https://github.com/catppuccin/alacritty.git
+[submodule "dotfiles/.zsh/zsh-syntax-highlighting"]
+	path = dotfiles/.zsh/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting
+[submodule "dotfiles/.zsh/theming/zsh-syntax-highlighting"]
+	path = dotfiles/.zsh/theming/zsh-syntax-highlighting
+	url = https://github.com/catppuccin/zsh-syntax-highlighting
