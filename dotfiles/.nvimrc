@@ -1,5 +1,12 @@
+" Basic nvim settings
 set number relativenumber
 syntax on
+
+" Remap split navigation
+nnoremap <C-h> :wincmd h<CR>
+nnoremap <C-j> :wincmd j<CR>
+nnoremap <C-k> :wincmd k<CR>
+nnoremap <C-l> :wincmd l<CR>
 
 call plug#begin()
 
