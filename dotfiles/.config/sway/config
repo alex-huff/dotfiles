@@ -37,7 +37,7 @@ bindsym $mod+Return exec alacritty
 # kill focused window
 bindsym $mod+Shift+q kill
 
-# force kill focused window
+# SIGKILL focused window
 bindsym $mod+Shift+t exec wkill.sh
 
 # take a screenshot
