@@ -37,8 +37,8 @@ bindsym $mod+Return exec alacritty
 # kill focused window
 bindsym $mod+Shift+q kill
 
-# kill window with xkill
-bindsym $mod+Shift+t exec xkill
+# force kill focused window
+bindsym $mod+Shift+t exec wkill.sh
 
 # take a screenshot
 bindsym $mod+Shift+s exec grimshot-imgur.sh
