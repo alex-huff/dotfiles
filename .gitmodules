@@ -10,3 +10,6 @@
 [submodule "dotfiles/.zsh/theming/zsh-syntax-highlighting"]
 	path = dotfiles/.zsh/theming/zsh-syntax-highlighting
 	url = https://github.com/catppuccin/zsh-syntax-highlighting
+[submodule "dotfiles/.zsh/zsh-completions"]
+	path = dotfiles/.zsh/zsh-completions
+	url = https://github.com/zsh-users/zsh-completions.git
