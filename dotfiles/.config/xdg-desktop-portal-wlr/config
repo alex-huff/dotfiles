@@ -1,0 +1,2 @@
+chooser_type = normal
+chooser_cmd = slurp -f %o -ro
