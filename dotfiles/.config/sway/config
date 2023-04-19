@@ -40,8 +40,11 @@ bindsym $mod+Shift+q kill
 # SIGKILL focused window
 bindsym $mod+Shift+t exec wkill.sh
 
-# take a screenshot
-bindsym $mod+Shift+s exec grimshot-imgur.sh
+# take a rectangular screenshot
+bindsym $mod+Shift+s exec grimshot-imgur.sh save area
+
+# take a fullscreen screenshot
+bindsym $mod+Shift+o exec grimshot-imgur.sh save output
 
 # start dmenu (a program launcher)
 # bindsym $mod+d exec --no-startup-id dmenu_run

@@ -2,7 +2,7 @@ typeset -U path PATH
 path=(~/.pfetch $path)
 path=(~/.cargo/bin $path)
 path=(~/.local/bin $path)
-path=(~/dev/python/grimshot-imgur $path)
+path=(~/screenshots $path)
 path=(~/.local/share/JetBrains/Toolbox/scripts $path)
 export PATH
 export QT_QPA_PLATFORMTHEME=gtk2
