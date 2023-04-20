@@ -1,7 +1,7 @@
 #!/bin/sh
 
-from='RecMonoCasual Nerd Font'
-to='VictorMono Nerd Font Mono'
+from='VictorMono Nerd Font Mono'
+to='VictorMono Nerd Font'
 
 find dotfiles -type f -exec file {} + | awk -F: '/ASCII text/ { print $1 }
                                                  /JSON text data/ { print $1 }

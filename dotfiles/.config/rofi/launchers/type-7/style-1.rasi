@@ -21,7 +21,7 @@ configuration {
 
 /*****----- Global Properties -----*****/
 * {
-    font:                        "VictorMono Nerd Font Mono 10";
+    font:                        "VictorMono Nerd Font 10";
     background:                  #11092D;
     background-alt:              #281657;
     foreground:                  #FFFFFF;
