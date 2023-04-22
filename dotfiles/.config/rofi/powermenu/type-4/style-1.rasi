@@ -24,8 +24,8 @@ configuration {
     element-padding:             55px 60px;
     element-border-radius:       100%;
 
-    prompt-font:                 "VictorMono Nerd Font Bold Italic 64";
-    textbox-font:                "VictorMono Nerd Font 16";
+    prompt-font:                 "ComicCode Nerd Font Bold Italic 64";
+    textbox-font:                "ComicCode Nerd Font 16";
     element-text-font:           "feather 64";
 
     background-window:           black/5%;

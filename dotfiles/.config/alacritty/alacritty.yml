@@ -16,16 +16,16 @@ font:
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
     # family: Source Code Pro
-    # family: VictorMono Nerd Font 
-    # family: VictorMono Nerd Font
+    # family: ComicCode Nerd Font 
+    # family: ComicCode Nerd Font
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    family: VictorMono Nerd Font
-    # family: VictorMono Nerd Font
+    family: ComicCode Nerd Font
+    # family: ComicCode Nerd Font
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
     # family: Mononoki Nerd Font
@@ -40,16 +40,16 @@ font:
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    # family: VictorMono Nerd Font
-    # family: VictorMono Nerd Font
+    # family: ComicCode Nerd Font
+    # family: ComicCode Nerd Font
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    family: VictorMono Nerd Font
-    # family: VictorMono Nerd Font
+    family: ComicCode Nerd Font
+    # family: ComicCode Nerd Font
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
     # family: Mononoki Nerd Font
@@ -64,16 +64,16 @@ font:
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    # family: VictorMono Nerd Font
-    # family: VictorMono Nerd Font
+    # family: ComicCode Nerd Font
+    # family: ComicCode Nerd Font
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    family: VictorMono Nerd Font
-    # family: VictorMono Nerd Font
+    family: ComicCode Nerd Font
+    # family: ComicCode Nerd Font
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
     # family: Mononoki Nerd Font
@@ -88,16 +88,16 @@ font:
     # If the bold italic family is not specified, it will fall back to the
     # value specified for the normal font.
     # family: Source Code Pro
-    # family: VictorMono Nerd Font
-    # family: VictorMono Nerd Font
+    # family: ComicCode Nerd Font
+    # family: ComicCode Nerd Font
     # family: monofur
     # family: Fantasque Sans Mono
     # family: iosevka
     # family: CodeNewRoman Nerd Font
     # family: RobotoMono Nerd Font
     # family: Hack
-    family: VictorMono Nerd Font
-    # family: VictorMono Nerd Font
+    family: ComicCode Nerd Font
+    # family: ComicCode Nerd Font
     # family: Monofuritalic Nerd Font Mono
     # family: TerminessTTF Nerd Font
     # family: Mononoki Nerd Font
@@ -106,7 +106,7 @@ font:
     style: Bold Italic
 
   # Point size
-  size: 20.0
+  size: 18.0
 
 draw_bold_text_with_bright_colors: true
 
