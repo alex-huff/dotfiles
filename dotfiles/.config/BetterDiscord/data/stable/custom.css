@@ -1,5 +1,5 @@
 :root {
-        --Chat-Font-Used: 'Ubuntu Mono', normal ;
+        --Chat-Font-Used: 'ComicCode Nerd Font', normal ;
         --Chat-Font-Size: 15.5px;
 }
 
@@ -9,4 +9,13 @@
 
 .markup:not(code) {
 	font-size: var(--Chat-Font-Size)!important;
+}
+
+.compact-2Nkcau .timestamp-p1Df1m, .cozy-VmLDNB .timestamp-p1Df1m.alt-1dvXnH {
+    text-align: right;
+    font-size: 0.62626rem;
+    line-height: 1.375rem;
+    margin-right: 0.25rem;
+    color: var(--text-muted);
+    text-indent: 0;
 }
