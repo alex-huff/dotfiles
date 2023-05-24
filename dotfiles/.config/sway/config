@@ -198,7 +198,7 @@ client.focused_inactive #4c4f69 #1e1e2e #f5e0dc #24273a #24273a
 bindsym $mod+Shift+b exec swaymsg bar hidden_state toggle
 
 # include device specific configuration and overrides
-include device.cfg
+include device/*
 
 bar 
 {
