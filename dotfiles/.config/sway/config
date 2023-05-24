@@ -190,6 +190,8 @@ for_window [class="^.*"] border pixel 5
 # gaps inner 18
 # gaps outer 0
 
+focus_on_window_activation none
+
 client.focused          #1e1e2e #4c4f69 #f5e0dc #4c4f69 #4c4f69
 client.unfocused        #4c4f69 #1e1e2e #f5e0dc #24273a #24273a
 client.focused_inactive #4c4f69 #1e1e2e #f5e0dc #24273a #24273a
