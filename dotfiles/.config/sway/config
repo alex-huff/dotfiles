@@ -6,7 +6,6 @@ exec_always
 set $mod Mod4
 
 font pango:ComicCode Nerd Font 12
-include device.cfg
 
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
@@ -197,6 +196,9 @@ client.unfocused        #4c4f69 #1e1e2e #f5e0dc #24273a #24273a
 client.focused_inactive #4c4f69 #1e1e2e #f5e0dc #24273a #24273a
 
 bindsym $mod+Shift+b exec swaymsg bar hidden_state toggle
+
+# include device specific configuration and overrides
+include device.cfg
 
 bar 
 {
