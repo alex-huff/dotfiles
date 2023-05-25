@@ -64,3 +64,9 @@ PS1='%F{blue}%~${vcs_info_msg_0_} %F{black}>%F{default} '
 # zsh-syntax-highlighting
 source ~/.zsh/theming/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# other configuration
+if [ -d ~/.zsh/conf.zsh.d ]
+then
+	source ~/.zsh/conf.zsh.d/*
+fi
