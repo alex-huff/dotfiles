@@ -68,5 +68,5 @@ source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # other configuration
 if [ -d ~/.zsh/conf.zsh.d ]
 then
-	source ~/.zsh/conf.zsh.d/*
+	source ~/.zsh/conf.zsh.d/*.zsh
 fi
