@@ -27,6 +27,10 @@ bindsym XF86AudioPrev exec playerctl previous && $refresh_i3status
 # use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# scratchpad control
+bindsym $mod+Semicolon scratchpad show
+bindsym $mod+Shift+Semicolon move container to scratchpad
+
 # prev/next workspace keybinds
 bindsym $mod+Page_Down workspace prev
 bindsym $mod+Page_Up workspace next
