@@ -7,8 +7,8 @@
 }
 
 # switch/move-container-to workspace
-C5{v>64} *[1:]("{}"→[-]PIANO) → swaymsg move container to workspace $(echo {} | perl -pe 's/([0-9]+)/(52-$1)/eg')
-C5{v<=64} *[1:]("{}"→[-]PIANO) → swaymsg workspace $(echo {} | perl -pe 's/([0-9]+)/(52-$1)/eg')
+C5{v>64} *[1:]("{}"→[-]f"{72 - MIDI}") → swaymsg move container to workspace {}
+C5{v<=64} *[1:]("{}"→[-]f"{72 - MIDI}") → swaymsg workspace {}
 
 # clipboard manager
 B4{v>64} *[1:]("{}"→[-]ASPN) → wl-paste -n > ~/.config/midi-macros/clipboards/"{}" && echo Saving clipboard to file: {}
