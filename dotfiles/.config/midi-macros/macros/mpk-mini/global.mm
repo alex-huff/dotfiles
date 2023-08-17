@@ -58,7 +58,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→f"{CC_VALUE_SCALED(0, 1)}") (python)[BL
 43{c==9} → cmus-remote -C "toggle repeat_current"
 
 # home assistant
-(40+42){c==9} (zsh)[BLOCK|DEBOUNCE]→
+(40+41){c==9} (zsh)[BLOCK|DEBOUNCE]→
 {
 	power_state_file=~/.config/midi-macros/state/power
 	current_state=$(<$power_state_file)
@@ -76,8 +76,8 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→f"{CC_VALUE_SCALED(0, 1)}") (python)[BL
 		for i in $(seq 2); do hass-cli state turn_${new_state} switch.out${i}_mss110_main_channel &; done
 	)
 }
-(40+43){c==9} → hass-cli state toggle switch.out1_mss110_main_channel
-(40+36){c==9} → hass-cli state toggle switch.out2_mss110_main_channel
+(40+42){c==9} → hass-cli state toggle switch.out1_mss110_main_channel
+(40+43){c==9} → hass-cli state toggle switch.out2_mss110_main_channel
 # MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"→f"{CC_VALUE_SCALED(0, 1)}") [BLOCK|DEBOUNCE]→ hass-cli service call --arguments entity_id=media_player.samsung_the_frame_55,volume_level={} media_player.volume_set
 MIDI{STATUS==cc}{CC_FUNCTION==74}("{}"→f"{round(CC_VALUE_SCALED(0, 255))}") [BLOCK|DEBOUNCE|LOCK=light]→
 {
