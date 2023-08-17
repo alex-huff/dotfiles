@@ -1,0 +1,16 @@
+["MPK mini"]
+enabled = true
+midi-input = "MPK mini"
+global-macros = "mpk-mini/global.mm"
+virtual-sustain-callback = "read state; echo sustain $state | espeak -s 180 -v en-gb-scotland"
+enable-callback = "read state; echo MPK $state | espeak -s 180 -v en-gb-scotland"
+subprofile-callback = "read subprofile; echo subprofile $subprofile | espeak -s 180 -v en-gb-scotland"
+enable-trigger = "[E4|F4|G4|A4]"
+cycle-subprofiles-trigger = "[D4|E4|F4|G4]"
+debounce-callbacks = true
+["MPK mini".default]
+macros = "mpk-mini/default.mm"
+["MPK mini".mc]
+macros = "mpk-mini/mc.mm"
+["MPK mini".ll]
+macros = "mpk-mini/ll.mm"

@@ -1,0 +1,105 @@
+(defvar light-r 0)
+(defvar light-g 0)
+(defvar light-b 0)
+(defvar adjusted-color "rgb(255, 255, 255)")
+(defvar brightness 0)
+(defvar temperature 0)
+(defvar main-volume 0)
+(defvar cmus-volume 0)
+(defvar focused-volume 0)
+
+(defwidget variable-slider [?style-class variable]
+	(scale
+		:class "slider${(style-class == '') ? '' : ' ${style-class}'}"
+		:draw-value true
+		:flipped true
+		:value variable
+		:min 0
+		:max 101
+		:active false
+		:orientation "vertical"))
+
+(defwidget labeled-control [label-text]
+	(box
+		:class "group"
+		:orientation "vertical"
+		:spacing 10
+		:space-evenly false
+		(children)
+		(label
+			:class "control-panel-label"
+			:text label-text)))
+
+(defwidget control-panel-column []
+	(box
+		:orientation "vertical"
+		:spacing 10
+		:valign "center"
+		(children)))
+
+(defwidget control-panel-row []
+	(box
+		:orientation "horizontal"
+		:spacing 10
+		:halign "center"
+		(children)))
+
+(defwidget light-control-panel-row []
+	(control-panel-row
+		(labeled-control
+			:label-text "Color"
+			(box
+				:class "color-box"
+				:style "background-color: ${adjusted-color}"))
+		(labeled-control
+			:label-text "R"
+			(variable-slider
+				:style-class "light-r-slider"
+				:variable light-r))
+		(labeled-control
+			:label-text "G"
+			(variable-slider
+				:style-class "light-g-slider"
+				:variable light-g))
+		(labeled-control
+			:label-text "B"
+			(variable-slider
+				:style-class "light-b-slider"
+				:variable light-b))
+		(labeled-control
+			:label-text "Bright"
+			(variable-slider
+				:style-class "brightness-slider"
+				:variable brightness))
+		(labeled-control
+			:label-text "Temp"
+			(variable-slider
+				:style-class "temperature-slider"
+				:variable temperature))))
+
+(defwidget volume-control-panel-row []
+	(control-panel-row
+		(labeled-control
+			:label-text "Main"
+			(variable-slider
+				:variable main-volume))
+		(labeled-control
+			:label-text "cmus"
+			(variable-slider
+				:variable cmus-volume))
+		(labeled-control
+			:label-text "Focused"
+			(variable-slider
+				:variable focused-volume))))
+
+(defwidget light-volume-control-panel []
+	(control-panel-column
+		(light-control-panel-row)
+		(volume-control-panel-row)))
+
+(defwindow control-panel-window
+	:monitor 2
+	:geometry (geometry
+		:anchor "center")
+	:stacking "overlay"
+	(light-volume-control-panel))
