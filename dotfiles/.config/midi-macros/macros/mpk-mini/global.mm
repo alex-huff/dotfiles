@@ -119,19 +119,19 @@ MIDI{STATUS==cc}{CC_FUNCTION==74}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE|LOCK=
 {
 	eww update light-r={}
 	echo {} > ~/.config/midi-macros/state/eww-slider-r
-	python ~/.config/midi-macros/scripts/update-lights-eww.py
+	~/.config/midi-macros/scripts/update-lights-eww.py
 }
 MIDI{STATUS==cc}{CC_FUNCTION==75}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE|LOCK=eww_light]→
 {
 	eww update light-g={}
 	echo {} > ~/.config/midi-macros/state/eww-slider-g
-	python ~/.config/midi-macros/scripts/update-lights-eww.py
+	~/.config/midi-macros/scripts/update-lights-eww.py
 }
 MIDI{STATUS==cc}{CC_FUNCTION==76}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE|LOCK=eww_light]→
 {
 	eww update light-b={}
 	echo {} > ~/.config/midi-macros/state/eww-slider-b
-	python ~/.config/midi-macros/scripts/update-lights-eww.py
+	~/.config/midi-macros/scripts/update-lights-eww.py
 }
 MIDI{STATUS==cc}{CC_FUNCTION==70}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ eww update main-volume={}
 MIDI{STATUS==cc}{CC_FUNCTION==71}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ eww update cmus-volume={}
