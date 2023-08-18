@@ -62,11 +62,11 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→f"{CC_VALUE_SCALED(0, 1)}") (python)[BL
 {
 	power_state_file=~/.config/midi-macros/state/power
 	current_state=$(<$power_state_file)
-	if [ $current_state = "on" ]
+	if [ $current_state = on ]
 	then
-		new_state="off"
+		new_state=off
 	else
-		new_state="on"
+		new_state=on
 	fi
 	echo $new_state > $power_state_file
 	echo $(
@@ -114,7 +114,19 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"→f"{round(CC_VALUE_SCALED(0, 255))}") [B
 }
 
 # control panel
-39{c==9} → eww open --toggle control-panel-window
+39{c==9} [BLOCK|DEBOUNCE]→
+{
+	control_panel_state_file=~/.config/midi-macros/state/control_panel
+	current_state=$(<$control_panel_state_file)
+	if [ $current_state = open ]
+	then
+		new_state=close
+	else
+		new_state=open
+	fi
+	echo $new_state > $control_panel_state_file
+	eww $new_state control-panel-window
+}
 MIDI{STATUS==cc}{CC_FUNCTION==74}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE|LOCK=eww_light]→
 {
 	eww update light-r={}
@@ -140,6 +152,10 @@ MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ e
 MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ eww update brightness={}
 MIDI{STATUS==cc}{70<=CC_FUNCTION<=77} [BLOCK|DEBOUNCE]→
 {
-	killall 110f2177-e068-48f8-96ab-ffd44a387ce2-peek-control-panel.sh &> /dev/null
-	~/.config/midi-macros/scripts/110f2177-e068-48f8-96ab-ffd44a387ce2-peek-control-panel.sh &> /dev/null &
+	current_state=$(<~/.config/midi-macros/state/control_panel)
+	if [ $current_state = close ]
+	then
+		killall 110f2177-e068-48f8-96ab-ffd44a387ce2-peek-control-panel.sh &> /dev/null
+		~/.config/midi-macros/scripts/110f2177-e068-48f8-96ab-ffd44a387ce2-peek-control-panel.sh &> /dev/null &
+	fi
 }
