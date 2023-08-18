@@ -138,3 +138,8 @@ MIDI{STATUS==cc}{CC_FUNCTION==71}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ e
 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ eww update focused-volume={}
 MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ eww update temperature={}
 MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ eww update brightness={}
+MIDI{STATUS==cc}{70<=CC_FUNCTION<=77} [BLOCK|DEBOUNCE]→
+{
+	killall 110f2177-e068-48f8-96ab-ffd44a387ce2-peek-control-panel.sh &> /dev/null
+	~/.config/midi-macros/scripts/110f2177-e068-48f8-96ab-ffd44a387ce2-peek-control-panel.sh &> /dev/null &
+}
