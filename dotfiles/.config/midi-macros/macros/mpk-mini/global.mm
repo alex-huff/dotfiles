@@ -11,8 +11,8 @@ C5{v>64} *[1:]("{}"→[-]f"{72 - MIDI}") → swaymsg move container to workspace
 C5{v<=64} *[1:]("{}"→[-]f"{72 - MIDI}") → swaymsg workspace {}
 
 # clipboard manager
-B4{v>64} *[1:]("{}"→[-]ASPN) → wl-paste -n > ~/.config/midi-macros/clipboards/"{}" && echo Saving clipboard to file: {}
-B4{v<=64} *[1:]("{}"→[-]ASPN) → wl-copy < ~/.config/midi-macros/clipboards/"{}" && echo Yanking file: {} to clipboard
+B4{v>64} *[1:]("{}"→[-]ASPN) → wl-paste -n > ~/.config/midi-macros/clipboards/{} && echo Saving clipboard to file: {}
+B4{v<=64} *[1:]("{}"→[-]ASPN) → wl-copy < ~/.config/midi-macros/clipboards/{} && echo Yanking file: {} to clipboard
 
 # main volume with knob 1
 MIDI{STATUS==cc}{CC_FUNCTION==70}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ pactl set-sink-volume @DEFAULT_SINK@ {}%
@@ -24,26 +24,20 @@ MIDI{STATUS==cc}{CC_FUNCTION==71}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ c
 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→f"{CC_VALUE_SCALED(0, 1)}") (python)[BLOCK|DEBOUNCE]→
 {
 	import subprocess
-	sway_pid_extractor = subprocess.Popen(
-		"swaymsg -t get_tree | jq '.. | select(.type?) | select(.focused==true).pid'",
-		text=True,
-		stdout=subprocess.PIPE,
-		stdin=subprocess.DEVNULL,
-		stderr=subprocess.DEVNULL,
-		shell=True
+	focused_pid = int(
+		subprocess.check_output(
+			"swaymsg -t get_tree | jq '.. | select(.type?) | select(.focused==true).pid'",
+			text=True,
+			shell=True
+		)
 	)
-	try:
-		focused_pid = int(sway_pid_extractor.communicate()[0])
-	except Exception:
-		import sys
-		sys.exit(0)
 	import psutil
 	focused_process = psutil.Process(focused_pid)
 	process_hierarchy = {p.pid for p in focused_process.children(recursive=True)}
 	process_hierarchy.add(focused_pid)
 	import pulsectl
 	pid_property = "application.process.id"
-	with pulsectl.Pulse('mm-pulseaudio-client') as pulse:
+	with pulsectl.Pulse("mm-pulseaudio-client") as pulse:
 		for sink_input in pulse.sink_input_list():
 			sink_input_pid = sink_input.proplist.get(pid_property)
 			if sink_input_pid and int(sink_input_pid) in process_hierarchy:
@@ -51,11 +45,16 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→f"{CC_VALUE_SCALED(0, 1)}") (python)[BL
 				break
 }
 
-# cmus control with pads
+# cmus
 40{c==9} → cmus-remote --pause
 41{c==9} → cmus-remote --prev
 42{c==9} → cmus-remote --next
 43{c==9} → cmus-remote -C "toggle repeat_current"
+C3 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→CC_VALUE) [BLOCK|DEBOUNCE]→
+{
+	current_song_duration=$(cmus-remote -Q | grep duration | cut -d " " -f 2)
+	cmus-remote --seek $(python -c "print(round(({} / 127) * $current_song_duration))")
+}
 
 # home assistant
 (40+41){c==9} (zsh)[BLOCK|DEBOUNCE]→
