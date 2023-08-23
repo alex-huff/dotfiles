@@ -7,12 +7,12 @@
 }
 
 # switch/move-container-to workspace
-C5{v>64} *[1:]("{}"→[-]f"{72 - MIDI}") → swaymsg move container to workspace {}
-C5{v<=64} *[1:]("{}"→[-]f"{72 - MIDI}") → swaymsg workspace {}
+C5{v>64} NOTES[1:]("{}"→[-]f"{72 - MIDI}") → swaymsg move container to workspace {}
+C5{v<=64} NOTES[1:]("{}"→[-]f"{72 - MIDI}") → swaymsg workspace {}
 
 # clipboard manager
-B4{v>64} *[1:]("{}"→[-]ASPN) → wl-paste -n > ~/.config/midi-macros/clipboards/{} && echo Saving clipboard to file: {}
-B4{v<=64} *[1:]("{}"→[-]ASPN) → wl-copy < ~/.config/midi-macros/clipboards/{} && echo Yanking file: {} to clipboard
+B4{v>64} NOTES[1:]("{}"→[-]ASPN) → wl-paste -n > ~/.config/midi-macros/clipboards/{} && echo Saving clipboard to file: {}
+B4{v<=64} NOTES[1:]("{}"→[-]ASPN) → wl-copy < ~/.config/midi-macros/clipboards/{} && echo Yanking file: {} to clipboard
 
 # main volume with knob 1
 MIDI{STATUS==cc}{CC_FUNCTION==70}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ pactl set-sink-volume @DEFAULT_SINK@ {}%
@@ -134,19 +134,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"→f"{round(CC_VALUE_SCALED(0, 255))}") [B
 }
 
 # control panel
-39{c==9} [BLOCK|DEBOUNCE]→
-{
-	control_panel_state_file=~/.config/midi-macros/state/control_panel
-	current_state=$(<$control_panel_state_file)
-	if [ $current_state = open ]
-	then
-		new_state=close
-	else
-		new_state=open
-	fi
-	echo $new_state > $control_panel_state_file
-	eww $new_state control-panel-window
-}
+39{c==9} → eww open --toggle control-panel-window &> /dev/null
 MIDI{STATUS==cc}{CC_FUNCTION==74}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE|LOCK=eww_light]→
 {
 	eww update light-r={}
@@ -170,12 +158,45 @@ MIDI{STATUS==cc}{CC_FUNCTION==71}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ e
 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ eww update focused-volume={}
 MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ eww update temperature={}
 MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ eww update brightness={}
-MIDI{STATUS==cc}{70<=CC_FUNCTION<=77} [BLOCK|DEBOUNCE]→
+MIDI{STATUS==cc}{70<=CC_FUNCTION<=77}(TIME) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]→
 {
-	current_state=$(<~/.config/midi-macros/state/control_panel)
-	if [ $current_state = close ]
-	then
-		killall 110f2177-e068-48f8-96ab-ffd44a387ce2-peek-control-panel.sh &> /dev/null
-		~/.config/midi-macros/scripts/110f2177-e068-48f8-96ab-ffd44a387ce2-peek-control-panel.sh &> /dev/null &
-	fi
+	import time
+	from threading import Thread
+	from subprocess import run, check_output, DEVNULL
+	from queue import Queue, Empty
+	def update_control_panel(is_open):
+		run(f'eww {"open" if is_open else "close"} control-panel-window', stdout=DEVNULL, shell=True)
+	def control_panel_open():
+		return "*" in check_output("eww windows | grep control-panel-window", shell=True, text=True)
+	def seconds_to_nanos(time_sec):
+		return time_sec * 10**9
+	def nanos_to_seconds(time_ns):
+		return time_ns / 10**9
+	def sleep_till(time_ns):
+		total_sleep_time = time_ns - time.time_ns()
+		if total_sleep_time > 0:
+			time.sleep(nanos_to_seconds(total_sleep_time))
+	def process_times_forever():
+		while True:
+			time_ns = time_queue.get()
+			time_queue.task_done()
+			was_control_panel_open = control_panel_open()
+			if not was_control_panel_open:
+				update_control_panel(True)
+			sleep_till(time_ns + hover_time)
+			while not time_queue.empty():
+				try:
+					while True:
+						time_ns = time_queue.get_nowait()
+						time_queue.task_done()
+				except Empty:
+					pass
+				sleep_till(time_ns + hover_time)
+			if not was_control_panel_open:
+				update_control_panel(False)
+	hover_time = seconds_to_nanos(1)
+	time_queue = Queue()
+	Thread(target=process_times_forever, daemon=True).start()
+	while True:
+		time_queue.put(int(input()))
 }
