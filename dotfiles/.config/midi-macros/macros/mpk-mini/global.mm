@@ -161,9 +161,8 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ e
 MIDI{STATUS==cc}{70<=CC_FUNCTION<=77}(TIME) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]→
 {
 	import time
-	from threading import Thread
+	from threading import Thread, Condition
 	from subprocess import run, check_output, DEVNULL
-	from queue import Queue, Empty
 	def update_control_panel(is_open):
 		run(f'eww {"open" if is_open else "close"} control-panel-window', stdout=DEVNULL, shell=True)
 	def control_panel_open():
@@ -176,27 +175,31 @@ MIDI{STATUS==cc}{70<=CC_FUNCTION<=77}(TIME) (python $MM_SCRIPT)[BACKGROUND|INVOC
 		total_sleep_time = time_ns - time.time_ns()
 		if total_sleep_time > 0:
 			time.sleep(nanos_to_seconds(total_sleep_time))
-	def process_times_forever():
+	def do_hover():
+		last_processed_action_time = None
 		while True:
-			time_ns = time_queue.get()
-			time_queue.task_done()
+			with new_action_condition:
+				new_action_condition.wait_for(lambda: last_action_time != last_processed_action_time)
+				last_processed_action_time = last_action_time
 			was_control_panel_open = control_panel_open()
 			if not was_control_panel_open:
 				update_control_panel(True)
-			sleep_till(time_ns + hover_time)
-			while not time_queue.empty():
-				try:
-					while True:
-						time_ns = time_queue.get_nowait()
-						time_queue.task_done()
-				except Empty:
-					pass
-				sleep_till(time_ns + hover_time)
+			sleep_till(last_processed_action_time + hover_time)
+			while True:
+				with new_action_condition:
+					if last_action_time == last_processed_action_time:
+						break
+					last_processed_action_time = last_action_time
+				sleep_till(last_processed_action_time + hover_time)
 			if not was_control_panel_open:
 				update_control_panel(False)
 	hover_time = seconds_to_nanos(1)
-	time_queue = Queue()
-	Thread(target=process_times_forever, daemon=True).start()
+	last_action_time = None
+	new_action_condition = Condition()
+	Thread(target=do_hover, daemon=True).start()
 	while True:
-		time_queue.put(int(input()))
+		action_time = int(input())
+		with new_action_condition:
+			last_action_time = action_time
+			new_action_condition.notify()
 }
