@@ -13,3 +13,5 @@
 [submodule "dotfiles/.zsh/zsh-completions"]
 	path = dotfiles/.zsh/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions.git
+[submodule "dotfiles/.config/alacritty/catppuccin"]
+	branch = feat/use-toml-config
