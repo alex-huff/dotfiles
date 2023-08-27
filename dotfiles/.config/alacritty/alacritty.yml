@@ -1,111 +1,21 @@
 window:
-  # opacity: .75
-
   padding:
     x: 6
     y: 6
 
-# Font configuration
 font:
-  # Normal (roman) font face
   normal:
-    # Font family
-    #
-    # Default:
-    #   - (macOS) Menlo
-    #   - (Linux/BSD) monospace
-    #   - (Windows) Consolas
-    # family: Source Code Pro
-    # family: ComicCode Nerd Font 
-    # family: ComicCode Nerd Font
-    # family: monofur
-    # family: Fantasque Sans Mono
-    # family: iosevka
-    # family: CodeNewRoman Nerd Font
-    # family: RobotoMono Nerd Font
-    # family: Hack
     family: ComicCode Nerd Font
-    # family: ComicCode Nerd Font
-    # family: Monofuritalic Nerd Font Mono
-    # family: TerminessTTF Nerd Font
-    # family: Mononoki Nerd Font
-
-    # The `style` can be specified to pick a specific face.
     style: Regular
-
-  # Bold font face
   bold:
-    # Font family
-    #
-    # If the bold family is not specified, it will fall back to the
-    # value specified for the normal font.
-    # family: Source Code Pro
-    # family: ComicCode Nerd Font
-    # family: ComicCode Nerd Font
-    # family: monofur
-    # family: Fantasque Sans Mono
-    # family: iosevka
-    # family: CodeNewRoman Nerd Font
-    # family: RobotoMono Nerd Font
-    # family: Hack
     family: ComicCode Nerd Font
-    # family: ComicCode Nerd Font
-    # family: Monofuritalic Nerd Font Mono
-    # family: TerminessTTF Nerd Font
-    # family: Mononoki Nerd Font
-
-    # The `style` can be specified to pick a specific face.
     style: Bold
-
-  # Italic font face
   italic:
-    # Font family
-    #
-    # If the italic family is not specified, it will fall back to the
-    # value specified for the normal font.
-    # family: Source Code Pro
-    # family: ComicCode Nerd Font
-    # family: ComicCode Nerd Font
-    # family: monofur
-    # family: Fantasque Sans Mono
-    # family: iosevka
-    # family: CodeNewRoman Nerd Font
-    # family: RobotoMono Nerd Font
-    # family: Hack
     family: ComicCode Nerd Font
-    # family: ComicCode Nerd Font
-    # family: Monofuritalic Nerd Font Mono
-    # family: TerminessTTF Nerd Font
-    # family: Mononoki Nerd Font
-
-    # The `style` can be specified to pick a specific face.
     style: Italic
-
-  # Bold italic font face
   bold_italic:
-    # Font family
-    #
-    # If the bold italic family is not specified, it will fall back to the
-    # value specified for the normal font.
-    # family: Source Code Pro
-    # family: ComicCode Nerd Font
-    # family: ComicCode Nerd Font
-    # family: monofur
-    # family: Fantasque Sans Mono
-    # family: iosevka
-    # family: CodeNewRoman Nerd Font
-    # family: RobotoMono Nerd Font
-    # family: Hack
     family: ComicCode Nerd Font
-    # family: ComicCode Nerd Font
-    # family: Monofuritalic Nerd Font Mono
-    # family: TerminessTTF Nerd Font
-    # family: Mononoki Nerd Font
-
-    # The `style` can be specified to pick a specific face.
     style: Bold Italic
-
-  # Point size
   size: 18.0
 
 draw_bold_text_with_bright_colors: true
