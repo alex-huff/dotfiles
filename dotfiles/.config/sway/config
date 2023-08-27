@@ -2,14 +2,13 @@ exec_always
 {
 	dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
 	~/.config/sway/import-gsettings
+	eww daemon
 }
 set $mod Mod4
-
 font pango:ComicCode Nerd Font 12
 
-# Start XDG autostart .desktop files using dex. See also
-# https://wiki.archlinux.org/index.php/XDG_Autostart
-exec --no-startup-id dex --autostart --environment i3
+# start XDG autostart .desktop files
+exec --no-startup-id dex --autostart --environment sway
 
 # use pactl to adjust volume in PulseAudio
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +1%
@@ -18,10 +17,10 @@ bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ to
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 # use playerctl to control media playback
-bindsym XF86AudioPlay exec playerctl play && $refresh_i3status
-bindsym XF86AudioPause exec playerctl pause && $refresh_i3status
-bindsym XF86AudioNext exec playerctl next && $refresh_i3status
-bindsym XF86AudioPrev exec playerctl previous && $refresh_i3status
+bindsym XF86AudioPlay exec playerctl play
+bindsym XF86AudioPause exec playerctl pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
 
 # scratchpad control
 bindsym $mod+Semicolon scratchpad show
@@ -54,23 +53,16 @@ bindsym $mod+Shift+s exec grimshot-imgur.sh save area
 # take a fullscreen screenshot
 bindsym $mod+Shift+o exec grimshot-imgur.sh save output
 
-# start dmenu (a program launcher)
-# bindsym $mod+d exec --no-startup-id dmenu_run
-# a more modern dmenu replacement is rofi:
+# rofi
 bindsym $mod+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
 bindsym $mod+m exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher-emoji.sh
 bindsym $mod+p exec --no-startup-id ~/.config/rofi/powermenu/type-2/powermenu.sh
-# There also is i3-dmenu-desktop which only displays applications shipping a
-# .desktop file. It is a wrapper around dmenu, so you need that installed.
-# bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
 
 # change focus
 bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
-
-# alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
@@ -81,8 +73,6 @@ bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
-
-# alternatively, you can use the cursor keys:
 bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
@@ -97,7 +87,7 @@ bindsym $mod+v split v
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
 
-# change container layout (stacked, tabbed, toggle split)
+# change container layout
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
@@ -114,8 +104,7 @@ bindsym $mod+a focus parent
 # focus the child container
 bindsym $mod+Shift+a focus child
 
-# define names for default workspaces for which we configure key bindings later on.
-# we use variables to avoid repeating the names in multiple places.
+# workspace names
 set $ws1 "1"
 set $ws2 "2"
 set $ws3 "3"
@@ -153,79 +142,68 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
-# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+
+# restart sway inplace
 bindsym $mod+Shift+r restart
-# exit i3
+
+# exit sway
 bindsym $mod+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your session.' -B 'Yes, exit sway' 'swaymsg exit'"
 
-# resize window (you can also use the mouse for that)
-mode "resize" 
+# resize window
+mode "resize"
 {
-        # these bindings trigger as soon as you enter the resize mode
-
-        bindsym h resize shrink width 10 px or 10 ppt
-        bindsym j resize shrink height 10 px or 10 ppt
-        bindsym k resize grow height 10 px or 10 ppt
-        bindsym l resize grow width 10 px or 10 ppt
-
-        # same bindings, but for the arrow keys
-        bindsym Left resize shrink width 10 px or 10 ppt
-        bindsym Up resize grow height 10 px or 10 ppt
-        bindsym Down resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
-
-        # back to normal: Enter or Escape or $mod+r
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-        bindsym $mod+r mode "default"
+	bindsym h resize shrink width 10 px or 10 ppt
+	bindsym j resize shrink height 10 px or 10 ppt
+	bindsym k resize grow height 10 px or 10 ppt
+	bindsym l resize grow width 10 px or 10 ppt
+	bindsym Left resize shrink width 10 px or 10 ppt
+	bindsym Up resize grow height 10 px or 10 ppt
+	bindsym Down resize shrink height 10 px or 10 ppt
+	bindsym Right resize grow width 10 px or 10 ppt
+	bindsym Return mode "default"
+	bindsym Escape mode "default"
+	bindsym $mod+r mode "default"
 }
-
 bindsym $mod+r mode "resize"
 
-focus_follows_mouse no
-smart_borders on
-# workspace_auto_back_and_forth yes
-tiling_drag off
-
-# default_border pixel 4
-for_window [class="^.*"] border pixel 5
-# gaps inner 18
-# gaps outer 0
-
-focus_on_window_activation none
-
+# colors
 client.focused          #1e1e2e #4c4f69 #f5e0dc #4c4f69 #4c4f69
 client.unfocused        #4c4f69 #1e1e2e #f5e0dc #24273a #24273a
 client.focused_inactive #4c4f69 #1e1e2e #f5e0dc #24273a #24273a
 
-bindsym $mod+Shift+b exec swaymsg bar hidden_state toggle
-
 # include device specific configuration and overrides
 include device/*
 
-bar 
+# various
+focus_follows_mouse no
+smart_borders on
+tiling_drag off
+for_window [class="^.*"] border pixel 5
+focus_on_window_activation none
+# gaps inner 18
+# gaps outer 0
+
+# bar
+bindsym $mod+Shift+b exec swaymsg bar hidden_state toggle
+bar
 {
 	mode hide
 	modifier none
-        colors 
-        {
-                background         #1e1e2e
-
-                focused_workspace  #4c4f69 #4c4f69 #f5e0dc
-                active_workspace   #4c4f69 #4c4f69 #f5e0dc
-                inactive_workspace #24273a #24273a #f5e0dc
-                urgent_workspace   #f38ba8 #f38ba8 #f5e0dc
-                binding_mode       #f38ba8 #f38ba8 #f5e0dc
-        }
-
+	colors
+	{
+		background         #1e1e2e
+		focused_workspace  #4c4f69 #4c4f69 #f5e0dc
+		active_workspace   #4c4f69 #4c4f69 #f5e0dc
+		inactive_workspace #24273a #24273a #f5e0dc
+		urgent_workspace   #f38ba8 #f38ba8 #f5e0dc
+		binding_mode       #f38ba8 #f38ba8 #f5e0dc
+	}
 	font pango:ComicCode Nerd Font 14
 	position top
 	output $barscreen
 	tray_output *
 	tray_padding 4
- 	status_command ~/.config/i3/bumblebee-status/bumblebee-status -m cpu \
- 		memory date time pasink battery \
- 		-p root.path=/ time.format="%I:%M:%S %p" date.format="%a, %b %d, %Y" \
-                pasink.percent_change=1 \
- 		-t catppuccinIceburg
+	status_command ~/.config/i3/bumblebee-status/bumblebee-status -m cpu \
+		memory date time pasink battery -p root.path=/ time.format="%I:%M:%S %p"\
+		date.format="%a, %b %d, %Y" pasink.percent_change=1 -t catppuccinIceburg
 }
