@@ -55,8 +55,8 @@ bindsym $mod+Shift+o exec grimshot-imgur.sh save output
 
 # rofi
 bindsym $mod+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
-bindsym $mod+m exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher-emoji.sh
 bindsym $mod+p exec --no-startup-id ~/.config/rofi/powermenu/type-2/powermenu.sh
+bindsym $mod+Shift+m exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher-emoji.sh
 
 # change focus
 bindsym $mod+h focus left
