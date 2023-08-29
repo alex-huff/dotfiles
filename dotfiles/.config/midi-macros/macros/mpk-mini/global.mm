@@ -26,7 +26,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→f"{CC_VALUE_SCALED(0, 1)}") (python)[BL
 	import subprocess
 	focused_pid = int(
 		subprocess.check_output(
-			"swaymsg -t get_tree | jq '.. | select(.type?) | select(.focused==true).pid'",
+			"sway-focused-pid.sh",
 			text=True,
 			shell=True
 		)
@@ -62,7 +62,7 @@ MIDI{STATUS==pb}{DATA_2>=64}("{}"→f"{lerp(((DATA_2 - 64) / 63), 1, 8)}") (pyth
 	import subprocess
 	focused_pid = int(
 		subprocess.check_output(
-			"swaymsg -t get_tree | jq '.. | select(.type?) | select(.focused==true).pid'",
+			"sway-focused-pid.sh",
 			text=True,
 			shell=True
 		)

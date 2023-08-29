@@ -1,7 +1,16 @@
 36{c==9} →
 {
-	mod=$(mod-menu-integration get-mod-names | rofi -dmenu -theme ~/.config/rofi/launchers/type-1/style-5.rasi)
-	mod-menu-integration open-config $mod
+	pid=$(sway-focused-pid.sh)
+	mod=$(mod-menu-integration --pid $pid get-mod-names | rofi -dmenu -i -theme ~/.config/rofi/launchers/type-1/style-5.rasi)
+	mod-menu-integration --pid $pid open-config "$mod"
 }
-37{c==9} → mod-menu-integration open-config litematica
-38{c==9} → mod-menu-integration open-config tweakeroo
+37{c==9} →
+{
+	pid=$(sway-focused-pid.sh)
+	mod-menu-integration --pid $pid open-config Litematica
+}
+38{c==9} →
+{
+	pid=$(sway-focused-pid.sh)
+	mod-menu-integration --pid $pid open-config Tweakeroo
+}
