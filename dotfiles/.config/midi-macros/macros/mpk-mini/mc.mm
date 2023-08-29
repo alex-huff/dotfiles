@@ -7,10 +7,10 @@
 37{c==9} →
 {
 	pid=$(focused-pid.sh)
-	mod-menu-integration --pid $pid open-config Litematica
+	mod-menu-integration --pid $pid open-config Tweakeroo
 }
 38{c==9} →
 {
 	pid=$(focused-pid.sh)
-	mod-menu-integration --pid $pid open-config Tweakeroo
+	mod-menu-integration --pid $pid open-config MiniHUD
 }
