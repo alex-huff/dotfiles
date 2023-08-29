@@ -1,10 +1,5 @@
 # subprofile switching
-48{c==9} →
-{
-	profile="MPK mini"
-	subprofile=$(mm-msg profile "$profile" get-loaded-subprofiles | rofi -dmenu -theme ~/.config/rofi/launchers/type-1/style-5.rasi)
-	mm-msg profile "$profile" set-subprofile "$subprofile"
-}
+48{c==9} → switch-mm-subprofile.sh "MPK mini"
 
 # switch/move-container-to workspace
 C5{v>64} NOTES[1:]("{}"→[-]f"{72 - MIDI}") → swaymsg move container to workspace {}
