@@ -4,7 +4,7 @@
 .group {
 	background-color: #313244;
 }
-.gold-stats-label, .champion-icon, .control-panel-label, .color-box, .slider .gold-ratio {
+.gold-stats-label, .champion-icon, .control-panel-label, .color-box, .slider {
 	margin: 10px;
 }
 scale value, .gold-stats-label, .control-panel-label {
@@ -17,9 +17,6 @@ scale value, .gold-stats-label, .control-panel-label {
 .control-panel-label {
 	font-size: 20px;
 }
-.gold-ratio {
-	min-width: 50px;
-}
 .color-box, .slider {
 	min-height: 240px;
 }
@@ -29,7 +26,7 @@ scale trough highlight {
 scale trough {
 	background-color: #585b70;
 	min-width: 40px;
-	min-height: 40px;
+	min-height: 35px;
 }
 scale value {
 	margin-top: 10px;

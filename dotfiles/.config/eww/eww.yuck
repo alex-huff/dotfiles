@@ -131,23 +131,31 @@
 
 (defwidget blue-team-gold-player-stats [icon-path gold-amount]
 	(box
-		:class "group"
 		:orientation "horizontal"
 		(champion-icon :align "start" :icon-path icon-path)
 		(gold-stats-label :align "end" :gold-amount gold-amount)))
 
 (defwidget red-team-gold-player-stats [icon-path gold-amount]
 	(box
-		:class "group"
 		:orientation "horizontal"
 		(gold-stats-label :align "start" :gold-amount gold-amount)
 		(champion-icon :align "end" :icon-path icon-path)))
 
 (defwidget gold-ratio-scale [blue-champ-gold red-champ-gold]
 	(box
-		:class "group"
+		:orientation "vertical"
+		(label
+			:class "gold-stats-label"
+			:valign "end"
+			:text "${
+				(blue-champ-gold - red-champ-gold) == 0 ? "← 0 →" : (
+					(blue-champ-gold - red-champ-gold) > 0 ? "← ${(blue-champ-gold - red-champ-gold)}" :
+					"${(blue-champ-gold - red-champ-gold) * -1} →"
+				)
+			}")
 		(scale
 			:class "gold-ratio"
+			:valign "start"
 			:value {
 				(blue-champ-gold + red-champ-gold) != 0 ? (blue-champ-gold / (blue-champ-gold + red-champ-gold)) * 2 : 1
 			}
@@ -158,6 +166,7 @@
 
 (defwidget league-gold-stats-row [blue-champ-icon red-champ-icon blue-champ-gold red-champ-gold]
 	(box
+		:class "group"
 		:orientation "horizontal"
 		(blue-team-gold-player-stats :icon-path blue-champ-icon :gold-amount blue-champ-gold)
 		(gold-ratio-scale :blue-champ-gold blue-champ-gold :red-champ-gold red-champ-gold)
