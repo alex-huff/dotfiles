@@ -1,5 +1,6 @@
 MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE>=64} → swaymsg workspace 5
 MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → swaymsg workspace 6
+37{c==9} → killall LeagueClient.exe; killall RiotClientServices.exe; killall "League of Legends.exe"
 36{c==9} (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"\n"]→
 {
 	import requests
@@ -7,8 +8,6 @@ MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → swaymsg workspace 6
 	import time
 	from subprocess import run, DEVNULL
 	from threading import Thread
-	from urllib3.exceptions import InsecureRequestWarning
-	from urllib.parse import quote
 
 	class Summoner:
 		def __init__(self, summoner_name, champion_name, total_gold_spent, position, team):
@@ -22,7 +21,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → swaymsg workspace 6
 		return f"/home/alex/lol-data/data/ddragon-data/img/champion/{champion_ids[champion_name]}.png"
 
 	def get_summoners():
-		response = requests.get(f"{base_url}{player_list_endpoint}", verify=False)
+		response = requests.get(f"{base_url}{player_list_endpoint}", verify=root_certificate)
 		response_json = response.json()
 		return [
 			Summoner(
@@ -56,8 +55,8 @@ MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → swaymsg workspace 6
 		summoners = get_summoners()
 		blue_team = [summoner for summoner in summoners if summoner.team == "ORDER"]
 		red_team = [summoner for summoner in summoners if summoner.team == "CHAOS"]
-		assert len(blue_team) == 5
-		assert len(red_team) == 5
+		assert len(blue_team) <= 5
+		assert len(red_team) <= 5
 		sort_by_role(blue_team)
 		sort_by_role(red_team)
 		update_league_gold_stats_for_team(blue_team, "blue")
@@ -71,7 +70,8 @@ MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → swaymsg workspace 6
 			except:
 				time.sleep(30)
 
-	requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+	lol_data_dir = "/home/alex/lol-data/"
+	root_certificate = f"{lol_data_dir}riotgames.pem"
 	base_url = "https://127.0.0.1:2999/"
 	live_client_data_endpoint = "liveclientdata/"
 	player_list_endpoint = f"{live_client_data_endpoint}playerlist"
@@ -87,9 +87,9 @@ MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → swaymsg workspace 6
 	total_key = "total"
 	name_key = "name"
 	id_key = "id"
-	data_dir = "/home/alex/lol-data/data/ddragon-data/data/en_US/"
-	item_data_file = f"{data_dir}item.json"
-	champion_data_file = f"{data_dir}champion.json"
+	ddragon_data_dir = f"{lol_data_dir}data/ddragon-data/data/en_US/"
+	item_data_file = f"{ddragon_data_dir}item.json"
+	champion_data_file = f"{ddragon_data_dir}champion.json"
 	item_prices = {}
 	champion_ids = {}
 	role_order = {
@@ -97,7 +97,9 @@ MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → swaymsg workspace 6
 		"JUNGLE": 1,
 		"MIDDLE": 2,
 		"BOTTOM": 3,
-		"UTILITY": 4
+		"UTILITY": 4,
+		"NONE": 5,
+		"": 5
 	}
 	gather_ddragon_data()
 	Thread(target=update_league_gold_stats_forever, daemon=True).start()
