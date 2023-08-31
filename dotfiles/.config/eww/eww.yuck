@@ -8,6 +8,27 @@
 (defvar cmus-volume 0)
 (defvar focused-volume 0)
 
+(defvar blue-champ-1-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
+(defvar blue-champ-2-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
+(defvar blue-champ-3-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
+(defvar blue-champ-4-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
+(defvar blue-champ-5-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
+(defvar blue-champ-1-gold 0)
+(defvar blue-champ-2-gold 0)
+(defvar blue-champ-3-gold 0)
+(defvar blue-champ-4-gold 0)
+(defvar blue-champ-5-gold 0)
+(defvar red-champ-1-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
+(defvar red-champ-2-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
+(defvar red-champ-3-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
+(defvar red-champ-4-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
+(defvar red-champ-5-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
+(defvar red-champ-1-gold 0)
+(defvar red-champ-2-gold 0)
+(defvar red-champ-3-gold 0)
+(defvar red-champ-4-gold 0)
+(defvar red-champ-5-gold 0)
+
 (defwidget variable-slider [?style-class variable]
 	(scale
 		:class "slider${(style-class == '') ? '' : ' ${style-class}'}"
@@ -97,9 +118,91 @@
 		(light-control-panel-row)
 		(volume-control-panel-row)))
 
+(defwidget champion-icon [icon-path align]
+	(image
+		:class "champion-icon"
+		:halign align
+		:path icon-path
+		:image-width 80
+		:image-height 80))
+
+(defwidget gold-stats-label [gold-amount align]
+	(label :class "gold-stats-label" :halign align :text gold-amount))
+
+(defwidget blue-team-gold-player-stats [icon-path gold-amount]
+	(box
+		:class "group"
+		:orientation "horizontal"
+		(champion-icon :align "start" :icon-path icon-path)
+		(gold-stats-label :align "end" :gold-amount gold-amount)))
+
+(defwidget red-team-gold-player-stats [icon-path gold-amount]
+	(box
+		:class "group"
+		:orientation "horizontal"
+		(gold-stats-label :align "start" :gold-amount gold-amount)
+		(champion-icon :align "end" :icon-path icon-path)))
+
+(defwidget gold-ratio-scale [blue-champ-gold red-champ-gold]
+	(box
+		:class "group"
+		(scale
+			:class "gold-ratio"
+			:value {
+				(blue-champ-gold + red-champ-gold) != 0 ? (blue-champ-gold / (blue-champ-gold + red-champ-gold)) * 2 : 1
+			}
+			:min 0
+			:max 3
+			:active false
+			:orientation "horizontal")))
+
+(defwidget league-gold-stats-row [blue-champ-icon red-champ-icon blue-champ-gold red-champ-gold]
+	(box
+		:orientation "horizontal"
+		(blue-team-gold-player-stats :icon-path blue-champ-icon :gold-amount blue-champ-gold)
+		(gold-ratio-scale :blue-champ-gold blue-champ-gold :red-champ-gold red-champ-gold)
+		(red-team-gold-player-stats :icon-path red-champ-icon :gold-amount red-champ-gold)))
+
+(defwidget league-gold-stats []
+	(box
+		:orientation "vertical"
+		:spacing 10
+		(league-gold-stats-row
+			:blue-champ-icon blue-champ-1-icon
+			:red-champ-icon red-champ-1-icon
+			:blue-champ-gold blue-champ-1-gold
+			:red-champ-gold red-champ-1-gold)
+		(league-gold-stats-row
+			:blue-champ-icon blue-champ-2-icon
+			:red-champ-icon red-champ-2-icon
+			:blue-champ-gold blue-champ-2-gold
+			:red-champ-gold red-champ-2-gold)
+		(league-gold-stats-row
+			:blue-champ-icon blue-champ-3-icon
+			:red-champ-icon red-champ-3-icon
+			:blue-champ-gold blue-champ-3-gold
+			:red-champ-gold red-champ-3-gold)
+		(league-gold-stats-row
+			:blue-champ-icon blue-champ-4-icon
+			:red-champ-icon red-champ-4-icon
+			:blue-champ-gold blue-champ-4-gold
+			:red-champ-gold red-champ-4-gold)
+		(league-gold-stats-row
+			:blue-champ-icon blue-champ-5-icon
+			:red-champ-icon red-champ-5-icon
+			:blue-champ-gold blue-champ-5-gold
+			:red-champ-gold red-champ-5-gold)))
+
 (defwindow control-panel-window
 	:monitor 2
 	:geometry (geometry
 		:anchor "center")
 	:stacking "overlay"
 	(light-volume-control-panel))
+
+(defwindow league-gold-stats-window
+	:monitor 2
+	:geometry (geometry
+		:anchor "center")
+	:stacking "overlay"
+	(league-gold-stats))

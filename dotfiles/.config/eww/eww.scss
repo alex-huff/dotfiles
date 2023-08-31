@@ -4,15 +4,24 @@
 .group {
 	background-color: #313244;
 }
-.control-panel-label {
-	color: #cdd6f4;
-	font-size: 20px;
-	font-weight: normal;
+.gold-stats-label, .champion-icon, .control-panel-label, .color-box, .slider .gold-ratio {
 	margin: 10px;
+}
+scale value, .gold-stats-label, .control-panel-label {
+	color: #cdd6f4;
+	font-weight: normal;
+}
+.gold-stats-label {
+	font-size: 21px;
+}
+.control-panel-label {
+	font-size: 20px;
+}
+.gold-ratio {
+	min-width: 50px;
 }
 .color-box, .slider {
 	min-height: 240px;
-	margin: 10px;
 }
 scale trough highlight {
 	background-color: #cba6f7;
@@ -20,6 +29,7 @@ scale trough highlight {
 scale trough {
 	background-color: #585b70;
 	min-width: 40px;
+	min-height: 40px;
 }
 scale value {
 	margin-top: 10px;
@@ -38,4 +48,10 @@ scale value {
 }
 .brightness-slider trough highlight {
 	background-color: #f5e0dc;
+}
+.gold-ratio trough highlight {
+	background-color: #89b4fa;
+}
+.gold-ratio trough {
+	background-color: #f38ba8;
 }
