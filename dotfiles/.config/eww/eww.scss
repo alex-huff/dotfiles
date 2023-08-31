@@ -4,18 +4,22 @@
 .group {
 	background-color: #313244;
 }
-.gold-stats-label, .champion-icon, .control-panel-label, .color-box, .slider {
+.champion-icon, .control-panel-label, .color-box, .slider {
 	margin: 10px;
 }
 scale value, .gold-stats-label, .control-panel-label {
 	color: #cdd6f4;
 	font-weight: normal;
 }
-.gold-stats-label {
-	font-size: 21px;
-}
 .control-panel-label {
 	font-size: 20px;
+}
+.gold-stats-label {
+	font-size: 21px;
+	margin-right: 10px;
+	margin-left: 10px;
+	margin-bottom: 4px;
+	margin-top: 4px;
 }
 .color-box, .slider {
 	min-height: 240px;
