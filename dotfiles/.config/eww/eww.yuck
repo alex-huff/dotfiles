@@ -127,7 +127,7 @@
 		:image-height 80))
 
 (defwidget gold-stats-label [gold-amount align]
-	(label :class "gold-stats-label" :halign align :text gold-amount))
+	(label :class "gold-stats-label" :halign align :text {align == "start" ? "${gold-amount} 󰆼" : "󰆼 ${gold-amount}"}))
 
 (defwidget blue-team-gold-player-stats [icon-path gold-amount]
 	(box
