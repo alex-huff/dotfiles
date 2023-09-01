@@ -123,8 +123,8 @@
 		:class "champion-icon"
 		:halign align
 		:path icon-path
-		:image-width 80
-		:image-height 80))
+		:image-width 90
+		:image-height 90))
 
 (defwidget gold-stats-label [gold-amount align]
 	(label :class "gold-stats-label" :halign align :text {align == "start" ? "${gold-amount} 󰆼" : "󰆼 ${gold-amount}"}))
