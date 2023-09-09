@@ -40,6 +40,16 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→f"{CC_VALUE_SCALED(0, 1)}") (python)[BL
 				break
 }
 
+# laptop brightness
+E3 MIDI{STATUS==cc}{CC_FUNCTION==72}(CC_VALUE_PERCENT) [BACKGROUND|INVOCATION_FORMAT=f"{a}\n"|KILL]→
+{
+	while true
+	do
+		ssh alex@archl zsh -c '"xargs -I {} echo {} > /sys/class/backlight/amdgpu_bl1/brightness"'
+		sleep 30
+	done
+}
+
 # cmus
 40{c==9} → cmus-remote --pause
 41{c==9} → cmus-remote --prev
