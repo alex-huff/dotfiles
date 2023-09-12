@@ -53,6 +53,9 @@ bindsym $mod+Shift+s exec grimshot-imgur.sh save area
 # take a fullscreen screenshot
 bindsym $mod+Shift+o exec grimshot-imgur.sh save output
 
+# twitch
+bindsym $mod+t exec twitch
+
 # rofi
 bindsym $mod+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
 bindsym $mod+p exec --no-startup-id ~/.config/rofi/powermenu/type-2/powermenu.sh

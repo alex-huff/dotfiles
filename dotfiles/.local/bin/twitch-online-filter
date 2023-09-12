@@ -1,0 +1,30 @@
+#!/bin/python
+
+import sys
+import requests
+
+ENDPOINT = "https://gql.twitch.tv/gql"
+STREAM_ID_QUERY = """\
+query {{
+    user(login: "{username}") {{
+        stream {{
+            id
+        }}
+    }}
+}}\
+"""
+usernames = list(map(str.rstrip, sys.stdin))
+multi_query = [
+    {"query": STREAM_ID_QUERY.format(username=username), "variables": {}}
+    for username in usernames
+]
+response = requests.post(
+    ENDPOINT,
+    json=multi_query,
+    headers={"client-id": "kimne78kx3ncx6brgo4mv6wki5h1ko"},
+).json()
+stream_datas = [query_response["data"]["user"]["stream"] for query_response in response]
+
+for username, stream_data in zip(usernames, stream_datas):
+    if stream_data:
+        print(username)
