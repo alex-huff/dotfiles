@@ -204,6 +204,6 @@ bar
 	tray_output *
 	tray_padding 4
 	status_command ~/.config/i3/bumblebee-status/bumblebee-status -m cpu \
-		memory date time pasink battery -p root.path=/ time.format="%I:%M:%S %p"\
-		date.format="%a, %b %d, %Y" pasink.percent_change=1 -t catppuccinIceburg
+		memory date time battery -p root.path=/ time.format="%I:%M:%S %p"\
+		date.format="%a, %b %d, %Y" -t catppuccinIceburg
 }
