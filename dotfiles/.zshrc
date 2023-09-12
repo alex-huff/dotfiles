@@ -10,7 +10,8 @@ then
 	alias cat=bat
 fi
 
-alias cmus='PULSE_SINK="hush" cmus'
+alias cmus='PULSE_SINK=hush cmus'
+alias discord='PULSE_SINK=hear discord'
 
 set -o vi
 
