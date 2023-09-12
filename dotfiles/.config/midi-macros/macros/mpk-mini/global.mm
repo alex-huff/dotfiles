@@ -10,7 +10,7 @@ B4{v>64} NOTES[1:]("{}"→[-]ASPN) → wl-paste -n > ~/.config/midi-macros/clipb
 B4{v<=64} NOTES[1:]("{}"→[-]ASPN) → wl-copy < ~/.config/midi-macros/clipboards/{} && echo Yanking file: {} to clipboard
 
 # main volume with knob 1
-MIDI{STATUS==cc}{CC_FUNCTION==70}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ pactl set-sink-volume @DEFAULT_SINK@ {}%
+MIDI{STATUS==cc}{CC_FUNCTION==70}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ pactl set-sink-volume alsa_output.pci-0000_00_1f.3.analog-stereo {}%
 
 # cmus volume with knob 2
 MIDI{STATUS==cc}{CC_FUNCTION==71}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]→ cmus-remote --volume {}%
