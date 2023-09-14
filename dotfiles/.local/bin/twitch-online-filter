@@ -14,6 +14,7 @@ query {{
 }}\
 """
 TWITCH_CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko"
+
 usernames = list(map(str.rstrip, sys.stdin))
 multi_query = [
     {"query": STREAM_ID_QUERY.format(username=username), "variables": {}}
@@ -25,7 +26,10 @@ response = requests.post(
     headers={"client-id": TWITCH_CLIENT_ID},
 ).json()
 stream_datas = (query_response["data"]["user"]["stream"] for query_response in response)
-
-for username, stream_data in zip(usernames, stream_datas):
-    if stream_data:
-        print(username)
+print(
+    "\n".join(
+        username
+        for username, stream_data in zip(usernames, stream_datas)
+        if stream_data
+    )
+)

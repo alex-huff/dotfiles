@@ -60,7 +60,10 @@ PS1='%F{blue}%~${vcs_info_msg_0_} %F{black}>%F{default} '
 source ~/.zsh/theming/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-if [ -d ~/.zsh/conf.zsh.d ]
-then
-	source ~/.zsh/conf.zsh.d/*.zsh
-fi
+for file in ~/.zsh/conf.zsh.d/*.zsh
+do
+	if [ -f $file ]
+	then
+		source $file
+	fi
+done
