@@ -1,9 +1,6 @@
 [submodule "dotfiles/.zsh/zsh-autosuggestions"]
 	path = dotfiles/.zsh/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions
-[submodule "dotfiles/.config/alacritty/alacritty"]
-	path = dotfiles/.config/alacritty/catppuccin
-	url = https://github.com/catppuccin/alacritty.git
 [submodule "dotfiles/.zsh/zsh-syntax-highlighting"]
 	path = dotfiles/.zsh/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting
@@ -13,5 +10,7 @@
 [submodule "dotfiles/.zsh/zsh-completions"]
 	path = dotfiles/.zsh/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions.git
-[submodule "dotfiles/.config/alacritty/catppuccin"]
+[submodule "dotfiles/.config/alacritty/scheme"]
+	path = dotfiles/.config/alacritty/scheme
+	url = https://github.com/alex-huff/alacritty-color-scheme.git
 	branch = feat/use-toml-config
