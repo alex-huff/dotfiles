@@ -170,9 +170,9 @@ mode "resize"
 bindsym $mod+r mode "resize"
 
 # colors
-client.focused          #11111b #45475a #f5e0dc #4c4f69 #4c4f69
-client.unfocused        #45475a #11111b #f5e0dc #24273a #24273a
-client.focused_inactive #45475a #11111b #f5e0dc #24273a #24273a
+client.focused          #181825 #45475a #f5e0dc #4c4f69 #4c4f69
+client.unfocused        #45475a #181825 #f5e0dc #24273a #24273a
+client.focused_inactive #45475a #181825 #f5e0dc #24273a #24273a
 
 # include device specific configuration and overrides
 include device/*
