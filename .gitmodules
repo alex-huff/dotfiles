@@ -14,3 +14,6 @@
 	path = dotfiles/.config/alacritty/scheme
 	url = https://github.com/alex-huff/alacritty-color-scheme.git
 	branch = feat/use-toml-config
+[submodule "dotfiles/.zsh/zsh-history-substring-search"]
+	path = dotfiles/.zsh/zsh-history-substring-search
+	url = https://github.com/zsh-users/zsh-history-substring-search

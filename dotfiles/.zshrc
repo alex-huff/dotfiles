@@ -60,6 +60,10 @@ PS1='%F{blue}%~${vcs_info_msg_0_} %F{black}>%F{default} '
 source ~/.zsh/theming/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+
 for file in ~/.zsh/conf.zsh.d/*.zsh(N)
 do
 	if [ -f $file ]
