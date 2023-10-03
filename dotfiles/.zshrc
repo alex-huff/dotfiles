@@ -35,7 +35,8 @@ rehash_precmd()
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
-setopt appendhistory
+setopt APPEND_HISTORY
+setopt HIST_IGNORE_SPACE
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 bindkey '^ ' autosuggest-accept
