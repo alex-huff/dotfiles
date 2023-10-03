@@ -13,7 +13,7 @@ fi
 alias cmus='PULSE_SINK=hush cmus'
 alias discord='PULSE_SINK=hear discord'
 
-set -o vi
+setopt vi
 
 # Rehash pacman command cache when it goes out of date
 zshcache_time="$(date +%s%N)"
@@ -56,7 +56,8 @@ precmd()
 
 zstyle ':vcs_info:git:*' formats ' %F{cyan}on %F{blue} %F{cyan}%b'
 setopt PROMPT_SUBST
-PS1='%F{blue}%~${vcs_info_msg_0_} %F{black}>%F{default} '
+PS1='%F{black}>%F{default} '
+RPS1='%F{blue}%~${vcs_info_msg_0_}'
 
 source ~/.zsh/theming/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
