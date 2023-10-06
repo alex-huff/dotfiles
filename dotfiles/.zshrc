@@ -56,8 +56,7 @@ precmd()
 
 zstyle ':vcs_info:git:*' formats ' %F{cyan}on %F{blue} %F{cyan}%b'
 setopt PROMPT_SUBST
-PS1='%F{black}>%F{default} '
-RPS1='%F{blue}%~${vcs_info_msg_0_}'
+PS1='%F{blue}%~${vcs_info_msg_0_} %F{black}>%F{default} '
 
 source ~/.zsh/theming/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
