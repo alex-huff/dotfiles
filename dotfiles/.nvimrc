@@ -1,5 +1,6 @@
 " Basic nvim settings
 set number relativenumber
+set ignorecase
 syntax on
 
 " Remap split navigation

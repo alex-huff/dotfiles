@@ -1,4 +1,5 @@
 set number relativenumber
+set ignorecase
 syntax on
 colorscheme catppuccin_mocha
 highlight Normal ctermbg=NONE
