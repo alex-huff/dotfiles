@@ -1,6 +1,6 @@
 MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE>=64} → swaymsg workspace 5
 MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → swaymsg workspace 6
-37{c==9} → killall LeagueClient.exe; killall RiotClientServices.exe; killall "League of Legends.exe"
+37{c==9} → killall LeagueClient.exe; killall RiotClientServices.exe; killall "League of Legends.exe"; killall LeagueCrashHandler
 36{c==9} (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"\n"]→
 {
 	import requests
