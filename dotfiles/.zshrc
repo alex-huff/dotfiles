@@ -37,6 +37,7 @@ HISTSIZE=100000
 SAVEHIST=100000
 setopt APPEND_HISTORY
 setopt HIST_IGNORE_SPACE
+setopt HIST_IGNORE_ALL_DUPS
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 bindkey '^ ' autosuggest-accept
