@@ -29,7 +29,7 @@ cmus-remote -C win-activate
 # identify whether we are in left or right window
 if ! cmus-remote -Q | grep $identifier &> /dev/null
 then
-	# if in right window, move to top of left
+	# we are in right window, move to top of left
 	cmus-remote -C win-next
 	cmus-remote -C win-top
 fi
