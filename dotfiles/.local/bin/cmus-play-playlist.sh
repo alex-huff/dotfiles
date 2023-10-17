@@ -1,7 +1,7 @@
 #!/bin/zsh
 
-# get playlists
-playlists=$(ls ~/.config/cmus/playlists/ | LC_COLLATE=C sort)
+# get playlists, skipping first dummy playlist used for current window identification
+playlists=$(ls ~/.config/cmus/playlists/ | LC_COLLATE=C sort | tail -n +2)
 
 # get selected playlist from user
 playlist=$(echo $playlists | rofi -dmenu -i -theme ~/.config/rofi/launchers/type-1/style-5.rasi)
@@ -15,11 +15,13 @@ then
 	exit 1
 fi
 
-# the only song in the top most playlist should have this in its name
+# the only song in the first dummy playlist should have this in its filename
 identifier=ba304144-e8ad-42c2-9975-93e2c6d0ee56
 
 # go to playlist view, go to top of current window, mute and activate selected item while saving vol_left and vol_right and whether we were on left window
-read -d "\n" left right on_left_window < <(cmus-remote -C "view 3" win-top status "vol 0" win-activate status | awk "/${identifier}/ && n == 2 {print 1} /set vol_(left|right)/ && ++n <= 2 {print \$3}")
+cmus-remote -C "view 3" win-top status "vol 0" win-activate status | \
+awk "/${identifier}/ && n == 2 {print 1} /set vol_(left|right) / && ++n <= 2 {print \$3}" | \
+read -d "\n" left right on_left_window
 
 # identify whether we are in left or right window
 # this works since:
@@ -32,4 +34,4 @@ then
 fi
 
 # move to selected playlist, activate it, and restore volume
-cmus-remote -C $setup_commands "win-down $(($playlist_position - 1))" win-activate "vol ${left}% ${right}%"
+cmus-remote -C $setup_commands "win-down $playlist_position" win-activate "vol ${left}% ${right}%"
