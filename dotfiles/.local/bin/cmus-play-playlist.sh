@@ -23,9 +23,9 @@ cmus-remote -C "view 3" win-top "vol 0" win-activate
 # if we were in the right window, we are now playing the top song in our current playlist, which is not named $identifier
 if ! cmus-remote -Q | grep $identifier &> /dev/null
 then
-	# we are in right window, move to top of left
-	cmus-remote -C win-next win-top
+	# we are in right window, so we need to move to top of left first
+	setup_commands="win-next win-top"
 fi
 
 # move to selected playlist, activate it, and restore volume
-cmus-remote -C "win-down $(($playlist_position - 1))" win-activate "vol ${left}% ${right}%"
+cmus-remote -C ${setup_commands} "win-down $(($playlist_position - 1))" win-activate "vol ${left}% ${right}%"
