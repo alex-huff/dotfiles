@@ -1,7 +1,13 @@
-#!/bin/sh
+#!/bin/zsh
 
-playlist=$(ls ~/.config/cmus/playlists | rofi -dmenu -i -theme ~/.config/rofi/launchers/type-1/style-5.rasi)
-playlist_position=$(ls ~/.config/cmus/playlists | LC_COLLATE=C sort | grep -n "^${playlist}$" | cut -d ":" -f 1)
+# get playlists
+playlists=$(ls ~/.config/cmus/playlists/ | LC_COLLATE=C sort)
+
+# get selected playlist from user
+playlist=$(echo $playlists | rofi -dmenu -i -theme ~/.config/rofi/launchers/type-1/style-5.rasi)
+
+# get playlist's position in view 3
+playlist_position=$(echo $playlists | grep -n "^${playlist}$" | cut -d ":" -f 1)
 
 if [ ! $playlist_position ]
 then
@@ -9,23 +15,21 @@ then
 	exit 1
 fi
 
+# the only song in the top most playlist should have this in its name
 identifier=ba304144-e8ad-42c2-9975-93e2c6d0ee56
 
-# save vol_left and vol_right
-read -d "\n" left right < <(cmus-remote -Q | grep --extended-regexp "vol_(left|right)" | cut -d " " -f 3)
-
-# go to playlist view, got to top of current window, mute and activate selected item
-cmus-remote -C "view 3" win-top "vol 0" win-activate
+# go to playlist view, go to top of current window, mute and activate selected item while saving vol_left and vol_right and whether we were on left window
+read -d "\n" left right on_left_window < <(cmus-remote -C "view 3" win-top status "vol 0" win-activate status | awk "/${identifier}/ && n == 2 {print 1} /set vol_(left|right)/ && ++n <= 2 {print \$3}")
 
 # identify whether we are in left or right window
 # this works since:
 # if we were in left window, we are now playing the only song in the top playlist, which is named $identifier
 # if we were in the right window, we are now playing the top song in our current playlist, which is not named $identifier
-if ! cmus-remote -Q | grep $identifier &> /dev/null
+if [ ! $on_left_window ]
 then
 	# we are in right window, so we need to move to top of left first
-	setup_commands="win-next win-top"
+	setup_commands=(win-next win-top)
 fi
 
 # move to selected playlist, activate it, and restore volume
-cmus-remote -C ${setup_commands} "win-down $(($playlist_position - 1))" win-activate "vol ${left}% ${right}%"
+cmus-remote -C $setup_commands "win-down $(($playlist_position - 1))" win-activate "vol ${left}% ${right}%"
