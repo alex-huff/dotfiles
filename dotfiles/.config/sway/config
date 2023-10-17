@@ -60,7 +60,7 @@ bindsym $mod+m exec open-mc-mod-configuration.sh
 bindsym $mod+g exec totp.sh
 
 # cmus
-bindsym $mod+c exec cmus-play-playlist.sh
+bindsym $mod+c exec cmus-play-playlist.zsh
 
 # twitch
 bindsym $mod+t exec twitch.sh
