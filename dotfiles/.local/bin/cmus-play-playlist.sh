@@ -1,13 +1,7 @@
 #!/bin/sh
 
-if [ $# -ne 1 ]
-then
-	echo "Usage: $0 <playlist>"
-	exit 1
-fi
-
-playlist=$1
-playlist_position=$(ls ~/.config/cmus/playlists | LC_COLLATE=C sort | grep -n "^${1}$" | cut -d ":" -f 1)
+playlist=$(ls ~/.config/cmus/playlists | rofi -dmenu -i -theme ~/.config/rofi/launchers/type-1/style-5.rasi)
+playlist_position=$(ls ~/.config/cmus/playlists | LC_COLLATE=C sort | grep -n "^${playlist}$" | cut -d ":" -f 1)
 
 if [ ! $playlist_position ]
 then
