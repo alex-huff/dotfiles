@@ -18,20 +18,18 @@ fi
 # the only song in the first dummy playlist should have this in its filename
 identifier=ba304144-e8ad-42c2-9975-93e2c6d0ee56
 
-# go to playlist view, go to top of current window, mute and activate selected item while saving vol_left and vol_right and whether we were on left window
-cmus-remote -C "view 3" win-top status "vol 0" win-activate status | \
-awk "/${identifier}/ && n == 2 {print 1} /set vol_(left|right) / && ++n <= 2 {print \$3}" | \
-read -d "\n" left right on_left_window
+# go to playlist view, go to top of current window, mute and activate selected item while looking for $identifier in status
+cmus-remote -C "view 3" win-top mute win-activate status | grep $identifier
 
-# identify whether we are in left or right window
+# return code of grep identifies whether we are in left or right window
 # this works since:
 # if we were in left window, we are now playing the only song in the top playlist, which is named $identifier
 # if we were in the right window, we are now playing the top song in our current playlist, which is not named $identifier
-if [ ! $on_left_window ]
+if [ $pipestatus[2] -eq 1 ]
 then
 	# we are in right window, so we need to move to top of left first
 	setup_commands=(win-next win-top)
 fi
 
 # move to selected playlist, activate it, and restore volume
-cmus-remote -C $setup_commands "win-down $playlist_position" win-activate "vol ${left}% ${right}%"
+cmus-remote -C $setup_commands "win-down $playlist_position" win-activate mute
