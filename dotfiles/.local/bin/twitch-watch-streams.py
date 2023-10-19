@@ -49,17 +49,11 @@ def start_streamlinks(streams, stream_fifos):
 def get_grid_dimensions_for_num_stream(num_streams):
     intermediate_dim = 1 + math.sqrt(4 * num_streams - 3) / 2
     row, col = math.floor(intermediate_dim - 0.5), math.floor(intermediate_dim)
-    downscale = max(row, col)
+    downscale_ratio = max(row, col)
     grid_tile_width, grid_tile_height = math.floor(
-        target_width / downscale
-    ), math.floor(target_height / downscale)
+        target_width / downscale_ratio
+    ), math.floor(target_height / downscale_ratio)
     return row, col, grid_tile_width, grid_tile_height
-
-
-def ffmpeg_build_hwaccel_device_args(command):
-    command.append("ffmpeg")
-    command.append("-init_hw_device")
-    command.append("vaapi=vdev:/dev/dri/renderD129")
 
 
 def ffmpeg_build_inputs(
@@ -89,28 +83,23 @@ def ffmpeg_build_maps_and_metadata(command, streams):
 def ffmpeg_build_filter(
     command, num_streams, row, col, grid_tile_width, grid_tile_height
 ):
-    command.append("-filter_hw_device")
-    command.append("vdev")
     command.append("-filter_complex")
     filter_builder = []
     i = 0
     grid_size = row * col
+    input_filter = f"format=pix_fmts=yuv420p,scale=width={grid_tile_width}:height={grid_tile_height}"
     for i in range(num_streams):
-        filter_builder.append(f"[{i}:v:0]format=nv12,hwupload[uploaded:{i}];")
+        filter_builder.append(f"[{i}:v:0]{input_filter}[uploaded:{i}];")
     i += 1
     for n in range(i, grid_size):
-        filter_builder.append(f"[{i}:v:0]format=nv12,hwupload[uploaded:{n}];")
+        filter_builder.append(f"[{i}:v:0]{input_filter}[uploaded:{n}];")
     for u in range(grid_size):
         filter_builder.append(f"[uploaded:{u}]")
-    filter_builder.append(
-        f"xstack_vaapi=grid={col}x{row}:grid_tile_size={grid_tile_width}x{grid_tile_height}[grid];"
-    )
+    filter_builder.append(f"xstack=grid={col}x{row}[grid];")
     command.append("".join(filter_builder))
 
 
 def ffmpeg_build_output(command):
-    command.append("-c:v")
-    command.append("hevc_vaapi")
     command.append("-f")
     command.append("matroska")
     command.append("pipe:1")
@@ -119,7 +108,7 @@ def ffmpeg_build_output(command):
 def ffmpeg_build_command(
     command, streams, stream_fifos, row, col, grid_tile_width, grid_tile_height
 ):
-    ffmpeg_build_hwaccel_device_args(command)
+    command.append("ffmpeg")
     ffmpeg_build_inputs(
         command, stream_fifos, row * col, grid_tile_width, grid_tile_height
     )
@@ -140,7 +129,9 @@ target_width, target_height = 1920, 1080
 streams = list(map(str.rstrip, sys.stdin.readlines()))
 num_streams = len(streams)
 
-if num_streams == 1:
+if num_streams < 2:
+    if not num_streams:
+        sys.exit(0)
     subprocess.run(["streamlink", f"https://www.twitch.tv/{streams[0]}", "best"])
     sys.exit(0)
 
