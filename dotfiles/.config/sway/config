@@ -1,11 +1,14 @@
-exec_always
-{
-	dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
-	~/.config/sway/import-gsettings
-	eww daemon
-}
 set $mod Mod4
 font pango:ComicCode Nerd Font 12
+
+# export environment to dbus session
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+
+# gtk
+exec ~/.config/sway/import-gsettings
+
+# eww
+exec eww daemon
 
 # start XDG autostart .desktop files
 exec --no-startup-id dex --autostart --environment sway
@@ -186,11 +189,14 @@ client.focused_inactive #45475a #181825 #f5e0dc #24273a #24273a
 # include device specific configuration and overrides
 include device/*
 
+# rules
+for_window [class="^.*"] border pixel 5
+for_window [title="Authentication required"] floating enable
+
 # various
 focus_follows_mouse no
 smart_borders on
 tiling_drag off
-for_window [class="^.*"] border pixel 5
 focus_on_window_activation none
 # gaps inner 18
 # gaps outer 0
