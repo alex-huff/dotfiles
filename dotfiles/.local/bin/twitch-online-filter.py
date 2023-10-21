@@ -26,10 +26,8 @@ response = requests.post(
     headers={"client-id": TWITCH_CLIENT_ID},
 ).json()
 stream_datas = (query_response["data"]["user"]["stream"] for query_response in response)
-print(
-    "\n".join(
-        username
-        for username, stream_data in zip(usernames, stream_datas)
-        if stream_data
-    )
+online = "\n".join(
+    username for username, stream_data in zip(usernames, stream_datas) if stream_data
 )
+if online:
+    print(online)
