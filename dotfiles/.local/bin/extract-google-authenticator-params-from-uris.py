@@ -24,18 +24,18 @@ for uri in uris:
     scheme = parse_result.scheme
     proto = parse_result.netloc
     if scheme != OTPAUTH:
-        print(f"uri: {uri} had an invalid scheme", file=sys.stderr)
+        print(f"uri: {uri} has an invalid scheme", file=sys.stderr)
         exit(1)
     if proto not in PROTOS:
-        print(f"uri: {uri} had an invalid protocol", file=sys.stderr)
+        print(f"uri: {uri} has an invalid protocol", file=sys.stderr)
         exit(1)
     result_dict = {}
     parameters = parse_qs(parse_result.query)
     if SECRET not in parameters:
-        print(f"uri: {uri} had no {SECRET} parameter", file=sys.stderr)
+        print(f"uri: {uri} has no {SECRET} parameter", file=sys.stderr)
         exit(1)
     if proto == HOTP and COUNTER not in parameters:
-        print(f"uri: {uri} for key of type {HOTP} did not have {COUNTER} parameter", file=sys.stderr)
+        print(f"uri: {uri} for key of type {HOTP} does not have {COUNTER} parameter", file=sys.stderr)
         exit(1)
     label = unquote(parse_result.path)[1:]
     result_dict["proto"] = proto
