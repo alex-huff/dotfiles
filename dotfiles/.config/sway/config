@@ -44,6 +44,10 @@ bindsym $mod+Control+l exec swaylock -c 1e1e2e
 # start a terminal
 bindsym $mod+Return exec alacritty
 
+# decode qrcode
+bindsym $mod+q exec decode-qrcode-on-screen.sh | wl-copy
+bindsym $mod+mod1+q exec add-totp-method-from-current-screen.sh
+
 # kill focused window
 bindsym $mod+Shift+q kill
 
