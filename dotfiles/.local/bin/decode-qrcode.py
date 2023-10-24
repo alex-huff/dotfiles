@@ -4,8 +4,8 @@ import argparse
 import cv2
 
 parser = argparse.ArgumentParser(
-    prog="decode-qr-code",
-    description="Decode qr code within a supplied image sending data to stdout",
+    prog="decode-qrcode",
+    description="Decode qrcode within a supplied image sending data to stdout",
 )
 parser.add_argument(
     "path_to_image",
