@@ -1,1 +1,1 @@
-C2 → wlrctl keyboard type "$(wl-paste)"
+C2 → wlrctl keyboard type "$(wl-paste -n)"
