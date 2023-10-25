@@ -1,2 +1,3 @@
-chooser_type = normal
-chooser_cmd = slurp -f %o -ro
+[screencast]
+chooser_type=simple
+chooser_cmd=slurp -or -f %o
