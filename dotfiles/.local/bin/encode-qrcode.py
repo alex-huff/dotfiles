@@ -19,7 +19,6 @@ qrcode_encoder = cv2.QRCodeEncoder.create()
 qrcode = qrcode_encoder.encode(sys.stdin.read())
 path_to_image = arguments.path_to_image
 if not path_to_image:
-    with tempfile.NamedTemporaryFile(suffix=".png") as temp_file:
-        path_to_image = temp_file.name
+    path_to_image = tempfile.mktemp(suffix=".png")
 cv2.imwrite(path_to_image, qrcode)
 print(path_to_image)
