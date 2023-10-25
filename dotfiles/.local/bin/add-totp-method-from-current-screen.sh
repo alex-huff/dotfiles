@@ -20,4 +20,4 @@ fi
 twofa_dir=~/.2fa
 twofa_key_file=$twofa_dir/"$label".key.gpg
 echo $secret | gpg --yes --output "$twofa_key_file" --symmetric -
-echo $secret | oathtool --base32 --totp - | wl-copy
+echo $secret | oathtool --base32 --totp - | wl-copy -n
