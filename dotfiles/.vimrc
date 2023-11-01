@@ -2,6 +2,7 @@ set number relativenumber
 set ignorecase
 set tabstop=4
 set listchars=tab:>~,space:_
+set clipboard=unnamedplus
 set list
 syntax on
 colorscheme catppuccin_mocha
