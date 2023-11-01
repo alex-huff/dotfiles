@@ -112,10 +112,10 @@ bindsym $super+w layout tabbed
 bindsym $super+e layout toggle split
 
 # toggle tiling / floating
-bindsym $super+Shift+space floating toggle
+bindsym $super+Shift+Space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $super+space focus mode_toggle
+bindsym $super+Space focus mode_toggle
 
 # focus the parent container
 bindsym $super+a focus parent
@@ -148,28 +148,28 @@ bindsym $super+9 workspace number $ws9
 bindsym $super+0 workspace number $ws10
 
 # move focused container to workspace
-bindsym $super+Shift+1 move container to workspace number $ws1
-bindsym $super+Shift+2 move container to workspace number $ws2
-bindsym $super+Shift+3 move container to workspace number $ws3
-bindsym $super+Shift+4 move container to workspace number $ws4
-bindsym $super+Shift+5 move container to workspace number $ws5
-bindsym $super+Shift+6 move container to workspace number $ws6
-bindsym $super+Shift+7 move container to workspace number $ws7
-bindsym $super+Shift+8 move container to workspace number $ws8
-bindsym $super+Shift+9 move container to workspace number $ws9
-bindsym $super+Shift+0 move container to workspace number $ws10
+bindsym $super+Alt+1 move container to workspace number $ws1
+bindsym $super+Alt+2 move container to workspace number $ws2
+bindsym $super+Alt+3 move container to workspace number $ws3
+bindsym $super+Alt+4 move container to workspace number $ws4
+bindsym $super+Alt+5 move container to workspace number $ws5
+bindsym $super+Alt+6 move container to workspace number $ws6
+bindsym $super+Alt+7 move container to workspace number $ws7
+bindsym $super+Alt+8 move container to workspace number $ws8
+bindsym $super+Alt+9 move container to workspace number $ws9
+bindsym $super+Alt+0 move container to workspace number $ws10
 
 # focus container by its index in its parent
-bindsym $super+Alt+1 exec sway-focus-container-by-index-in-parent.py 0
-bindsym $super+Alt+2 exec sway-focus-container-by-index-in-parent.py 1
-bindsym $super+Alt+3 exec sway-focus-container-by-index-in-parent.py 2
-bindsym $super+Alt+4 exec sway-focus-container-by-index-in-parent.py 3
-bindsym $super+Alt+5 exec sway-focus-container-by-index-in-parent.py 4
-bindsym $super+Alt+6 exec sway-focus-container-by-index-in-parent.py 5
-bindsym $super+Alt+7 exec sway-focus-container-by-index-in-parent.py 6
-bindsym $super+Alt+8 exec sway-focus-container-by-index-in-parent.py 7
-bindsym $super+Alt+9 exec sway-focus-container-by-index-in-parent.py 8
-bindsym $super+Alt+0 exec sway-focus-container-by-index-in-parent.py 9
+bindsym $super+Shift+1 exec sway-focus-container-by-index-in-parent.py 0
+bindsym $super+Shift+2 exec sway-focus-container-by-index-in-parent.py 1
+bindsym $super+Shift+3 exec sway-focus-container-by-index-in-parent.py 2
+bindsym $super+Shift+4 exec sway-focus-container-by-index-in-parent.py 3
+bindsym $super+Shift+5 exec sway-focus-container-by-index-in-parent.py 4
+bindsym $super+Shift+6 exec sway-focus-container-by-index-in-parent.py 5
+bindsym $super+Shift+7 exec sway-focus-container-by-index-in-parent.py 6
+bindsym $super+Shift+8 exec sway-focus-container-by-index-in-parent.py 7
+bindsym $super+Shift+9 exec sway-focus-container-by-index-in-parent.py 8
+bindsym $super+Shift+0 exec sway-focus-container-by-index-in-parent.py 9
 
 # reload the configuration file
 bindsym $super+Shift+c reload
