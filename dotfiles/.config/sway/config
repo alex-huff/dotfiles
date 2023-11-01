@@ -1,4 +1,4 @@
-set $mod Mod4
+set $super Mod4
 font pango:ComicCode Nerd Font 12
 
 # export environment to dbus session
@@ -26,102 +26,102 @@ bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 
 # scratchpad control
-bindsym $mod+Semicolon scratchpad show
-bindsym $mod+Shift+Semicolon move container to scratchpad
+bindsym $super+Semicolon scratchpad show
+bindsym $super+Shift+Semicolon move container to scratchpad
 
-# use Mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
+# use Mouse+$super to drag floating windows to their wanted position
+floating_modifier $super
 
 # prev/next workspace keybinds
-bindsym $mod+Page_Down workspace prev
-bindsym $mod+Page_Up workspace next
+bindsym $super+Page_Down workspace prev
+bindsym $super+Page_Up workspace next
 bindsym Shift+Control+Alt+Page_Down workspace prev
 bindsym Shift+Control+Alt+Page_Up workspace next
 
 # lock the system
-bindsym $mod+Control+l exec swaylock -c 1e1e2e
+bindsym $super+Control+l exec swaylock -c 1e1e2e
 
 # start a terminal
-bindsym $mod+Return exec alacritty
+bindsym $super+Return exec alacritty
 
 # decode qrcode
-bindsym $mod+q exec decode-qrcode-on-screen.sh | wl-copy
-bindsym $mod+mod1+q exec add-totp-method-from-current-screen.sh
+bindsym $super+q exec decode-qrcode-on-screen.sh | wl-copy
+bindsym $super+Alt+q exec add-totp-method-from-current-screen.sh
 
 # kill focused window
-bindsym $mod+Shift+q kill
+bindsym $super+Shift+q kill
 
 # SIGKILL focused window
-bindsym $mod+Shift+t exec wkill.sh
+bindsym $super+Shift+t exec wkill.sh
 
 # take a rectangular screenshot
-bindsym $mod+Shift+s exec grimshot-imgur.sh save area
+bindsym $super+Shift+s exec grimshot-imgur.sh save area
 
 # take a fullscreen screenshot
-bindsym $mod+Shift+o exec grimshot-imgur.sh save output
+bindsym $super+Shift+o exec grimshot-imgur.sh save output
 
 # mc
-bindsym $mod+m exec open-mc-mod-configuration.sh
+bindsym $super+m exec open-mc-mod-configuration.sh
 
 # totp
-bindsym $mod+g exec totp.sh
+bindsym $super+g exec totp.sh
 
 # cmus
-bindsym $mod+c exec cmus-play-playlist.zsh
+bindsym $super+c exec cmus-play-playlist.zsh
 
 # twitch
-bindsym $mod+t exec twitch.sh
+bindsym $super+t exec twitch.sh
 
 # rofi
-bindsym $mod+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
-bindsym $mod+p exec --no-startup-id ~/.config/rofi/powermenu/type-2/powermenu.sh
-bindsym $mod+Shift+m exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher-emoji.sh
+bindsym $super+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
+bindsym $super+p exec --no-startup-id ~/.config/rofi/powermenu/type-2/powermenu.sh
+bindsym $super+Shift+m exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher-emoji.sh
 
 # change focus
-bindsym $mod+h focus left
-bindsym $mod+j focus down
-bindsym $mod+k focus up
-bindsym $mod+l focus right
-bindsym $mod+Left focus left
-bindsym $mod+Down focus down
-bindsym $mod+Up focus up
-bindsym $mod+Right focus right
+bindsym $super+h focus left
+bindsym $super+j focus down
+bindsym $super+k focus up
+bindsym $super+l focus right
+bindsym $super+Left focus left
+bindsym $super+Down focus down
+bindsym $super+Up focus up
+bindsym $super+Right focus right
 
 # move focused window
-bindsym $mod+Shift+h move left
-bindsym $mod+Shift+j move down
-bindsym $mod+Shift+k move up
-bindsym $mod+Shift+l move right
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Right move right
+bindsym $super+Shift+h move left
+bindsym $super+Shift+j move down
+bindsym $super+Shift+k move up
+bindsym $super+Shift+l move right
+bindsym $super+Shift+Left move left
+bindsym $super+Shift+Down move down
+bindsym $super+Shift+Up move up
+bindsym $super+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+b split h
+bindsym $super+b split h
 
 # split in vertical orientation
-bindsym $mod+v split v
+bindsym $super+v split v
 
 # enter fullscreen mode for the focused container
-bindsym $mod+f fullscreen toggle
+bindsym $super+f fullscreen toggle
 
 # change container layout
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+bindsym $super+s layout stacking
+bindsym $super+w layout tabbed
+bindsym $super+e layout toggle split
 
 # toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
+bindsym $super+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
+bindsym $super+space focus mode_toggle
 
 # focus the parent container
-bindsym $mod+a focus parent
+bindsym $super+a focus parent
 
 # focus the child container
-bindsym $mod+Shift+a focus child
+bindsym $super+Shift+a focus child
 
 # workspace names
 set $ws1 "1"
@@ -136,37 +136,49 @@ set $ws9 "9"
 set $ws10 "10"
 
 # switch to workspace
-bindsym $mod+1 workspace number $ws1
-bindsym $mod+2 workspace number $ws2
-bindsym $mod+3 workspace number $ws3
-bindsym $mod+4 workspace number $ws4
-bindsym $mod+5 workspace number $ws5
-bindsym $mod+6 workspace number $ws6
-bindsym $mod+7 workspace number $ws7
-bindsym $mod+8 workspace number $ws8
-bindsym $mod+9 workspace number $ws9
-bindsym $mod+0 workspace number $ws10
+bindsym $super+1 workspace number $ws1
+bindsym $super+2 workspace number $ws2
+bindsym $super+3 workspace number $ws3
+bindsym $super+4 workspace number $ws4
+bindsym $super+5 workspace number $ws5
+bindsym $super+6 workspace number $ws6
+bindsym $super+7 workspace number $ws7
+bindsym $super+8 workspace number $ws8
+bindsym $super+9 workspace number $ws9
+bindsym $super+0 workspace number $ws10
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace number $ws1
-bindsym $mod+Shift+2 move container to workspace number $ws2
-bindsym $mod+Shift+3 move container to workspace number $ws3
-bindsym $mod+Shift+4 move container to workspace number $ws4
-bindsym $mod+Shift+5 move container to workspace number $ws5
-bindsym $mod+Shift+6 move container to workspace number $ws6
-bindsym $mod+Shift+7 move container to workspace number $ws7
-bindsym $mod+Shift+8 move container to workspace number $ws8
-bindsym $mod+Shift+9 move container to workspace number $ws9
-bindsym $mod+Shift+0 move container to workspace number $ws10
+bindsym $super+Shift+1 move container to workspace number $ws1
+bindsym $super+Shift+2 move container to workspace number $ws2
+bindsym $super+Shift+3 move container to workspace number $ws3
+bindsym $super+Shift+4 move container to workspace number $ws4
+bindsym $super+Shift+5 move container to workspace number $ws5
+bindsym $super+Shift+6 move container to workspace number $ws6
+bindsym $super+Shift+7 move container to workspace number $ws7
+bindsym $super+Shift+8 move container to workspace number $ws8
+bindsym $super+Shift+9 move container to workspace number $ws9
+bindsym $super+Shift+0 move container to workspace number $ws10
+
+# focus container by its index in its parent
+bindsym $super+Alt+1 exec sway-focus-container-by-index-in-parent.py 0
+bindsym $super+Alt+2 exec sway-focus-container-by-index-in-parent.py 1
+bindsym $super+Alt+3 exec sway-focus-container-by-index-in-parent.py 2
+bindsym $super+Alt+4 exec sway-focus-container-by-index-in-parent.py 3
+bindsym $super+Alt+5 exec sway-focus-container-by-index-in-parent.py 4
+bindsym $super+Alt+6 exec sway-focus-container-by-index-in-parent.py 5
+bindsym $super+Alt+7 exec sway-focus-container-by-index-in-parent.py 6
+bindsym $super+Alt+8 exec sway-focus-container-by-index-in-parent.py 7
+bindsym $super+Alt+9 exec sway-focus-container-by-index-in-parent.py 8
+bindsym $super+Alt+0 exec sway-focus-container-by-index-in-parent.py 9
 
 # reload the configuration file
-bindsym $mod+Shift+c reload
+bindsym $super+Shift+c reload
 
 # restart sway inplace
-bindsym $mod+Shift+r restart
+bindsym $super+Shift+r restart
 
 # exit sway
-bindsym $mod+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your session.' -B 'Yes, exit sway' 'swaymsg exit'"
+bindsym $super+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your session.' -B 'Yes, exit sway' 'swaymsg exit'"
 
 # resize window
 mode "resize"
@@ -181,9 +193,9 @@ mode "resize"
 	bindsym Right resize grow width 10 px or 10 ppt
 	bindsym Return mode "default"
 	bindsym Escape mode "default"
-	bindsym $mod+r mode "default"
+	bindsym $super+r mode "default"
 }
-bindsym $mod+r mode "resize"
+bindsym $super+r mode "resize"
 
 # colors
 client.focused          #181825 #45475a #f5e0dc #4c4f69 #4c4f69
@@ -207,7 +219,7 @@ focus_wrapping force
 # gaps outer 0
 
 # bar
-bindsym $mod+Shift+b exec swaymsg bar hidden_state toggle
+bindsym $super+Shift+b exec swaymsg bar hidden_state toggle
 bar
 {
 	mode hide
