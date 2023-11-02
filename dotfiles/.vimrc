@@ -1,6 +1,9 @@
-set number relativenumber
+set number
+set relativenumber
 set ignorecase
+set autoindent
 set tabstop=4
+set shiftwidth=0
 set listchars=tab:>~,space:_
 set clipboard=unnamedplus
 set list
