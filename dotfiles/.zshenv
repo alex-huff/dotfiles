@@ -14,4 +14,8 @@ export MOZ_DBUS_REMOTE=1
 if command -v nvim &> /dev/null
 then
 	export MANPAGER='nvim +Man!'
+	EDITOR=nvim
+else
+	EDITOR=vim
 fi
+export EDITOR
