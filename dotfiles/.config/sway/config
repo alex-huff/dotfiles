@@ -166,16 +166,16 @@ bindsym $super+Alt+9 move container to workspace number $ws9
 bindsym $super+Alt+0 move container to workspace number $ws10
 
 # focus container by its index in its parent
-bindsym $super+Shift+1 exec sway-focus-container-by-index-in-parent.py 0
-bindsym $super+Shift+2 exec sway-focus-container-by-index-in-parent.py 1
-bindsym $super+Shift+3 exec sway-focus-container-by-index-in-parent.py 2
-bindsym $super+Shift+4 exec sway-focus-container-by-index-in-parent.py 3
-bindsym $super+Shift+5 exec sway-focus-container-by-index-in-parent.py 4
-bindsym $super+Shift+6 exec sway-focus-container-by-index-in-parent.py 5
-bindsym $super+Shift+7 exec sway-focus-container-by-index-in-parent.py 6
-bindsym $super+Shift+8 exec sway-focus-container-by-index-in-parent.py 7
-bindsym $super+Shift+9 exec sway-focus-container-by-index-in-parent.py 8
-bindsym $super+Shift+0 exec sway-focus-container-by-index-in-parent.py 9
+bindsym $super+Shift+1 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[0].id // "__focused__"')] focus
+bindsym $super+Shift+2 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[1].id // "__focused__"')] focus
+bindsym $super+Shift+3 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[2].id // "__focused__"')] focus
+bindsym $super+Shift+4 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[3].id // "__focused__"')] focus
+bindsym $super+Shift+5 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[4].id // "__focused__"')] focus
+bindsym $super+Shift+6 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[5].id // "__focused__"')] focus
+bindsym $super+Shift+7 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[6].id // "__focused__"')] focus
+bindsym $super+Shift+8 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[7].id // "__focused__"')] focus
+bindsym $super+Shift+9 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[8].id // "__focused__"')] focus
+bindsym $super+Shift+0 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[9].id // "__focused__"')] focus
 
 # reload the configuration file
 bindsym $super+Shift+c reload
