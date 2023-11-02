@@ -8,9 +8,10 @@ set listchars=tab:>~,space:_
 set clipboard=unnamedplus
 set list
 syntax on
+set termguicolors
 colorscheme catppuccin_mocha
-highlight Normal ctermbg=NONE
-highlight nonText ctermbg=NONE
+highlight Normal guibg=NONE
+highlight nonText guibg=NONE
 nnoremap <C-h> :wincmd h<CR>
 nnoremap <C-j> :wincmd j<CR>
 nnoremap <C-k> :wincmd k<CR>
