@@ -1,6 +1,6 @@
 MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE>=64} → swaymsg workspace 5
 MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → swaymsg workspace 6
-37{c==9} → killall LeagueClient.exe; killall RiotClientServices.exe; killall "League of Legends.exe"; killall LeagueCrashHandler
+37{c==9} → ps ax | grep -i league | cut -f 1 -d " " | xargs kill -TERM
 36{c==9} (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"\n"]→
 {
 	import requests
