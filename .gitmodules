@@ -17,3 +17,6 @@
 [submodule "dotfiles/.zsh/zsh-history-substring-search"]
 	path = dotfiles/.zsh/zsh-history-substring-search
 	url = https://github.com/zsh-users/zsh-history-substring-search
+[submodule "modules/noise-suppression/noise-suppression-for-voice"]
+	path = modules/noise-suppression/noise-suppression-for-voice
+	url = https://github.com/werman/noise-suppression-for-voice
