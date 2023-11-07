@@ -7,6 +7,7 @@ set shiftwidth=0
 set listchars=tab:>~,space:_
 set clipboard=unnamedplus
 set list
+set title
 syntax on
 set termguicolors
 colorscheme catppuccin_mocha
