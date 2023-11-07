@@ -8,6 +8,7 @@ set listchars=tab:>~,space:_
 set clipboard=unnamedplus
 set list
 set title
+set laststatus=0
 syntax on
 set termguicolors
 colorscheme catppuccin_mocha
