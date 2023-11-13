@@ -73,6 +73,9 @@ bindsym $super+c exec cmus-play-playlist.zsh
 # twitch
 bindsym $super+t exec twitch.sh
 
+# nmcli
+bindsym $super+n exec switch-connection.sh
+
 # rofi
 bindsym $super+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
 bindsym $super+p exec --no-startup-id ~/.config/rofi/powermenu/type-2/powermenu.sh
