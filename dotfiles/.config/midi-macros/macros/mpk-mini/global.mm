@@ -139,7 +139,6 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"→f"{round(CC_VALUE_SCALED(0, 255))}") [B
 }
 
 # control panel
-39{c==9} → eww open --toggle control-panel-window &> /dev/null
 MIDI{STATUS==cc}{CC_FUNCTION==74}("{}"→CC_VALUE_PERCENT) [BLOCK|DEBOUNCE|LOCK=eww_light]→
 {
 	eww update light-r={}

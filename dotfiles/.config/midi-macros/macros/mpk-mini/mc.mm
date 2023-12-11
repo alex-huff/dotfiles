@@ -1,6 +1,8 @@
-36{c==9} → open-mc-mod-configuration.sh
-37{c==9} → mc-cli --pid $(focused-pid.sh) open-config Tweakeroo
-38{c==9} → mc-cli --pid $(focused-pid.sh) open-config MiniHUD
+36{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft record start"
+37{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft record save recording.py"
+38{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft run recording.py"
+39{c==9} → switch-active-pycraft-script.sh
+39+38{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft run active.py"
 D3 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→f"{round(CC_VALUE_SCALED(30, 110))}") [BLOCK|DEBOUNCE]→
 {
 	pid=$(focused-pid.sh)
