@@ -1,8 +1,8 @@
 36{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft record start"
-37{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft record save recording.py"
-38{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft run recording.py"
-39{c==9} → switch-active-pycraft-script.sh
-39+38{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft run active.py"
+37{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft record save latest"
+38{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft run playbackRecording.py latest.pcr"
+39{c==9} → switch-active-pycraft-recording.sh
+39+38{c==9} → mc-cli --pid $(focused-pid.sh) send chat ".pycraft run playbackRecording.py active.pcr"
 D3 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→f"{round(CC_VALUE_SCALED(30, 110))}") [BLOCK|DEBOUNCE]→
 {
 	pid=$(focused-pid.sh)
