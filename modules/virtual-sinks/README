@@ -1,0 +1,19 @@
+Before running the install script, define your sinks by creating sinks.json in the same directory
+
+Example sinks.json:
+[
+	{
+		"name": "sink1-with-no-output",
+		"description": "This sink has no outputs"
+	},
+	{
+		"name": "sink2",
+		"description": "Sink 2",
+		"output-sink": "bluetooth-headphones"
+	},
+	{
+		"name": "sink3",
+		"description": "Sink 3",
+		"output-sink": "bluetooth-headphones"
+	}
+]
