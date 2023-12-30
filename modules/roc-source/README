@@ -6,3 +6,4 @@ local_source_port=10001
 local_repair_port=10002
 local_control_port=10003
 target_latency_ms=100
+playback_sink=sink

@@ -15,7 +15,7 @@ template = """\
 			playback.props = {
 				node.name = "playback.<name>"
 				audio.position = [ FL FR ]
-				target.object = "<output-sink>"
+				target.object = <output-sink>
 			}
 		}
 	}\
@@ -25,7 +25,7 @@ def print_sink_config(sink):
 	print(
 		template.replace("<description>", sink["description"])
 				.replace("<name>", sink["name"])
-				.replace("<output-sink>", sink["output-sink"] if "output-sink" in sink else '')
+				.replace("<output-sink>", f'"{sink["output-sink"]"}' if "output-sink" in sink else 'null')
 	)
 
 with open('sinks.json', 'r') as sinks_file:
