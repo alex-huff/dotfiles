@@ -1,0 +1,5 @@
+Before running the install script, configure your quantum limits by creating config.sh in the same directory
+
+Example config.sh:
+min=32
+max=256
