@@ -12,4 +12,4 @@ cmake -Bbuild-x64 -H. -GNinja -DCMAKE_BUILD_TYPE=Release
 ninja -C build-x64
 mkdir -p $pipewire_conf_dir
 cp $template_path $config_path
-sed -i "s|plugin = .*$|plugin = $plugin_path|" $config_path
+sed -i "s|<path-to-plugin>|$plugin_path|" $config_path
