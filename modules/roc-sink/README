@@ -1,0 +1,7 @@
+Before running the install script, configure your roc sink by creating config.sh in the same directory
+
+Example config.sh:
+remote_ip=192.168.0.1
+remote_source_port=10001
+remote_repair_port=10002
+remote_control_port=10003
