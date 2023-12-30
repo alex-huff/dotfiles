@@ -1,0 +1,8 @@
+Before running the install script, configure your roc source by creating config.sh in the same directory
+
+Example config.sh:
+local_ip=0.0.0.0
+local_source_port=10001
+local_repair_port=10002
+local_control_port=10003
+target_latency_ms=100
