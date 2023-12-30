@@ -1,0 +1,8 @@
+Before running the install script, configure your simple protocol server by creating config.sh in the same directory
+
+Example config.sh:
+ip=0.0.0.0
+port=4711
+capture_sink=sink
+rate=44100
+format=S16
