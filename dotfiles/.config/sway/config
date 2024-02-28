@@ -224,7 +224,7 @@ focus_follows_mouse no
 smart_borders on
 tiling_drag off
 focus_on_window_activation none
-focus_wrapping force
+focus_wrapping no
 # gaps inner 18
 # gaps outer 0
 
