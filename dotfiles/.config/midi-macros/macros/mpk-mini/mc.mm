@@ -13,3 +13,5 @@ D3+E3 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→f"{CC_VALUE_SCALED(0, 1)}") [BLOC
 	pid=$(focused-pid.sh)
 	mc-cli --pid $pid send chat-local "$(mc-cli --pid $pid set-brightness {})"
 }
+MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE>=64} → kill -STOP $(ps ax ho pid,command | sed '/[c]osmicpvp/I!d; s/\s*\([0-9]*\).*/\1/')
+MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → kill -CONT $(ps ax ho pid,command | sed '/[c]osmicpvp/I!d; s/\s*\([0-9]*\).*/\1/')
