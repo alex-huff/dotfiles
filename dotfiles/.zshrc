@@ -64,9 +64,6 @@ zstyle ':vcs_info:git:*' formats ' %F{cyan}on %F{blue} %F{cyan}%b'
 setopt PROMPT_SUBST
 PS1='%F{blue}%~${vcs_info_msg_0_} %F{black}>%F{default} '
 
-source ~/.zsh/theming/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
-source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
@@ -78,3 +75,6 @@ do
 		source $file
 	fi
 done
+
+source ~/.zsh/theming/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
+source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
