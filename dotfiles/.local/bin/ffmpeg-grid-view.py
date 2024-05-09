@@ -65,11 +65,12 @@ class OutputMode(Enum):
     file = auto()
     stdout = auto()
     vlc = auto()
+    mpv = auto()
     ffplay = auto()
 
     def is_player(self):
         match self:
-            case OutputMode.vlc | OutputMode.ffplay:
+            case OutputMode.vlc | OutputMode.ffplay | OutputMode.mpv:
                 return True
         return False
 
@@ -79,7 +80,7 @@ class OutputMode(Enum):
         return None
 
 
-DEFAULT_OUTPUT_MODE = OutputMode.ffplay
+DEFAULT_OUTPUT_MODE = OutputMode.mpv
 
 
 class AudioMode(Enum):
