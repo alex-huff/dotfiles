@@ -4,7 +4,7 @@ set ignorecase
 set autoindent
 set tabstop=4
 set shiftwidth=0
-set listchars=tab:>~,space:_
+set listchars=tab:>~
 set clipboard=unnamedplus
 set list
 set title
