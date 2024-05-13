@@ -62,18 +62,17 @@ C3 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"→CC_VALUE) [BLOCK|DEBOUNCE]→
 }
 
 # mpv
-MIDI{STATUS==pb}("{}"→f"{round(DATA_2_SCALED(-8, 10))}") (python)[BLOCK|DEBOUNCE]→
+MIDI{STATUS==pb}("{}"→f"{DATA_2_SCALED(-57/7, 10):.2f}") (python)[BLOCK|DEBOUNCE]→
 {
 	import subprocess
 	import json
 	playback_rate = {}
-	is_forward = playback_rate >= 0
-	playback_rate = abs(playback_rate)
 	focused_pid = int(subprocess.check_output('focused-pid.sh'))
-	speed_command = {'command': ['set_property', 'speed', playback_rate]}
-	direction_command = {'command': ['set_property', 'play-direction', 'forward' if is_forward else 'backward']}
-	payload = f'{json.dumps(direction_command)}\n{json.dumps(speed_command)}\n'
-	subprocess.run(f"echo '{payload}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-{focused_pid}.sock", shell=True)
+	speed_command = {'command': ['set_property', 'speed', abs(playback_rate)]}
+	direction_command = {'command': ['set_property', 'play-direction', 'forward' if playback_rate > 0 else 'backward']}
+	display_command = {'command': ['show-text', f'Playback Rate: {playback_rate}']}
+	json_payload = '\n'.join(json.dumps(command) for command in (speed_command, direction_command, display_command))
+	subprocess.run(f"echo '{json_payload}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-{focused_pid}.sock", shell=True)
 }
 36{c==9} → echo '{"command": ["cycle", "pause"]}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock
 37{c==9} → echo '{"command": ["playlist-prev"]}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock
