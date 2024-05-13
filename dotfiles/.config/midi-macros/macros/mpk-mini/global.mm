@@ -70,23 +70,21 @@ MIDI{STATUS==pb}("{}"→f"{round(DATA_2_SCALED(-8, 10))}") (python)[BLOCK|DEBOUN
 	is_forward = playback_rate >= 0
 	playback_rate = abs(playback_rate)
 	focused_pid = int(subprocess.check_output('focused-pid.sh'))
-	speed_command = {
-		'command': [
-			'set_property',
-			'speed',
-			playback_rate
-		]
-	}
-	direction_command = {
-		'command': [
-			'set_property',
-			'play-direction',
-			'forward' if is_forward else 'backward'
-		]
-	}
+	speed_command = {'command': ['set_property', 'speed', playback_rate]}
+	direction_command = {'command': ['set_property', 'play-direction', 'forward' if is_forward else 'backward']}
 	payload = f'{json.dumps(direction_command)}\n{json.dumps(speed_command)}\n'
 	subprocess.run(f"echo '{payload}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-{focused_pid}.sock", shell=True)
 }
+36{c==9} → echo '{"command": ["cycle", "pause"]}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock
+37{c==9} → echo '{"command": ["playlist-prev"]}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock
+38{c==9} → echo '{"command": ["playlist-next"]}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock
+39{c==9} →
+{
+	sock_path=$XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock
+	loop_state=$(printf '{"command": ["cycle-values", "loop-file", "inf", "no"]}\n{"command": ["get_property", "loop-file"]}\n' | socat - $sock_path | jq -sr '.[1].data')
+	echo '{"command": ["show-text", "Loop: '$loop_state'"]}' | socat - $sock_path
+}
+(36+37){c==9} → echo '{"command": ["revert-seek"]}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock
 
 # home assistant
 (40+41){c==9} (zsh)[BLOCK|DEBOUNCE]→
