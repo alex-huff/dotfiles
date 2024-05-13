@@ -15,7 +15,6 @@ then
 	alias vim=nvim
 fi
 
-alias mpv=mpv-ipc
 alias cmus='PULSE_SINK=hush cmus'
 alias discord='PULSE_SINK=hear discord'
 
