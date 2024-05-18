@@ -70,8 +70,9 @@ MIDI{STATUS==pb}("{}"→f"{DATA_2_SCALED(-57/7, 10):.2f}") (python)[BLOCK|DEBOUN
 	focused_pid = int(subprocess.check_output('focused-pid.sh'))
 	speed_command = {'command': ['set_property', 'speed', abs(playback_rate)]}
 	direction_command = {'command': ['set_property', 'play-direction', 'forward' if playback_rate > 0 else 'backward']}
+	hwdec_command = {'command': ['set_property', 'hwdec', 'auto-safe' if playback_rate > 0 else 'no']}
 	display_command = {'command': ['show-text', f'Playback Rate: {playback_rate}']}
-	json_payload = '\n'.join(json.dumps(command) for command in (speed_command, direction_command, display_command))
+	json_payload = '\n'.join(json.dumps(command) for command in (speed_command, direction_command, hwdec_command, display_command))
 	subprocess.run(f"echo '{json_payload}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-{focused_pid}.sock", shell=True)
 }
 36{c==9} → echo '{"command": ["cycle", "pause"]}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock
