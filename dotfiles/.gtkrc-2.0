@@ -1,15 +1,2 @@
-gtk-theme-name="Catppuccin-Mocha-Standard-Mauve-Dark"
-gtk-icon-theme-name="Adwaita"
-gtk-font-name="ComicCode Nerd Font 12"
-gtk-cursor-theme-name="Catppuccin-Dark-Cursors"
+gtk-font-name="ComicCode Nerd Font 11"
 gtk-enable-animations=false
-gtk-cursor-theme-size=0
-gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
-gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
-gtk-button-images=0
-gtk-menu-images=0
-gtk-enable-event-sounds=1
-gtk-enable-input-feedback-sounds=1
-gtk-xft-antialias=1
-gtk-xft-hinting=1
-gtk-xft-hintstyle="hintmedium"
