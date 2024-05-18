@@ -5,7 +5,7 @@ path=(~/.local/bin $path)
 path=(~/screenshots $path)
 path=(~/.local/share/JetBrains/Toolbox/scripts $path)
 export PATH
-export QT_QPA_PLATFORMTHEME=gtk2
+export QT_QPA_PLATFORMTHEME=qt5ct:qt6ct
 export BAT_THEME=Catppuccin
 export QT_QPA_PLATFORM=wayland
 export XDG_CURRENT_DESKTOP=sway
