@@ -77,9 +77,7 @@ bindsym $super+t exec twitch.sh
 bindsym $super+n exec switch-connection.sh
 
 # rofi
-bindsym $super+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
-bindsym $super+p exec --no-startup-id ~/.config/rofi/powermenu/type-2/powermenu.sh
-bindsym $super+Shift+m exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher-emoji.sh
+bindsym $super+d exec rofi -show run
 
 # change focus
 bindsym $super+h focus left

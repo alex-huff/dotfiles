@@ -4,7 +4,7 @@
 playlists=$(ls ~/.config/cmus/playlists/ | LC_COLLATE=C sort | tail -n +2)
 
 # get selected playlist from user
-playlist=$(echo $playlists | rofi -dmenu -i -theme ~/.config/rofi/launchers/type-1/style-5.rasi)
+playlist=$(echo $playlists | rofi -dmenu -i)
 
 # get playlist's position in view 3
 playlist_position=$(echo $playlists | grep -n "^${playlist}$" | cut -d ":" -f 1)
