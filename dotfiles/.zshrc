@@ -15,8 +15,6 @@ PS1='[%n@%m]> '
 # Rehash pacman command cache when it goes out of date
 zshcache_time="$(date +%s%N)"
 
-autoload -Uz add-zsh-hook
-
 rehash_precmd()
 {
 	if [[ -a /var/cache/zsh/pacman ]]
@@ -29,6 +27,12 @@ rehash_precmd()
 	fi
 }
 
+autoload -Uz add-zsh-hook compinit
+add-zsh-hook -Uz precmd rehash_precmd
+compinit
+zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+fpath=(~/.zsh $fpath)
+
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
@@ -38,14 +42,6 @@ setopt HIST_IGNORE_ALL_DUPS
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 bindkey '^ ' autosuggest-accept
-
-add-zsh-hook -U precmd rehash_precmd
-
-zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
-fpath=(~/.zsh $fpath)
-
-autoload -U compinit
-compinit
 
 source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey -M vicmd 'k' history-substring-search-up
