@@ -7,19 +7,19 @@ draw_bold_text_with_bright_colors = true
 size = 12.0
 
 [font.bold]
-family = "ComicCode Nerd Font"
+family = "Victor Mono"
 style = "Bold"
 
 [font.bold_italic]
-family = "ComicCode Nerd Font"
+family = "Victor Mono"
 style = "Bold Italic"
 
 [font.italic]
-family = "ComicCode Nerd Font"
+family = "Victor Mono"
 style = "Italic"
 
 [font.normal]
-family = "ComicCode Nerd Font"
+family = "Victor Mono"
 style = "Regular"
 
 [window.padding]

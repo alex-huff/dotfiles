@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:ComicCode Nerd Font 10
+font pango:Victor Mono 10
 
 # export environment
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -40,7 +40,7 @@ bindsym Shift+Control+Alt+Page_Down workspace prev
 bindsym Shift+Control+Alt+Page_Up workspace next
 
 # lock the system
-bindsym $super+Control+l exec swaylock -c 1e1e2e --font "ComicCode Nerd Font"
+bindsym $super+Control+l exec swaylock -c 1e1e2e --font "Victor Mono"
 
 # start a terminal
 bindsym $super+Return exec alacritty
@@ -223,30 +223,3 @@ smart_borders on
 tiling_drag off
 focus_on_window_activation none
 focus_wrapping no
-# gaps inner 18
-# gaps outer 0
-
-# bar
-bindsym $super+Shift+b exec swaymsg bar hidden_state toggle
-bar
-{
-	mode hide
-	modifier none
-	colors
-	{
-		background         #1e1e2e
-		focused_workspace  #4c4f69 #4c4f69 #f5e0dc
-		active_workspace   #4c4f69 #4c4f69 #f5e0dc
-		inactive_workspace #24273a #24273a #f5e0dc
-		urgent_workspace   #f38ba8 #f38ba8 #f5e0dc
-		binding_mode       #f38ba8 #f38ba8 #f5e0dc
-	}
-	font pango:ComicCode Nerd Font 10
-	position top
-	output $barscreen
-	tray_output *
-	tray_padding 4
-	status_command ~/.config/i3/bumblebee-status/bumblebee-status -m cpu \
-		memory date time battery -p root.path=/ time.format="%I:%M:%S %p"\
-		date.format="%a, %b %d, %Y" -t catppuccinIceburg
-}
