@@ -1,3 +1,5 @@
+@theme "Arc-Dark"
+
 *{
 	font: "Victor Mono 12";
 }
