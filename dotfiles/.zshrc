@@ -1,15 +1,5 @@
 [[ $- != *i* ]] && return
 
-if command -v lsd &> /dev/null
-then
-	alias ls="lsd --color=auto"
-fi
-
-if command -v bat &> /dev/null
-then
-	alias cat=bat
-fi
-
 if command -v nvim &> /dev/null
 then
 	alias vim=nvim
@@ -19,6 +9,8 @@ alias cmus='PULSE_SINK=hush cmus'
 alias discord='PULSE_SINK=hear discord'
 
 setopt vi
+
+PS1='[%n@%m]> '
 
 # Rehash pacman command cache when it goes out of date
 zshcache_time="$(date +%s%N)"
@@ -47,22 +39,13 @@ setopt HIST_IGNORE_ALL_DUPS
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 bindkey '^ ' autosuggest-accept
 
-add-zsh-hook -Uz precmd rehash_precmd
+add-zsh-hook -U precmd rehash_precmd
 
 zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
 fpath=(~/.zsh $fpath)
 
-autoload -Uz compinit vcs_info
+autoload -U compinit
 compinit
-
-precmd()
-{
-	vcs_info
-}
-
-zstyle ':vcs_info:git:*' formats ' %F{cyan}on %F{blue} %F{cyan}%b'
-setopt PROMPT_SUBST
-PS1='%F{blue}%~${vcs_info_msg_0_} %F{black}>%F{default} '
 
 source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey -M vicmd 'k' history-substring-search-up
@@ -75,6 +58,3 @@ do
 		source $file
 	fi
 done
-
-source ~/.zsh/theming/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
-source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
