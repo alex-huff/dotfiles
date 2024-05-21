@@ -77,7 +77,7 @@ bindsym $super+t exec twitch.sh
 bindsym $super+n exec switch-connection.sh
 
 # rofi
-bindsym $super+d exec rofi -show run
+bindsym $super+d exec rofi -show drun
 
 # change focus
 bindsym $super+h focus left
