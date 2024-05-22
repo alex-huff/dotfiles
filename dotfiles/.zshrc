@@ -43,10 +43,6 @@ setopt HIST_IGNORE_ALL_DUPS
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 bindkey '^ ' autosuggest-accept
 
-source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
-
 for file in ~/.zsh/conf.zsh.d/*.zsh(N)
 do
 	if [ -f $file ]
