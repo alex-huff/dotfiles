@@ -45,6 +45,9 @@ bindsym $super+Control+l exec swaylock -c 1e1e2e --font "Victor Mono"
 # start a terminal
 bindsym $super+Return exec alacritty
 
+# search with firefox
+bindsym $super+s exec query=$(rofi -dmenu -l 0 -p search) && firefox --search "$query"
+
 # decode qrcode
 bindsym $super+q exec decode-qrcode-on-screen.sh | wl-copy
 bindsym $super+Alt+q exec add-totp-method-from-current-screen.sh
@@ -115,7 +118,6 @@ bindsym $super+v split v
 bindsym $super+f fullscreen toggle
 
 # change container layout
-bindsym $super+s layout stacking
 bindsym $super+w layout tabbed
 bindsym $super+e layout toggle split
 
