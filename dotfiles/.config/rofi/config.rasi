@@ -20,7 +20,7 @@
 	selected-normal-background:  @border-color;
 	border-color:                rgba ( 203, 166, 247, 100 % );
 	spacing:                     2;
-	separatorcolor:              @alternate-normal-background;
+	separatorcolor:              @selected-normal-background;
 	urgent-background:           rgba ( 29, 31, 33, 100 % );
 	selected-urgent-background:  rgba ( 165, 66, 66, 100 % );
 	alternate-urgent-foreground: @urgent-foreground;
@@ -128,15 +128,17 @@ case-indicator {
 	text-color: @normal-foreground;
 }
 entry {
-	spacing:    0;
-	text-color: @normal-foreground;
+	spacing:           0;
+	text-color:        @normal-foreground;
+	placeholder:       "";
+	placeholder-color: @normal-foreground;
 }
 prompt {
 	spacing:    0;
 	text-color: @normal-foreground;
 }
 inputbar {
-	children: [ prompt,textbox-prompt-colon,entry,case-indicator ];
+	children: [ prompt,textbox-prompt-colon,entry ];
 }
 textbox-prompt-colon {
 	expand:     false;
