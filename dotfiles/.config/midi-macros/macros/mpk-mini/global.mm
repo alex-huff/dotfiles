@@ -174,7 +174,7 @@ MIDI{STATUS==cc}{70<=CC_FUNCTION<=77}(TIME) (python $MM_SCRIPT)[BACKGROUND|INVOC
 	def update_control_panel(is_open):
 		run(f'eww {"open" if is_open else "close"} control-panel-window', stdout=DEVNULL, shell=True)
 	def control_panel_open():
-		return "*" in check_output("eww windows | grep control-panel-window", shell=True, text=True)
+		return "*" in check_output("eww list-windows | grep control-panel-window", shell=True, text=True)
 	def seconds_to_nanos(time_sec):
 		return time_sec * 10**9
 	def nanos_to_seconds(time_ns):
