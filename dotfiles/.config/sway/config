@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Victor Mono 10
+font pango:Victor Mono 9
 
 # export environment
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -216,7 +216,7 @@ client.focused_inactive #45475a #181825 #f5e0dc #24273a #24273a
 include device/*
 
 # rules
-for_window [class="^.*"] border pixel 5
+for_window [class="^.*"] border pixel 2
 for_window [title="Authentication required"] floating enable
 
 # various
