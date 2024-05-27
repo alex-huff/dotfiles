@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Victor Mono 9
+font pango:Victor Mono 1
 
 # export environment
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -188,7 +188,7 @@ bindsym $super+Shift+c reload
 bindsym $super+Shift+r restart
 
 # exit sway
-bindsym $super+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your session.' -B 'Yes, exit sway' 'swaymsg exit'"
+bindsym $super+Shift+e exec "swaynag --font 'Victor Mono' -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your session.' -B 'Yes, exit sway' 'swaymsg exit'"
 
 # resize window
 mode "resize"
@@ -208,9 +208,9 @@ mode "resize"
 bindsym $super+r mode "resize"
 
 # colors
-client.focused          #585b70 #313244 #cdd6f4 #4c4f69 #4c4f69
-client.unfocused        #313244 #181825 #cdd6f4 #24273a #24273a
-client.focused_inactive #313244 #181825 #cdd6f4 #24273a #24273a
+client.focused          #585b70 #313244 #313244 #4c4f69 #4c4f69
+client.unfocused        #313244 #181825 #181825 #24273a #24273a
+client.focused_inactive #44465a #242534 #242534 #24273a #24273a
 
 # include device specific configuration and overrides
 include device/*
@@ -220,6 +220,7 @@ for_window [class="^.*"] border pixel 2
 for_window [title="Authentication required"] floating enable
 
 # various
+titlebar_padding 3 3
 focus_follows_mouse no
 smart_borders on
 tiling_drag off
