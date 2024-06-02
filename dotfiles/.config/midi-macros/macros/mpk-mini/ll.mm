@@ -1,7 +1,7 @@
-MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE>=64} → swaymsg workspace 5
-MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} → swaymsg workspace 6
-37{c==9} → ps ax ho pid,command | sed "/[l]eague/I!d; s/\s*\([0-9]*\).*/\1/" | xargs kill -TERM
-36{c==9} (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"\n"]→
+MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE>=64} -> swaymsg workspace 5
+MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} -> swaymsg workspace 6
+37{c==9} -> ps ax ho pid,command | sed "/[l]eague/I!d; s/\s*\([0-9]*\).*/\1/" | xargs kill -TERM
+36{c==9} (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"\n"]->
 {
 	import requests
 	import json
