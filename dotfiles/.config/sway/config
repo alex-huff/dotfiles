@@ -30,7 +30,7 @@ bindsym XF86AudioPrev exec playerctl previous
 bindsym $super+Semicolon scratchpad show
 bindsym $super+Shift+Semicolon move container to scratchpad
 
-# use Mouse+$super to drag floating windows to their wanted position
+# use mouse+$super to drag floating windows to their wanted position
 floating_modifier $super
 
 # prev/next workspace keybinds
