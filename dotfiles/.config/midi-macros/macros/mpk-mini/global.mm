@@ -6,7 +6,7 @@ C5{v>64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg move container to workspa
 C5{v<=64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg workspace {}
 
 # lock/unlock
-[39|43]{c==9} -> if swaylock_pid=$(ps -C swaylock ho pid); then kill -USR1 $swaylock_pid; else swaylock -c 000000 --font "Victor Mono"; fi
+[39|43]{c==9} -> $(which kill) -USR1 swaylock || swaylock -c 000000 --font "Victor Mono"
 
 # clipboard manager
 B4{v>64} NOTES[1:]("{}"->[-]ASPN) -> wl-paste -n > ~/.config/midi-macros/clipboards/{} && echo Saving clipboard to file: {}
