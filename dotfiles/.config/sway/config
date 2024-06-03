@@ -11,6 +11,9 @@ exec ~/.config/sway/import-gsettings
 # eww
 exec eww daemon
 
+# foot server
+exec foot --server
+
 # start XDG autostart .desktop files
 exec --no-startup-id dex --autostart --environment sway
 
@@ -40,10 +43,10 @@ bindsym Shift+Control+Alt+Page_Down workspace prev
 bindsym Shift+Control+Alt+Page_Up workspace next
 
 # lock the system
-bindsym $super+Control+l exec swaylock -c 1e1e2e --font "Victor Mono"
+bindsym $super+Control+l exec swaylock -c 000000 --font "Victor Mono"
 
 # start a terminal
-bindsym $super+Return exec alacritty
+bindsym $super+Return exec footclient
 
 # search with firefox
 bindsym $super+s exec query=$(rofi -dmenu -l 0 -p search) && firefox --search "$query"
