@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Victor Mono 1
+font pango:Victor Mono 9
 
 # export environment
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -211,9 +211,9 @@ mode "resize"
 bindsym $super+r mode "resize"
 
 # colors
-client.focused          #cdd6f4 #000000 #000000 #cdd6f4 #cdd6f4
-client.unfocused        #313244 #000000 #000000 #313244 #313244
-client.focused_inactive #585b70 #000000 #000000 #585b70 #585b70
+client.focused          #cdd6f4 #000000 #cdd6f4 #cdd6f4 #cdd6f4
+client.unfocused        #313244 #000000 #cdd6f4 #313244 #313244
+client.focused_inactive #585b70 #000000 #cdd6f4 #585b70 #585b70
 
 # include device specific configuration and overrides
 include device/*
@@ -223,7 +223,7 @@ for_window [class="^.*"] border pixel 1
 for_window [title="Authentication required"] floating enable
 
 # various
-titlebar_padding 3 3
+titlebar_padding 4 4
 focus_follows_mouse no
 smart_borders on
 tiling_drag off
