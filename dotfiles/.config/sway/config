@@ -211,7 +211,7 @@ mode "resize"
 bindsym $super+r mode "resize"
 
 # colors
-client.focused          #cba6f7 #000000 #000000 #cba6f7 #cba6f7
+client.focused          #cdd6f4 #000000 #000000 #cdd6f4 #cdd6f4
 client.unfocused        #313244 #000000 #000000 #313244 #313244
 client.focused_inactive #585b70 #000000 #000000 #585b70 #585b70
 
