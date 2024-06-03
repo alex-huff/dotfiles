@@ -1,0 +1,22 @@
+{
+    "colors": {
+        "AlternateBase": "#000000",
+        "Base": "#000000",
+        "BrightText": "#f38ba8",
+        "Button": "#050508",
+        "ButtonText": "#ffffff",
+        "Highlight": "#cba6f7",
+        "HighlightedText": "#000000",
+        "Link": "#89b4fa",
+        "Text": "#f5e0dc",
+        "ToolTipBase": "#f5e0dc",
+        "ToolTipText": "#f5e0dc",
+        "Window": "#000000",
+        "WindowText": "#f5e0dc",
+        "fadeAmount": 0.5,
+        "fadeColor": "#181825"
+    },
+    "name": "Catppuccin",
+    "qssFilePath": "themeStyle.css",
+    "widgets": "Fusion"
+}
