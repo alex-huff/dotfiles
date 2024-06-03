@@ -211,15 +211,15 @@ mode "resize"
 bindsym $super+r mode "resize"
 
 # colors
-client.focused          #585b70 #313244 #313244 #4c4f69 #4c4f69
-client.unfocused        #313244 #181825 #181825 #24273a #24273a
-client.focused_inactive #44465a #242536 #242536 #24273a #24273a
+client.focused          #cba6f7 #000000 #000000 #cba6f7 #cba6f7
+client.unfocused        #313244 #000000 #000000 #313244 #313244
+client.focused_inactive #585b70 #000000 #000000 #585b70 #585b70
 
 # include device specific configuration and overrides
 include device/*
 
 # rules
-for_window [class="^.*"] border pixel 2
+for_window [class="^.*"] border pixel 1
 for_window [title="Authentication required"] floating enable
 
 # various
