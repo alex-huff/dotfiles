@@ -210,6 +210,9 @@ mode "resize"
 }
 bindsym $super+r mode "resize"
 
+# toggle border style
+bindsym $super+Shift+b border toggle
+
 # colors
 client.focused          #cdd6f4 #000000 #cdd6f4 #cdd6f4 #cdd6f4
 client.unfocused        #313244 #000000 #cdd6f4 #313244 #313244
@@ -219,10 +222,12 @@ client.focused_inactive #585b70 #000000 #cdd6f4 #585b70 #585b70
 include device/*
 
 # rules
-for_window [class="^.*"] border pixel 2
+for_window [all] title_format %title (<i>%shell</i>)
+for_window [app_id="mpv"] border pixel 1
 for_window [title="Authentication required"] floating enable
 
 # various
+default_border normal 1
 titlebar_padding 4 4
 focus_follows_mouse no
 smart_borders on
