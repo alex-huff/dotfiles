@@ -219,7 +219,7 @@ client.focused_inactive #585b70 #000000 #cdd6f4 #585b70 #585b70
 include device/*
 
 # rules
-for_window [class="^.*"] border pixel 1
+for_window [class="^.*"] border pixel 2
 for_window [title="Authentication required"] floating enable
 
 # various
