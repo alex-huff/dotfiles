@@ -87,6 +87,13 @@ MIDI{STATUS==pb}("{}"->f"{DATA_2_SCALED(-57/7, 10):.2f}") (python)[BLOCK|DEBOUNC
 	echo '{"command": ["show-text", "Loop: '$loop_state'"]}' | socat - $sock_path
 }
 (36+37){c==9} -> echo '{"command": ["revert-seek"]}' | socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock
+MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]->
+{
+	socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock <<EOF
+	{"command": ["set_property", "volume", {}]}
+	{"command": ["show-text", "Volume: {}"]}
+	EOF
+}
 
 # home assistant
 (40+41){c==9} (zsh)[BLOCK|DEBOUNCE]->
