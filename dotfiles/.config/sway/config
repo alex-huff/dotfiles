@@ -75,6 +75,7 @@ bindsym $super+g exec totp.sh
 
 # cmus
 bindsym $super+c exec cmus-play-playlist.zsh
+bindsym $super+Shift+c exec song="music/$(find ~/music -type f -name '*.mp3' | sed 's|^/home/.*/music/\(.*\)\.mp3$|\1|' | rofi -i -dmenu).mp3" && cmus-remote --file "$song"
 
 # twitch
 bindsym $super+t exec twitch.sh
@@ -185,7 +186,7 @@ bindsym $super+Shift+9 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes
 bindsym $super+Shift+0 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[].nodes) | select(any(.focused? == true)) | .[9].id // "__focused__"')] focus
 
 # reload the configuration file
-bindsym $super+Shift+c reload
+bindsym $super+Alt+c reload
 
 # restart sway inplace
 bindsym $super+Shift+r restart
