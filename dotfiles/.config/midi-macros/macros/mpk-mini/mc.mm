@@ -8,12 +8,12 @@ D3 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{round(CC_VALUE_SCALED(30, 110))}")
 	pid=$(focused-pid.sh)
 	mc-cli --pid $pid send chat-local "$(mc-cli --pid $pid set-fov {})"
 }
-D3+E3 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{CC_VALUE_SCALED(0, 1)}") [BLOCK|DEBOUNCE]->
+D3+E3 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{CC_VALUE_SCALED(0, 1):.2f}") [BLOCK|DEBOUNCE]->
 {
 	pid=$(focused-pid.sh)
 	mc-cli --pid $pid send chat-local "$(mc-cli --pid $pid set-brightness {})"
 }
-MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{CC_VALUE_SCALED(0, 1)}") [BLOCK|DEBOUNCE]->
+MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{CC_VALUE_SCALED(0, 1):.2f}") [BLOCK|DEBOUNCE]->
 {
 	pid=$(focused-pid.sh)
 	mc-cli --pid $pid send chat-local "$(mc-cli --pid $pid set-volume {})"
