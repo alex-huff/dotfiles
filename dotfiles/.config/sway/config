@@ -75,7 +75,7 @@ bindsym $super+g exec totp.sh
 
 # cmus
 bindsym $super+c exec cmus-play-playlist.zsh
-bindsym $super+Shift+c exec song="music/$(find ~/music -type f -name '*.mp3' | sed 's|^/home/.*/music/\(.*\)\.mp3$|\1|' | rofi -i -dmenu).mp3" && cmus-remote --file "$song"
+bindsym $super+Shift+c exec song="music/$(find ~/music -type f -name '*.mp3' | sed 's|^/home/.*/music/\(.*\)\.mp3$|\1|' | rofi -theme-str 'window {width: 800;}' -i -dmenu).mp3" && cmus-remote --file "$song"
 
 # twitch
 bindsym $super+t exec twitch.sh
