@@ -203,14 +203,14 @@
 			:red-champ-gold red-champ-5-gold)))
 
 (defwindow control-panel-window
-	:monitor 2
+	:monitor 0
 	:geometry (geometry
 		:anchor "center")
 	:stacking "overlay"
 	(light-volume-control-panel))
 
 (defwindow league-gold-stats-window
-	:monitor 2
+	:monitor 0
 	:geometry (geometry
 		:anchor "center")
 	:stacking "overlay"
