@@ -49,7 +49,7 @@ bindsym $super+Control+l exec swaylock -c 000000 --font "Victor Mono"
 bindsym $super+Return exec footclient
 
 # search with firefox
-bindsym $super+s exec query=$(rofi -dmenu -l 0 -p search) && firefox --search "$query"
+bindsym $super+Alt+s exec query=$(rofi -dmenu -l 0 -p search) && firefox --search "$query"
 
 # decode qrcode
 bindsym $super+q exec decode-qrcode-on-screen.sh | wl-copy
@@ -62,10 +62,16 @@ bindsym $super+Shift+q kill
 bindsym $super+Shift+t exec wkill.sh
 
 # take a rectangular screenshot
-bindsym $super+Shift+s exec grimshot-imgur.sh save area
+bindsym $super+s exec grimshot-imgur.sh save area
 
 # take a fullscreen screenshot
-bindsym $super+Shift+o exec grimshot-imgur.sh save output
+bindsym $super+o exec grimshot-imgur.sh save output
+
+# take a rectangular screengrab
+bindsym $super+Shift+s exec wf-recorder-imgur.sh area
+
+# take a fullscreen screengrab
+bindsym $super+Shift+o exec wf-recorder-imgur.sh
 
 # mc
 bindsym $super+m exec open-mc-mod-configuration.sh
