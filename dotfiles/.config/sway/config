@@ -118,6 +118,9 @@ bindsym $super+Shift+Down move down
 bindsym $super+Shift+Up move up
 bindsym $super+Shift+Right move right
 
+# toggle sticky
+bindsym $super+y sticky toggle
+
 # split in horizontal orientation
 bindsym $super+b split h
 
