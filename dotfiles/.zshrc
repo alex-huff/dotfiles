@@ -33,7 +33,12 @@ compinit
 zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
 fpath=(~/.zsh $fpath)
 
-HISTFILE=~/.zsh_history
+if [ -z $CUSTOM_HISTFILE ]
+then
+	HISTFILE=~/.zsh_history
+else
+	HISTFILE=$CUSTOM_HISTFILE
+fi
 HISTSIZE=100000
 SAVEHIST=100000
 setopt APPEND_HISTORY
