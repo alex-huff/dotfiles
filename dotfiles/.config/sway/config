@@ -184,7 +184,16 @@ bindsym $super+Alt+0 move container to workspace number $ws10
 
 # "I wouldn't really call it hacky" - i3 core developer
 # focus container by its index in its parent
-exec_always for i in $(seq 10); do swaymsg 'bindsym $super+Shift+'$(($i % 10))' exec swaymsg [con_id = $(swaymsg -t get_tree | jq '"'"'.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .['$((i - 1))'].id // "__focused__"'"'"')] focus'; done
+bindsym $super+Shift+1 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[0].id // "__focused__"')] focus
+bindsym $super+Shift+2 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[1].id // "__focused__"')] focus
+bindsym $super+Shift+3 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[2].id // "__focused__"')] focus
+bindsym $super+Shift+4 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[3].id // "__focused__"')] focus
+bindsym $super+Shift+5 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[4].id // "__focused__"')] focus
+bindsym $super+Shift+6 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[5].id // "__focused__"')] focus
+bindsym $super+Shift+7 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[6].id // "__focused__"')] focus
+bindsym $super+Shift+8 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[7].id // "__focused__"')] focus
+bindsym $super+Shift+9 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[8].id // "__focused__"')] focus
+bindsym $super+Shift+0 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[9].id // "__focused__"')] focus
 
 # reload the configuration file
 bindsym $super+Alt+c reload
