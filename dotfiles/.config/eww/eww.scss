@@ -2,7 +2,8 @@
 	all: unset;
 }
 .group {
-	background-color: #313244;
+	background-color: #000000;
+	border: 1px solid #cdd6f4;
 }
 .champion-icon, .control-panel-label, .color-box, .slider {
 	margin: 10px;
@@ -27,7 +28,7 @@ scale trough highlight {
 	background-color: #cba6f7;
 }
 scale trough {
-	background-color: #585b70;
+	background-color: #1e1e2e;
 	min-width: 40px;
 	min-height: 35px;
 }
