@@ -109,10 +109,14 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{round(CC_VALUE_SCALED(0, 130))}") [BL
 	fi
 	echo $new_state > $power_state_file
 	echo $(
-		for i in lights lights_2 light_2 light_3 light_4; do
-			hass-cli state turn_${new_state} light.color_$i &
+		for light in $(seq 5)
+		do
+			hass-cli state turn_${new_state} light.cl${light} &
 		done
-		for i in $(seq 2); do hass-cli state turn_${new_state} switch.out${i}_mss110_main_channel &; done
+		for switch in $(seq 2)
+		do
+			hass-cli state turn_${new_state} switch.out${switch}_mss110_main_channel &
+		done
 	)
 }
 (40+42){c==9} -> hass-cli state toggle switch.out1_mss110_main_channel
@@ -136,18 +140,18 @@ MIDI{STATUS==cc}{CC_FUNCTION==76}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
 MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{round(CC_VALUE_SCALED(2000, 6500))}") [BLOCK|DEBOUNCE]->
 {
 	echo $(
-		lights="lights lights_2 light_2 light_3 light_4"
-		for light in $lights; do
-			hass-cli service call --arguments "entity_id=light.color_${light},kelvin={}" light.turn_on &
+		for light in $(seq 5)
+		do
+			hass-cli service call --arguments "entity_id=light.cl${light},kelvin={}" light.turn_on &
 		done
 	)
 }
 MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BLOCK|DEBOUNCE]->
 {
 	echo $(
-		lights="lights lights_2 light_2 light_3 light_4"
-		for light in $lights; do
-			hass-cli service call --arguments "entity_id=light.color_${light},brightness={}" light.turn_on &
+		for light in $(seq 5)
+		do
+			hass-cli service call --arguments "entity_id=light.cl${light},brightness={}" light.turn_on &
 		done
 	)
 }
