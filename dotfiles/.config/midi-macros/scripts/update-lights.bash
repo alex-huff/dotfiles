@@ -7,6 +7,6 @@ b=$(<${state_dir}light-b)
 echo $(
 	for light in $(seq 5)
 	do
-		hass-cli raw ws --json "{\"domain\":\"light\",\"service\":\"turn_on\",\"service_data\":{\"entity_id\":\"light.cl${light}\",\"rgb_color\":[$r,$g,$b]}}" call_service &
+		hass-cli raw ws --json "{\"domain\":\"light\",\"service\":\"turn_on\",\"service_data\":{\"entity_id\":\"light.clc${light}\",\"rgb_color\":[$r,$g,$b]}}" call_service &
 	done
 )

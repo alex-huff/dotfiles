@@ -111,7 +111,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{round(CC_VALUE_SCALED(0, 130))}") [BL
 	echo $(
 		for light in $(seq 5)
 		do
-			hass-cli state turn_${new_state} light.cl${light} &
+			hass-cli state turn_${new_state} light.clc${light} &
 		done
 		for switch in $(seq 2)
 		do
@@ -142,7 +142,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{round(CC_VALUE_SCALED(2000, 6500))}")
 	echo $(
 		for light in $(seq 5)
 		do
-			hass-cli service call --arguments "entity_id=light.cl${light},kelvin={}" light.turn_on &
+			hass-cli service call --arguments "entity_id=light.clc${light},kelvin={}" light.turn_on &
 		done
 	)
 }
@@ -151,7 +151,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
 	echo $(
 		for light in $(seq 5)
 		do
-			hass-cli service call --arguments "entity_id=light.cl${light},brightness={}" light.turn_on &
+			hass-cli service call --arguments "entity_id=light.clc${light},brightness={}" light.turn_on &
 		done
 	)
 }
