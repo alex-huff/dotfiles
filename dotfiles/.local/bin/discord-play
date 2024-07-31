@@ -1,0 +1,5 @@
+#!/bin/sh
+
+default_sink=$(pw-dump | jq -r '.[] | select(.type == "PipeWire:Interface:Metadata" and .props."metadata.name" == "default").metadata[] | select(.key == "default.audio.source").value.name')
+target_node_serial=$(pw-dump | jq '.[] | select(.type == "PipeWire:Interface:Node" and .info.props."application.name" == "Chromium input" and .info.props."target.object" == "'"$default_sink"'").info.props."object.serial"' | head -n 1)
+pw-play --target $target_node_serial "$@"

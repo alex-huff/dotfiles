@@ -83,6 +83,9 @@ bindsym $super+g exec totp.sh
 bindsym $super+c exec cmus-play-playlist.zsh
 bindsym $super+Shift+c exec song="music/$(find ~/music -type f -name '*.mp3' | sed 's|^/home/.*/music/\(.*\)\.mp3$|\1|' | rofi -theme-str 'window {width: 800;}' -i -dmenu).mp3" && cmus-remote --file "$song"
 
+# soundboard
+bindsym $super+Shift+m exec song=$(find ~/soundboard -type f -name '*.mp3' -printf '%f\n' | rofi -dmenu) && discord-play ~/soundboard/"$song"
+
 # twitch
 bindsym $super+t exec twitch.sh
 
