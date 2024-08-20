@@ -106,6 +106,7 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 	import threading
 	import shutil
 	import json
+	import websocket as pywebsocket
 	import obswebsocket
 
 	def speak(to_speak):
@@ -117,7 +118,11 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 		global websocket_save_finished
 		with websocket_save_finished_condition:
 			websocket_save_finished = False
-			succeeded = websocket.call(obswebsocket.requests.SaveReplayBuffer()).status
+			succeeded = False
+			try:
+				succeeded = websocket.call(obswebsocket.requests.SaveReplayBuffer()).status
+			except pywebsocket._exceptions.WebSocketException:
+				pass
 			if not succeeded:
 				return False
 			return websocket_save_finished_condition.wait_for(lambda: websocket_save_finished, timeout=20)
@@ -152,14 +157,14 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 	websocket_host = 'localhost'
 	websocket_port = 4455
 	websocket_password = os.environ['OBS_WEBSOCKET_PASSWORD']
-	websocket = obswebsocket.obsws(websocket_host, websocket_port, websocket_password)
+	websocket = obswebsocket.obsws(websocket_host, websocket_port, websocket_password, authreconnect=5)
 	websocket.register(on_replay_saved, obswebsocket.events.ReplayBufferSaved)
-	websocket.connect()
 	mpv_path = shutil.which('mpv')
 	currently_clipping = False
 	beginning_timestamp = end_timestamp = replay_video_path = clipping_mpv_process = None
 	websocket_save_finished = False
 	websocket_save_finished_condition = threading.Condition()
+	websocket.connect()
 	for line in sys.stdin:
 		line = line.rstrip()
 		match line:
