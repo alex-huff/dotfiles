@@ -139,7 +139,7 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 		if duration < 0:
 			return False, ''
 		out_path = f'{video_path}-clipped.mp4'
-		clipper_process = subprocess.run(f'ffmpeg -ss {beginning_timestamp} -i "{video_path}" -t {duration} "{out_path}"', shell=True)
+		clipper_process = subprocess.run(f'ffmpeg -ss {beginning_timestamp} -i "{video_path}" -t {duration} -c:a copy -c:v copy "{out_path}"', shell=True)
 		return clipper_process.returncode == 0, out_path
 
 	def on_replay_saved(event):
