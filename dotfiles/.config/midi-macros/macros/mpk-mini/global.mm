@@ -5,13 +5,13 @@
 C5{v>64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg move container to workspace {}
 C5{v<=64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg workspace {}
 
-# lock/unlock
-(43+39){c==9} -> $(which kill) -USR1 swaylock || swaylock -c 000000 --font "Victor Mono"
-(39+43){c==9} -> swaymsg output '$main_display' toggle
-
 # clipboard manager
 B4{v>64} NOTES[1:]("{}"->[-]ASPN) -> wl-paste -n > ~/.config/midi-macros/clipboards/{} && echo Saving clipboard to file: {}
 B4{v<=64} NOTES[1:]("{}"->[-]ASPN) -> wl-copy < ~/.config/midi-macros/clipboards/{} && echo Yanking file: {} to clipboard
+
+# lock/unlock
+(43+39){c==9} -> $(which kill) -USR1 swaylock || swaylock -c 000000 --font "Victor Mono"
+(39+43){c==9} -> swaymsg output '$main_display' toggle
 
 # main volume with knob 1
 MIDI{STATUS==cc}{CC_FUNCTION==70}("{}"->CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]-> pactl set-sink-volume $MAIN_SINK {}%
@@ -94,6 +94,110 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{round(CC_VALUE_SCALED(0, 130))}") [BL
 	{"command": ["set_property", "volume", {}]}
 	{"command": ["show-text", "Volume: {}%"]}
 	EOF
+}
+
+# clipper
+C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
+{
+	import os
+	import sys
+	import subprocess
+	import time
+	import threading
+	import shutil
+	import json
+	import obswebsocket
+
+	def speak(to_speak):
+		speech_process = subprocess.Popen('speak-it', stdin=subprocess.PIPE, text=True)
+		speech_process.stdin.write(to_speak)
+		speech_process.stdin.close()
+
+	def save_obs_replay():
+		global websocket_save_finished
+		with websocket_save_finished_condition:
+			websocket_save_finished = False
+			succeeded = websocket.call(obswebsocket.requests.SaveReplayBuffer()).status
+			if not succeeded:
+				return False
+			return websocket_save_finished_condition.wait_for(lambda: websocket_save_finished, timeout=20)
+
+	def get_current_timestamp_in_mpv():
+		json_result = subprocess.check_output('echo \'{"command": ["get_property", "playback-time"]}\' | socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock', shell=True, text=True)
+		if not json_result:
+			return False, -1
+		json_result_object = json.loads(json_result)
+		if json_result_object['error'] != 'success':
+			return False, -1
+		return True, json_result_object["data"]
+
+	def open_video_in_mpv(video_path):
+		return subprocess.Popen((mpv_path, '--wayland-app-id=mpv-clipper', video_path))
+
+	def clip_video(video_path, beginning_timestamp, end_timestamp):
+		duration = end_timestamp - beginning_timestamp
+		if duration < 0:
+			return False, ''
+		out_path = f'{video_path}-clipped.mp4'
+		clipper_process = subprocess.run(f'ffmpeg -ss {beginning_timestamp} -i "{video_path}" -t {duration} "{out_path}"', shell=True)
+		return clipper_process.returncode == 0, out_path
+
+	def on_replay_saved(event):
+		global replay_video_path, websocket_save_finished
+		with websocket_save_finished_condition:
+			replay_video_path = event.datain['savedReplayPath']
+			websocket_save_finished = True
+			websocket_save_finished_condition.notify_all()
+
+	websocket_host = 'localhost'
+	websocket_port = 4455
+	websocket_password = os.environ['OBS_WEBSOCKET_PASSWORD']
+	websocket = obswebsocket.obsws(websocket_host, websocket_port, websocket_password)
+	websocket.register(on_replay_saved, obswebsocket.events.ReplayBufferSaved)
+	websocket.connect()
+	mpv_path = shutil.which('mpv')
+	currently_clipping = False
+	beginning_timestamp = end_timestamp = replay_video_path = clipping_mpv_process = None
+	websocket_save_finished = False
+	websocket_save_finished_condition = threading.Condition()
+	for line in sys.stdin:
+		line = line.rstrip()
+		match line:
+			case '':
+				if currently_clipping:
+					clipping_mpv_process.kill()
+					clipping_mpv_process.wait()
+					if None in (beginning_timestamp, end_timestamp):
+						speak('cancelling')
+					else:
+						speak('saving')
+						succeeded, clip_video_path = clip_video(replay_video_path, beginning_timestamp, end_timestamp)
+						speak(f'clipping {"succeeded" if succeeded else "failed"}')
+						if succeeded:
+							open_video_in_mpv(clip_video_path)
+					beginning_timestamp = end_timestamp = None
+				else:
+					succeeded = save_obs_replay()
+					if not succeeded:
+						speak('failed to save replay')
+						continue
+					clipping_mpv_process = open_video_in_mpv(replay_video_path)
+				currently_clipping = not currently_clipping
+			case 'B3' | 'D4':
+				if not currently_clipping:
+					continue
+				currently_setting_beginning_timestamp = line == 'B3'
+				succeeded, timestamp = get_current_timestamp_in_mpv()
+				if succeeded:
+					if currently_setting_beginning_timestamp:
+						beginning_timestamp = timestamp
+					else:
+						end_timestamp = timestamp
+					speak(f'set clip {"beginning" if currently_setting_beginning_timestamp else "end"}')
+				else:
+					speak('could not retrieve timestamp')
+			case _:
+				pass
 }
 
 # home assistant

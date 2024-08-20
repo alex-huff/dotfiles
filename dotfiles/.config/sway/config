@@ -238,6 +238,11 @@ include device/*
 # rules
 for_window [all] title_format %title (<i>%shell</i>)
 for_window [app_id="mpv"] border pixel 1
+for_window [app_id="mpv-clipper"]
+{
+	floating enable
+	resize set width 1280 height 720
+}
 for_window [title="Authentication required"] floating enable
 
 # various
@@ -248,3 +253,4 @@ smart_borders on
 tiling_drag off
 focus_on_window_activation none
 focus_wrapping no
+mouse_warping container
