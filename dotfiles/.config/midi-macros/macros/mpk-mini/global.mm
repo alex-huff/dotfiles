@@ -115,9 +115,9 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 		speech_process.stdin.close()
 
 	def save_obs_replay():
-		global websocket_save_finished
-		with websocket_save_finished_condition:
-			websocket_save_finished = False
+		global replay_save_finished
+		with replay_save_finished_condition:
+			replay_save_finished = False
 			succeeded = False
 			try:
 				succeeded = websocket.call(obswebsocket.requests.SaveReplayBuffer()).status
@@ -125,7 +125,7 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 				pass
 			if not succeeded:
 				return False
-			return websocket_save_finished_condition.wait_for(lambda: websocket_save_finished, timeout=20)
+			return replay_save_finished_condition.wait_for(lambda: replay_save_finished, timeout=20)
 
 	def get_current_timestamp_in_mpv():
 		json_result = subprocess.check_output('echo \'{"command": ["get_property", "playback-time"]}\' | socat - $XDG_RUNTIME_DIR/mpv-ipc-$(focused-pid.sh).sock', shell=True, text=True)
@@ -152,11 +152,11 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 		return clipper_process.returncode == 0, out_path
 
 	def on_replay_saved(event):
-		global replay_video_path, websocket_save_finished
-		with websocket_save_finished_condition:
+		global replay_video_path, replay_save_finished
+		with replay_save_finished_condition:
 			replay_video_path = event.datain['savedReplayPath']
-			websocket_save_finished = True
-			websocket_save_finished_condition.notify_all()
+			replay_save_finished = True
+			replay_save_finished_condition.notify_all()
 
 	websocket_host = 'localhost'
 	websocket_port = 4455
@@ -166,8 +166,8 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 	mpv_path = shutil.which('mpv')
 	currently_clipping = False
 	beginning_timestamp = end_timestamp = replay_video_path = clipping_mpv_process = None
-	websocket_save_finished = False
-	websocket_save_finished_condition = threading.Condition()
+	replay_save_finished = False
+	replay_save_finished_condition = threading.Condition()
 	websocket.connect()
 	for line in sys.stdin:
 		line = line.rstrip()
