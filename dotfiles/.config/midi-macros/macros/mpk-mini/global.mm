@@ -143,8 +143,12 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 		duration = end_timestamp - beginning_timestamp
 		if duration < 0:
 			return False, ''
-		out_path = f'{video_path}-clipped.mp4'
-		clipper_process = subprocess.run(f'ffmpeg -ss {beginning_timestamp} -i "{video_path}" -t {duration} -c:a copy -c:v copy "{out_path}"', shell=True)
+		try:
+			clip_name = subprocess.check_output('rofi -dmenu -l 0 -p "clip name"', shell=True, text=True).rstrip()
+		except subprocess.CalledProcessError:
+			return False, ''
+		out_path = os.path.expanduser(f'~/clips/{clip_name}')
+		clipper_process = subprocess.run(('ffmpeg', '-ss', str(beginning_timestamp), '-i', video_path, '-t', str(duration), '-c:a', 'copy', '-c:v', 'copy', out_path))
 		return clipper_process.returncode == 0, out_path
 
 	def on_replay_saved(event):
