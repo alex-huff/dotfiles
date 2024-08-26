@@ -6,7 +6,8 @@ then
 fi
 
 alias cmus='PULSE_SINK=hush cmus'
-alias discord='PULSE_SINK=hear discord'
+alias discord='PULSE_SINK=hush discord'
+alias webcord='PULSE_SINK=hush webcord'
 
 setopt vi
 
