@@ -236,10 +236,11 @@ client.focused_inactive #1c343a #051d23 #cdd6f4 #1c343a #1c343a
 include device/*
 
 # rules
+for_window [app_id="blueman-applet"] kill
 for_window [all] title_format %title (<i>%shell</i>)
-for_window [app_id="mpv"] border pixel 1
 for_window [app_id="mpv-clipper"]
 {
+	border pixel 1
 	floating enable
 	resize set width 1280 height 720
 }
