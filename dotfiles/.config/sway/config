@@ -73,6 +73,9 @@ bindsym $super+Shift+s exec wf-recorder-imgur.sh area
 # take a fullscreen screengrab
 bindsym $super+Shift+o exec wf-recorder-imgur.sh
 
+# pick color
+bindsym $super+Alt+p exec wl-color-picker
+
 # mc
 bindsym $super+m exec open-mc-mod-configuration.sh
 
