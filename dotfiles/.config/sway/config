@@ -198,6 +198,10 @@ bindsym $super+Shift+8 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes
 bindsym $super+Shift+9 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[8].id // "__focused__"')] focus
 bindsym $super+Shift+0 exec swaymsg [con_id = $(swaymsg -t get_tree | jq '.nodes | recurse(.[] | .nodes, .floating_nodes) | select(any(.focused? == true)) | .[9].id // "__focused__"')] focus
 
+# mark
+bindsym $super+Shift+apostrophe exec (mark_name="$(rofi -dmenu -l 0 -p 'mark name')" && swaymsg mark "$mark_name") || swaymsg '[con_id="__focused__"]' unmark
+bindsym $super+apostrophe exec to_focus="$(swaymsg -t get_marks | jq -r '.[]' | rofi -dmenu -p 'jump to')" && swaymsg '[con_mark="'$to_focus'"]' focus
+
 # reload the configuration file
 bindsym $super+Alt+c reload
 
