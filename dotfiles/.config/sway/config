@@ -74,7 +74,7 @@ bindsym $super+Shift+s exec wf-recorder-imgur.sh area
 bindsym $super+Shift+o exec wf-recorder-imgur.sh
 
 # pick color
-bindsym $super+Alt+p exec wl-color-picker
+bindsym $super+Alt+p exec hyprpicker -a
 
 # mc
 bindsym $super+m exec open-mc-mod-configuration.sh
