@@ -10,11 +10,12 @@ then
 	swayimg --config='Textinfo.show=no' --fullscreen $temp_file &
 	swayimg_pid=$!
 	region=$(slurp -f %w:%h:%x:%y)
-	if [ $? -ne 0 ]
-	then
-		region='in_w:in_h:0:0'
-	fi
+	slurp_return_code=$?
 	kill $swayimg_pid
+	if [ $slurp_return_code -ne 0 ]
+	then
+		exit 1
+	fi
 	ffmpeg -i $temp_file -vf "crop=$region" $image_name
 else
 	grim $image_name
