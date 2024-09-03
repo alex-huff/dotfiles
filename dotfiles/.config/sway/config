@@ -62,10 +62,10 @@ bindsym $super+Shift+q kill
 bindsym $super+Shift+t exec wkill.sh
 
 # take a rectangular screenshot
-bindsym $super+s exec grimshot-imgur.sh save area
+bindsym $super+s exec grimshot-imgur.sh area
 
 # take a fullscreen screenshot
-bindsym $super+o exec grimshot-imgur.sh save output
+bindsym $super+o exec grimshot-imgur.sh
 
 # take a rectangular screengrab
 bindsym $super+Shift+s exec wf-recorder-imgur.sh area
