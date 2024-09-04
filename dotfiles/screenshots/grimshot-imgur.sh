@@ -14,9 +14,11 @@ then
 	kill $swayimg_pid
 	if [ $slurp_return_code -ne 0 ]
 	then
+		rm $temp_file
 		exit 1
 	fi
 	ffmpeg -i $temp_file -vf "crop=$region" $image_name
+	rm $temp_file
 else
 	grim $image_name
 fi
