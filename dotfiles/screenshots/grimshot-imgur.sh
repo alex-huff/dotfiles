@@ -7,7 +7,7 @@ if [ $1 = "area" ]
 then
 	temp_file=$(mktemp --suffix .png)
 	grim -l 0 $temp_file
-	swayimg --config='Textinfo.show=no' --fullscreen $temp_file &
+	swayimg --config='info.show=no' --fullscreen $temp_file &
 	swayimg_pid=$!
 	region=$(slurp -f %w:%h:%x:%y)
 	slurp_return_code=$?
