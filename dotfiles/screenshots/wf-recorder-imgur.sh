@@ -21,4 +21,5 @@ recorder_pid=$(sed -n 2p < recording)
 rm recording
 kill -TERM $recorder_pid
 waitpid $recorder_pid
-upload-to-imgur.sh $grab_name
+speak-it <<< "recording saved"
+# upload-to-imgur.sh $grab_name
