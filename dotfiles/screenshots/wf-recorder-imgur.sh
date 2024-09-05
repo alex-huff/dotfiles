@@ -7,10 +7,12 @@ then
 	grab_name="screengrab-${current_time}.mp4"
 	if [ $1 = "area" ]
 	then
-		wf-recorder -g "$(slurp)" -f $grab_name &
+		area="$(slurp)"
+		wf-recorder --framerate 30 -g "$area" -f $grab_name &
 	else
-		wf-recorder -f $grab_name &
+		wf-recorder --framerate 30 -f $grab_name &
 	fi
+	speak-it <<< "recording"
 	printf "${grab_name}\n$!" > recording
 	exit 0
 fi
