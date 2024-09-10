@@ -248,7 +248,7 @@ include device/*
 # rules
 for_window [app_id="blueman-applet"] kill
 for_window [all] title_format %title (<i>%shell</i>)
-for_window [app_id="mpv-clipper"]
+for_window [app_id="mpv-clipper|footclient-dialogue"]
 {
 	border pixel 1
 	floating enable
