@@ -2,7 +2,6 @@ typeset -U path PATH
 path=(~/.pfetch $path)
 path=(~/.cargo/bin $path)
 path=(~/.local/bin $path)
-path=(~/screenshots $path)
 path=(~/.local/share/JetBrains/Toolbox/scripts $path)
 export PATH
 export QT_QPA_PLATFORM=wayland
