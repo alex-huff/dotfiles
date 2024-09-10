@@ -1,0 +1,76 @@
+config_version: 2
+settings:
+  auto_save.session:
+    global: false
+  colors.webpage.darkmode.enabled:
+    global: false
+  colors.webpage.preferred_color_scheme:
+    global: dark
+  completion.open_categories:
+    global:
+    - quickmarks
+    - bookmarks
+  completion.quick:
+    global: false
+  content.blocking.enabled:
+    global: true
+  content.blocking.hosts.lists:
+    global:
+    - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+  content.blocking.method:
+    global: both
+  content.cookies.store:
+    global: false
+  content.desktop_capture:
+    global: ask
+    https://discord.com: true
+  content.headers.user_agent:
+    global: Mozilla/5.0 ({os_info}) AppleWebKit/{webkit_version} (KHTML, like Gecko)
+      {qt_key}/{qt_version} {upstream_browser_key}/{upstream_browser_version} Safari/{webkit_version}
+  content.media.audio_capture:
+    global: ask
+    https://discord.com: true
+  content.media.audio_video_capture:
+    global: ask
+  content.notifications.enabled:
+    global: false
+  content.prefers_reduced_motion:
+    global: true
+  downloads.location.prompt:
+    global: false
+  downloads.location.remember:
+    global: false
+  downloads.location.suggestion:
+    global: both
+  editor.command:
+    global:
+    - footclient
+    - --app-id=footclient-dialogue
+    - nvim
+    - -f
+    - '{file}'
+    - -c
+    - normal {line}G{column0}l
+  fileselect.folder.command:
+    global:
+    - env
+    - CHOICE={}
+    - footclient
+    - --client-environment
+    - --app-id=footclient-dialogue
+  fileselect.handler:
+    global: external
+  fileselect.multiple_files.command:
+    global:
+    - env
+    - CHOICE={}
+    - footclient
+    - --client-environment
+    - --app-id=footclient-dialogue
+  fileselect.single_file.command:
+    global:
+    - env
+    - CHOICE={}
+    - footclient
+    - --client-environment
+    - --app-id=footclient-dialogue
