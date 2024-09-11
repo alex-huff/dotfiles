@@ -95,5 +95,8 @@ settings:
     - footclient
     - --client-environment
     - --app-id=footclient-dialogue
+  spellcheck.languages:
+    global:
+    - en-US
   tabs.position:
     global: top
