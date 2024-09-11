@@ -9,7 +9,7 @@ set clipboard=unnamedplus
 set list
 set title
 set laststatus=0
-syntax on
+syntax off
 set termguicolors
 colorscheme catppuccin_mocha
 highlight Normal guibg=NONE
