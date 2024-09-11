@@ -16,6 +16,10 @@ settings:
         <Ctrl+d>: jseval --quiet scrollHelper.scrollPage(0.8)
         <Ctrl+u>: jseval --quiet scrollHelper.scrollPage(-0.8)
         G: jseval --quiet scrollHelper.scrollToPercent(100)
+        H: tab-prev
+        J: back
+        K: forward
+        L: tab-next
         gg: jseval --quiet scrollHelper.scrollTo(0)
         j: jseval --quiet scrollHelper.scrollBy(200)
         k: jseval --quiet scrollHelper.scrollBy(-200)
