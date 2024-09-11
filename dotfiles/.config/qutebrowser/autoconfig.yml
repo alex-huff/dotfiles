@@ -32,11 +32,11 @@ settings:
   colors.tabs.odd.bg:
     global: black
   colors.tabs.selected.even.bg:
-    global: '#458085'
+    global: '#315a5e'
   colors.tabs.selected.even.fg:
     global: white
   colors.tabs.selected.odd.bg:
-    global: '#458085'
+    global: '#315a5e'
   colors.tabs.selected.odd.fg:
     global: white
   colors.webpage.darkmode.enabled:

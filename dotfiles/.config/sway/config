@@ -238,7 +238,7 @@ bindsym $super+r mode "resize"
 bindsym $super+Shift+b border toggle
 
 # colors
-client.focused          #b0dfd9 #458085 #ffffff #b0dfd9 #b0dfd9
+client.focused          #b0dfd9 #315a5e #ffffff #b0dfd9 #b0dfd9
 client.unfocused        #313244 #000000 #cdd6f4 #313244 #313244
 client.focused_inactive #426272 #093f4c #cdd6f4 #426272 #426272
 
