@@ -23,6 +23,20 @@ settings:
         gg: jseval --quiet scrollHelper.scrollTo(0)
         j: jseval --quiet scrollHelper.scrollBy(200)
         k: jseval --quiet scrollHelper.scrollBy(-200)
+  colors.tabs.bar.bg:
+    global: '#555555'
+  colors.tabs.even.bg:
+    global: black
+  colors.tabs.odd.bg:
+    global: black
+  colors.tabs.selected.even.bg:
+    global: '#458085'
+  colors.tabs.selected.even.fg:
+    global: white
+  colors.tabs.selected.odd.bg:
+    global: '#458085'
+  colors.tabs.selected.odd.fg:
+    global: white
   colors.webpage.darkmode.enabled:
     global: false
   colors.webpage.preferred_color_scheme:
@@ -95,6 +109,8 @@ settings:
     - footclient
     - --client-environment
     - --app-id=footclient-dialogue
+  fonts.default_size:
+    global: 9pt
   spellcheck.languages:
     global:
     - en-US
