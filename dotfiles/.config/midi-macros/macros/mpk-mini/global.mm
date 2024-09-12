@@ -137,7 +137,7 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 		return True, json_result_object["data"]
 
 	def open_video_in_mpv(video_path):
-		return subprocess.Popen((mpv_path, '--wayland-app-id=mpv-clipper', video_path))
+		return subprocess.Popen((mpv_path, '--wayland-app-id=mpv-clipper-dialogue', video_path))
 
 	def clip_video(video_path, beginning_timestamp, end_timestamp):
 		duration = end_timestamp - beginning_timestamp

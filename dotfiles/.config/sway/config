@@ -246,15 +246,22 @@ client.focused_inactive #426272 #093f4c #cdd6f4 #426272 #426272
 include device/*
 
 # rules
-for_window [app_id="blueman-applet"] kill
 for_window [all] title_format %title (<i>%shell</i>)
-for_window [app_id="mpv-clipper|footclient-dialogue"]
+for_window [title="Authentication required"] floating enable
+for_window [app_id="blueman-applet"] kill
+for_window [app_id=".*-dialogue"]
 {
 	border pixel 1
 	floating enable
 	resize set width 1280 height 720
 }
-for_window [title="Authentication required"] floating enable
+for_window [app_id=".*-overlay"]
+{
+	border none
+	floating enable
+	resize set width 1920 height 1080
+	move absolute position 0px 0px
+}
 
 # various
 default_border normal 1
