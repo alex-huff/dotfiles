@@ -118,3 +118,7 @@ settings:
     - en-US
   tabs.position:
     global: top
+  url.default_page:
+    global: about:config
+  url.start_pages:
+    global: about:config
