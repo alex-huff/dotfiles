@@ -13,6 +13,13 @@ B4{v<=64} NOTES[1:]("{}"->[-]ASPN) -> wl-copy < ~/.config/midi-macros/clipboards
 (43+39){c==9} -> $(which kill) -USR1 swaylock || swaylock -c 000000 --font "Victor Mono"
 (39+43){c==9} -> swaymsg output '$main_display' toggle
 
+# mute mic with pedal
+MIDI{STATUS==cc}{CC_FUNCTION==sustain}("{}"->f"{CC_VALUE >= 64}") [BLOCK|DEBOUNCE]->
+{
+	pactl set-source-mute $MICROPHONE_SOURCE {}
+	speak-it <<< "muted {}"
+}
+
 # main volume with knob 1
 MIDI{STATUS==cc}{CC_FUNCTION==70}("{}"->CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]-> pactl set-sink-volume $MAIN_SINK {}%
 
