@@ -11,6 +11,7 @@ set list
 set title
 set laststatus=0
 set background=dark
+set incsearch
 syntax off
 nnoremap <C-h> :wincmd h<CR>
 nnoremap <C-j> :wincmd j<CR>
