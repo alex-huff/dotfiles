@@ -10,7 +10,7 @@ set clipboard=unnamedplus
 set list
 set title
 set laststatus=0
-set termguicolors
+set background=dark
 syntax off
 nnoremap <C-h> :wincmd h<CR>
 nnoremap <C-j> :wincmd j<CR>
