@@ -3,34 +3,34 @@
 import json
 
 template = """\
-	{
-		name = libpipewire-module-loopback
-		args = {
-			node.description = "<description>"
-			capture.props = {
-				node.name = "<name>"
-				media.class = Audio/Sink
-				audio.position = [ FL FR ]
-			}
-			playback.props = {
-				node.name = "playback.<name>"
-				audio.position = [ FL FR ]
-				target.object = <output-sink>
-			}
-		}
-	}\
+    {
+        name = libpipewire-module-loopback
+        args = {
+            node.description = "<description>"
+            capture.props = {
+                node.name = "<name>"
+                media.class = Audio/Sink
+                audio.position = [ FL FR ]
+            }
+            playback.props = {
+                node.name = "playback.<name>"
+                audio.position = [ FL FR ]
+                target.object = <output-sink>
+            }
+        }
+    }\
 """
 
 def print_sink_config(sink):
-	print(
-		template.replace("<description>", sink["description"])
-				.replace("<name>", sink["name"])
-				.replace("<output-sink>", f'"{sink["output-sink"]}"' if "output-sink" in sink else 'null')
-	)
+    print(
+        template.replace("<description>", sink["description"])
+                .replace("<name>", sink["name"])
+                .replace("<output-sink>", f'"{sink["output-sink"]}"' if "output-sink" in sink else 'null')
+    )
 
 with open('sinks.json', 'r') as sinks_file:
-	sinks_json = json.load(sinks_file)
+    sinks_json = json.load(sinks_file)
 print("context.modules = [")
 for sink in sinks_json:
-	print_sink_config(sink)
+    print_sink_config(sink)
 print("]")

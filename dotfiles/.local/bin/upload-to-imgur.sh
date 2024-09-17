@@ -9,12 +9,12 @@
 
 if [ $# -ne 1 ]
 then
-	echo "Usage: $0 <file-path>"
-	exit 1
+    echo "Usage: $0 <file-path>"
+    exit 1
 fi
 if imgur-uploader $1
 then
-	speak-it <<< "upload succeeded"
+    speak-it <<< "upload succeeded"
 else
-	speak-it <<< "upload failed"
+    speak-it <<< "upload failed"
 fi

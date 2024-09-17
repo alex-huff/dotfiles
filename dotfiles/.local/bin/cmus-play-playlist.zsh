@@ -11,8 +11,8 @@ playlist_position=$(echo $playlists | grep -n "^${playlist}$" | cut -d ":" -f 1)
 
 if [ ! $playlist_position ]
 then
-	echo "Invalid playlist"
-	exit 1
+    echo "Invalid playlist"
+    exit 1
 fi
 
 # the only song in the first dummy playlist should have this in its filename
@@ -27,8 +27,8 @@ cmus-remote -C "view 3" win-top win-activate "format_print %F" | grep $identifie
 # if we were in the track window, we are now playing the top song in our current playlist, which does not have $identifier in filename
 if [ $pipestatus[2] -eq 1 ]
 then
-	# we are in track window, so we need to move to top of playlist window
-	setup_commands=(win-next win-top)
+    # we are in track window, so we need to move to top of playlist window
+    setup_commands=(win-next win-top)
 fi
 
 # move to selected playlist, and activate it

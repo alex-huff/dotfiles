@@ -1,58 +1,58 @@
 *{
-	all: unset;
+    all: unset;
 }
 .group {
-	background-color: #000000;
-	border: 1px solid #cdd6f4;
+    background-color: #000000;
+    border: 1px solid #cdd6f4;
 }
 .champion-icon, .control-panel-label, .color-box, .slider {
-	margin: 10px;
+    margin: 10px;
 }
 scale value, .gold-stats-label, .control-panel-label {
-	color: #cdd6f4;
-	font-weight: normal;
+    color: #cdd6f4;
+    font-weight: normal;
 }
 .control-panel-label, .gold-stats-label {
-	font-size: 20px;
+    font-size: 20px;
 }
 .gold-stats-label {
-	margin-right: 10px;
-	margin-left: 10px;
-	margin-bottom: 4px;
-	margin-top: 4px;
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 4px;
+    margin-top: 4px;
 }
 .color-box, .slider {
-	min-height: 240px;
+    min-height: 240px;
 }
 scale trough highlight {
-	background-color: #cba6f7;
+    background-color: #cba6f7;
 }
 scale trough {
-	background-color: #1e1e2e;
-	min-width: 40px;
-	min-height: 35px;
+    background-color: #1e1e2e;
+    min-width: 40px;
+    min-height: 35px;
 }
 scale value {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 .light-r-slider trough highlight {
-	background-color: #f38ba8;
+    background-color: #f38ba8;
 }
 .light-g-slider trough highlight {
-	background-color: #a6e3a1;
+    background-color: #a6e3a1;
 }
 .light-b-slider trough highlight {
-	background-color: #89b4fa;
+    background-color: #89b4fa;
 }
 .temperature-slider trough highlight {
-	background-color: #fab387;
+    background-color: #fab387;
 }
 .brightness-slider trough highlight {
-	background-color: #f5e0dc;
+    background-color: #f5e0dc;
 }
 .gold-ratio trough highlight {
-	background-color: #89b4fa;
+    background-color: #89b4fa;
 }
 .gold-ratio trough {
-	background-color: #f38ba8;
+    background-color: #f38ba8;
 }

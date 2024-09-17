@@ -13,14 +13,14 @@ zshcache_time="$(date +%s%N)"
 
 rehash_precmd()
 {
-	if [[ -a /var/cache/zsh/pacman ]]
-	then
-		local paccache_time="$(date -r /var/cache/zsh/pacman +%s%N)"
-		if (( zshcache_time < paccache_time )); then
-			rehash
-			zshcache_time="$paccache_time"
-		fi
-	fi
+    if [[ -a /var/cache/zsh/pacman ]]
+    then
+        local paccache_time="$(date -r /var/cache/zsh/pacman +%s%N)"
+        if (( zshcache_time < paccache_time )); then
+            rehash
+            zshcache_time="$paccache_time"
+        fi
+    fi
 }
 
 autoload -Uz add-zsh-hook compinit
@@ -31,9 +31,9 @@ fpath=(~/.zsh $fpath)
 
 if [ -z $CUSTOM_HISTFILE ]
 then
-	HISTFILE=~/.zsh_history
+    HISTFILE=~/.zsh_history
 else
-	HISTFILE=$CUSTOM_HISTFILE
+    HISTFILE=$CUSTOM_HISTFILE
 fi
 HISTSIZE=100000
 SAVEHIST=100000
@@ -46,8 +46,8 @@ bindkey '^ ' autosuggest-accept
 
 for file in ~/.zsh/conf.zsh.d/*.zsh(N)
 do
-	if [ -f $file ]
-	then
-		source $file
-	fi
+    if [ -f $file ]
+    then
+        source $file
+    fi
 done

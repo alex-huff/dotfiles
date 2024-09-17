@@ -8,5 +8,5 @@ export BAT_THEME="Catppuccin"
 
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]
 then
-	exec startx
+    exec startx
 fi

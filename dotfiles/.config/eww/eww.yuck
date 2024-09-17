@@ -30,188 +30,188 @@
 (defvar red-champ-5-gold 0)
 
 (defwidget variable-slider [?style-class variable]
-	(scale
-		:class "slider${(style-class == '') ? '' : ' ${style-class}'}"
-		:draw-value true
-		:flipped true
-		:value variable
-		:min 0
-		:max 101
-		:active false
-		:orientation "vertical"))
+    (scale
+        :class "slider${(style-class == '') ? '' : ' ${style-class}'}"
+        :draw-value true
+        :flipped true
+        :value variable
+        :min 0
+        :max 101
+        :active false
+        :orientation "vertical"))
 
 (defwidget labeled-control [label-text]
-	(box
-		:class "group"
-		:orientation "vertical"
-		:spacing 10
-		:space-evenly false
-		(children)
-		(label
-			:class "control-panel-label"
-			:text label-text)))
+    (box
+        :class "group"
+        :orientation "vertical"
+        :spacing 10
+        :space-evenly false
+        (children)
+        (label
+            :class "control-panel-label"
+            :text label-text)))
 
 (defwidget control-panel-column []
-	(box
-		:orientation "vertical"
-		:spacing 10
-		:valign "center"
-		(children)))
+    (box
+        :orientation "vertical"
+        :spacing 10
+        :valign "center"
+        (children)))
 
 (defwidget control-panel-row []
-	(box
-		:orientation "horizontal"
-		:spacing 10
-		:halign "center"
-		(children)))
+    (box
+        :orientation "horizontal"
+        :spacing 10
+        :halign "center"
+        (children)))
 
 (defwidget light-control-panel-row []
-	(control-panel-row
-		(labeled-control
-			:label-text "Color"
-			(box
-				:class "color-box"
-				:style "background-color: ${adjusted-color}"))
-		(labeled-control
-			:label-text "R"
-			(variable-slider
-				:style-class "light-r-slider"
-				:variable light-r))
-		(labeled-control
-			:label-text "G"
-			(variable-slider
-				:style-class "light-g-slider"
-				:variable light-g))
-		(labeled-control
-			:label-text "B"
-			(variable-slider
-				:style-class "light-b-slider"
-				:variable light-b))
-		(labeled-control
-			:label-text "Bright"
-			(variable-slider
-				:style-class "brightness-slider"
-				:variable brightness))
-		(labeled-control
-			:label-text "Temp"
-			(variable-slider
-				:style-class "temperature-slider"
-				:variable temperature))))
+    (control-panel-row
+        (labeled-control
+            :label-text "Color"
+            (box
+                :class "color-box"
+                :style "background-color: ${adjusted-color}"))
+        (labeled-control
+            :label-text "R"
+            (variable-slider
+                :style-class "light-r-slider"
+                :variable light-r))
+        (labeled-control
+            :label-text "G"
+            (variable-slider
+                :style-class "light-g-slider"
+                :variable light-g))
+        (labeled-control
+            :label-text "B"
+            (variable-slider
+                :style-class "light-b-slider"
+                :variable light-b))
+        (labeled-control
+            :label-text "Bright"
+            (variable-slider
+                :style-class "brightness-slider"
+                :variable brightness))
+        (labeled-control
+            :label-text "Temp"
+            (variable-slider
+                :style-class "temperature-slider"
+                :variable temperature))))
 
 (defwidget volume-control-panel-row []
-	(control-panel-row
-		(labeled-control
-			:label-text "Main"
-			(variable-slider
-				:variable main-volume))
-		(labeled-control
-			:label-text "cmus"
-			(variable-slider
-				:variable cmus-volume))
-		(labeled-control
-			:label-text "Focused"
-			(variable-slider
-				:variable focused-volume))))
+    (control-panel-row
+        (labeled-control
+            :label-text "Main"
+            (variable-slider
+                :variable main-volume))
+        (labeled-control
+            :label-text "cmus"
+            (variable-slider
+                :variable cmus-volume))
+        (labeled-control
+            :label-text "Focused"
+            (variable-slider
+                :variable focused-volume))))
 
 (defwidget light-volume-control-panel []
-	(control-panel-column
-		(light-control-panel-row)
-		(volume-control-panel-row)))
+    (control-panel-column
+        (light-control-panel-row)
+        (volume-control-panel-row)))
 
 (defwidget champion-icon [icon-path align]
-	(image
-		:class "champion-icon"
-		:halign align
-		:path icon-path
-		:image-width 90
-		:image-height 90))
+    (image
+        :class "champion-icon"
+        :halign align
+        :path icon-path
+        :image-width 90
+        :image-height 90))
 
 (defwidget gold-stats-label [gold-amount align]
-	(label :class "gold-stats-label" :halign align :text {align == "start" ? "${gold-amount} 󰆼" : "󰆼 ${gold-amount}"}))
+    (label :class "gold-stats-label" :halign align :text {align == "start" ? "${gold-amount} 󰆼" : "󰆼 ${gold-amount}"}))
 
 (defwidget blue-team-gold-player-stats [icon-path gold-amount]
-	(box
-		:orientation "horizontal"
-		(champion-icon :align "start" :icon-path icon-path)
-		(gold-stats-label :align "end" :gold-amount gold-amount)))
+    (box
+        :orientation "horizontal"
+        (champion-icon :align "start" :icon-path icon-path)
+        (gold-stats-label :align "end" :gold-amount gold-amount)))
 
 (defwidget red-team-gold-player-stats [icon-path gold-amount]
-	(box
-		:orientation "horizontal"
-		(gold-stats-label :align "start" :gold-amount gold-amount)
-		(champion-icon :align "end" :icon-path icon-path)))
+    (box
+        :orientation "horizontal"
+        (gold-stats-label :align "start" :gold-amount gold-amount)
+        (champion-icon :align "end" :icon-path icon-path)))
 
 (defwidget gold-ratio-scale [blue-champ-gold red-champ-gold]
-	(box
-		:orientation "vertical"
-		(label
-			:class "gold-stats-label"
-			:valign "end"
-			:text "${
-				(blue-champ-gold - red-champ-gold) == 0 ? "← 0 →" : (
-					(blue-champ-gold - red-champ-gold) > 0 ? "← ${(blue-champ-gold - red-champ-gold)}" :
-					"${(blue-champ-gold - red-champ-gold) * -1} →"
-				)
-			}")
-		(scale
-			:class "gold-ratio"
-			:valign "start"
-			:value {
-				(blue-champ-gold + red-champ-gold) != 0 ? (blue-champ-gold / (blue-champ-gold + red-champ-gold)) * 2 : 1
-			}
-			:min 0
-			:max 3
-			:active false
-			:orientation "horizontal")))
+    (box
+        :orientation "vertical"
+        (label
+            :class "gold-stats-label"
+            :valign "end"
+            :text "${
+                (blue-champ-gold - red-champ-gold) == 0 ? "← 0 →" : (
+                    (blue-champ-gold - red-champ-gold) > 0 ? "← ${(blue-champ-gold - red-champ-gold)}" :
+                    "${(blue-champ-gold - red-champ-gold) * -1} →"
+                )
+            }")
+        (scale
+            :class "gold-ratio"
+            :valign "start"
+            :value {
+                (blue-champ-gold + red-champ-gold) != 0 ? (blue-champ-gold / (blue-champ-gold + red-champ-gold)) * 2 : 1
+            }
+            :min 0
+            :max 3
+            :active false
+            :orientation "horizontal")))
 
 (defwidget league-gold-stats-row [blue-champ-icon red-champ-icon blue-champ-gold red-champ-gold]
-	(box
-		:class "group"
-		:orientation "horizontal"
-		(blue-team-gold-player-stats :icon-path blue-champ-icon :gold-amount blue-champ-gold)
-		(gold-ratio-scale :blue-champ-gold blue-champ-gold :red-champ-gold red-champ-gold)
-		(red-team-gold-player-stats :icon-path red-champ-icon :gold-amount red-champ-gold)))
+    (box
+        :class "group"
+        :orientation "horizontal"
+        (blue-team-gold-player-stats :icon-path blue-champ-icon :gold-amount blue-champ-gold)
+        (gold-ratio-scale :blue-champ-gold blue-champ-gold :red-champ-gold red-champ-gold)
+        (red-team-gold-player-stats :icon-path red-champ-icon :gold-amount red-champ-gold)))
 
 (defwidget league-gold-stats []
-	(box
-		:orientation "vertical"
-		:spacing 10
-		(league-gold-stats-row
-			:blue-champ-icon blue-champ-1-icon
-			:red-champ-icon red-champ-1-icon
-			:blue-champ-gold blue-champ-1-gold
-			:red-champ-gold red-champ-1-gold)
-		(league-gold-stats-row
-			:blue-champ-icon blue-champ-2-icon
-			:red-champ-icon red-champ-2-icon
-			:blue-champ-gold blue-champ-2-gold
-			:red-champ-gold red-champ-2-gold)
-		(league-gold-stats-row
-			:blue-champ-icon blue-champ-3-icon
-			:red-champ-icon red-champ-3-icon
-			:blue-champ-gold blue-champ-3-gold
-			:red-champ-gold red-champ-3-gold)
-		(league-gold-stats-row
-			:blue-champ-icon blue-champ-4-icon
-			:red-champ-icon red-champ-4-icon
-			:blue-champ-gold blue-champ-4-gold
-			:red-champ-gold red-champ-4-gold)
-		(league-gold-stats-row
-			:blue-champ-icon blue-champ-5-icon
-			:red-champ-icon red-champ-5-icon
-			:blue-champ-gold blue-champ-5-gold
-			:red-champ-gold red-champ-5-gold)))
+    (box
+        :orientation "vertical"
+        :spacing 10
+        (league-gold-stats-row
+            :blue-champ-icon blue-champ-1-icon
+            :red-champ-icon red-champ-1-icon
+            :blue-champ-gold blue-champ-1-gold
+            :red-champ-gold red-champ-1-gold)
+        (league-gold-stats-row
+            :blue-champ-icon blue-champ-2-icon
+            :red-champ-icon red-champ-2-icon
+            :blue-champ-gold blue-champ-2-gold
+            :red-champ-gold red-champ-2-gold)
+        (league-gold-stats-row
+            :blue-champ-icon blue-champ-3-icon
+            :red-champ-icon red-champ-3-icon
+            :blue-champ-gold blue-champ-3-gold
+            :red-champ-gold red-champ-3-gold)
+        (league-gold-stats-row
+            :blue-champ-icon blue-champ-4-icon
+            :red-champ-icon red-champ-4-icon
+            :blue-champ-gold blue-champ-4-gold
+            :red-champ-gold red-champ-4-gold)
+        (league-gold-stats-row
+            :blue-champ-icon blue-champ-5-icon
+            :red-champ-icon red-champ-5-icon
+            :blue-champ-gold blue-champ-5-gold
+            :red-champ-gold red-champ-5-gold)))
 
 (defwindow control-panel-window
-	:monitor 0
-	:geometry (geometry
-		:anchor "center")
-	:stacking "overlay"
-	(light-volume-control-panel))
+    :monitor 0
+    :geometry (geometry
+        :anchor "center")
+    :stacking "overlay"
+    (light-volume-control-panel))
 
 (defwindow league-gold-stats-window
-	:monitor 0
-	:geometry (geometry
-		:anchor "center")
-	:stacking "overlay"
-	(league-gold-stats))
+    :monitor 0
+    :geometry (geometry
+        :anchor "center")
+    :stacking "overlay"
+    (league-gold-stats))

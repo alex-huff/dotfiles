@@ -220,17 +220,17 @@ bindsym $super+Shift+e exec "swaynag --font 'Victor Mono' -t warning -m 'You pre
 # resize window
 mode "resize"
 {
-	bindsym h resize shrink width 10 px or 10 ppt
-	bindsym j resize shrink height 10 px or 10 ppt
-	bindsym k resize grow height 10 px or 10 ppt
-	bindsym l resize grow width 10 px or 10 ppt
-	bindsym Left resize shrink width 10 px or 10 ppt
-	bindsym Up resize grow height 10 px or 10 ppt
-	bindsym Down resize shrink height 10 px or 10 ppt
-	bindsym Right resize grow width 10 px or 10 ppt
-	bindsym Return mode "default"
-	bindsym Escape mode "default"
-	bindsym $super+r mode "default"
+    bindsym h resize shrink width 10 px or 10 ppt
+    bindsym j resize shrink height 10 px or 10 ppt
+    bindsym k resize grow height 10 px or 10 ppt
+    bindsym l resize grow width 10 px or 10 ppt
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Up resize grow height 10 px or 10 ppt
+    bindsym Down resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $super+r mode "default"
 }
 bindsym $super+r mode "resize"
 
@@ -251,16 +251,16 @@ for_window [title="Authentication required"] floating enable
 for_window [app_id="blueman-applet"] kill
 for_window [app_id=".*-dialogue"]
 {
-	border pixel 1
-	floating enable
-	resize set width 1280 height 720
+    border pixel 1
+    floating enable
+    resize set width 1280 height 720
 }
 for_window [app_id=".*-overlay"]
 {
-	border none
-	floating enable
-	resize set width 1920 height 1080
-	move absolute position 0px 0px
+    border none
+    floating enable
+    resize set width 1920 height 1080
+    move absolute position 0px 0px
 }
 
 # various
