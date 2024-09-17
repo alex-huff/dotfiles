@@ -14,12 +14,14 @@ settings:
         ',M': hint links spawn mpv {hint-url}
         ',m': spawn mpv {url}
         <Ctrl+d>: jseval --quiet scrollHelper.scrollPage(0.8)
+        <Ctrl+h>: tab-prev
+        <Ctrl+l>: tab-next
         <Ctrl+u>: jseval --quiet scrollHelper.scrollPage(-0.8)
         G: jseval --quiet scrollHelper.scrollToPercent(100)
-        H: tab-prev
+        H: nop
+        L: nop
         J: back
         K: forward
-        L: tab-next
         gH: tab-move -
         gL: tab-move +
         gg: jseval --quiet scrollHelper.scrollTo(0)
