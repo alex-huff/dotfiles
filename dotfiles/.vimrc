@@ -6,16 +6,19 @@ set smarttab
 set expandtab
 set tabstop=4
 set shiftwidth=0
-set listchars=tab:>~
-set clipboard=unnamedplus
 set list
+set listchars=tab:>~
 set title
 set laststatus=0
 set background=dark
 set incsearch
 syntax off
+inoremap <nowait> <C-[> <Esc>
+cnoremap <nowait> <C-[> <C-\><C-N>
 nnoremap <C-h> :wincmd h<CR>
 nnoremap <C-j> :wincmd j<CR>
 nnoremap <C-k> :wincmd k<CR>
 nnoremap <C-l> :wincmd l<CR>
-nnoremap <Leader>t :silent !dup<CR>
+nnoremap <C-S-H> :resize -1<CR>
+nnoremap <C-S-L> :resize +1<CR>
+nnoremap <Leader>t :silent !dup<CR>:redraw!<CR>
