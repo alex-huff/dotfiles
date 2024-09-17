@@ -1,2 +1,5 @@
 source ~/.vimrc
-let g:python_recommended_style=0
+set notermguicolors
+colorscheme vim
+filetype off
+set guicursor=i:block

@@ -1,3 +1,4 @@
+syntax off
 set number
 set relativenumber
 set ignorecase
@@ -12,7 +13,6 @@ set title
 set laststatus=0
 set background=dark
 set incsearch
-syntax off
 inoremap <nowait> <C-[> <Esc>
 cnoremap <nowait> <C-[> <C-\><C-N>
 nnoremap <C-h> :wincmd h<CR>
