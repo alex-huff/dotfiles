@@ -2,9 +2,9 @@
 enabled = true
 midi-input = "MPK mini"
 global-macros = "mpk-mini/global.mm"
-virtual-sustain-callback = "read state; echo $state sustain | piper --model ~/voices/en_US-hfc_male-medium.onnx --output_raw | pw-play --format s16 --rate 22050 --channels 1 -"
-enable-callback = "read state; echo $state MPK | piper --model ~/voices/en_US-hfc_male-medium.onnx --output_raw | pw-play --format s16 --rate 22050 --channels 1 -"
-subprofile-callback = "read subprofile; echo subprofile $subprofile | piper --model ~/voices/en_US-hfc_male-medium.onnx --output_raw | pw-play --format s16 --rate 22050 --channels 1 -"
+virtual-sustain-callback = "read state; echo $state sustain | speak-it"
+enable-callback = "read state; echo $state MPK | speak-it"
+subprofile-callback = "read subprofile; echo subprofile $subprofile | speak-it"
 enable-trigger = "[E4|F4|G4|A4]"
 cycle-subprofiles-trigger = "[D4|E4|F4|G4]"
 debounce-callbacks = true
