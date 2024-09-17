@@ -19,7 +19,7 @@ settings:
         <Ctrl+u>: jseval --quiet scrollHelper.scrollPage(-0.8)
         G: jseval --quiet scrollHelper.scrollToPercent(100)
         H: nop
-        L: nop
+        L: edit-url
         J: back
         K: forward
         gH: tab-move -
