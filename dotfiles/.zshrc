@@ -1,5 +1,10 @@
 [[ $- != *i* ]] && return
 
+if command -v nvim &> /dev/null
+then
+    alias vim=nvim
+fi
+
 alias cmus='PULSE_SINK=hush cmus'
 alias discord='PULSE_SINK=hush discord'
 alias webcord='PULSE_SINK=hush webcord'

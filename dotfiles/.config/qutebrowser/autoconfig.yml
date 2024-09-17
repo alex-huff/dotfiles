@@ -85,7 +85,7 @@ settings:
     global:
     - footclient
     - --app-id=footclient-dialogue
-    - vim
+    - nvim
     - -f
     - '{file}'
     - -c
