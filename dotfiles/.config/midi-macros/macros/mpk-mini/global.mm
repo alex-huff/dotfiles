@@ -151,7 +151,7 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
         except subprocess.CalledProcessError:
             return False, ''
         out_path = os.path.expanduser(f'~/clips/{clip_name}')
-        clipper_process = subprocess.run(('ffmpeg', '-ss', str(beginning_timestamp), '-i', video_path, '-t', str(duration), '-c:a', 'copy', '-c:v', 'copy', out_path))
+        clipper_process = subprocess.run(('ffmpeg', '-y', '-ss', str(beginning_timestamp), '-i', video_path, '-t', str(duration), '-c:a', 'copy', '-c:v', 'copy', out_path))
         return clipper_process.returncode == 0, out_path
 
     def on_replay_saved(event):
