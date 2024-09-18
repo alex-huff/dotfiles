@@ -22,3 +22,4 @@ nnoremap <C-l> :wincmd l<CR>
 nnoremap <C-S-H> :resize -1<CR>
 nnoremap <C-S-L> :resize +1<CR>
 nnoremap <Leader>t :silent !dup<CR>:redraw!<CR>
+nnoremap ,/ :nohlsearch<CR>
