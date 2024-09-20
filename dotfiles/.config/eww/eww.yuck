@@ -1,12 +1,11 @@
-(defvar light-r 0)
-(defvar light-g 0)
-(defvar light-b 0)
-(defvar adjusted-color "rgb(255, 255, 255)")
-(defvar brightness 0)
-(defvar temperature 0)
-(defvar main-volume 0)
-(defvar cmus-volume 0)
-(defvar focused-volume 0)
+(defvar knob-1 0)
+(defvar knob-2 0)
+(defvar knob-3 0)
+(defvar knob-4 0)
+(defvar knob-5 0)
+(defvar knob-6 0)
+(defvar knob-7 0)
+(defvar knob-8 0)
 
 (defvar blue-champ-1-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
 (defvar blue-champ-2-icon "/home/alex/lol-data/data/ddragon-data/img/champion/Jinx.png")
@@ -29,94 +28,45 @@
 (defvar red-champ-4-gold 0)
 (defvar red-champ-5-gold 0)
 
-(defwidget variable-slider [?style-class variable]
+(defwidget variable-slider [class variable]
     (scale
-        :class "slider${(style-class == '') ? '' : ' ${style-class}'}"
-        :draw-value true
-        :flipped true
+        :class "slider ${class}"
         :value variable
         :min 0
-        :max 101
+        :max 100
         :active false
-        :orientation "vertical"))
+        :orientation "horizontal"))
 
-(defwidget labeled-control [label-text]
-    (box
-        :class "group"
-        :orientation "vertical"
-        :spacing 10
-        :space-evenly false
-        (children)
-        (label
-            :class "control-panel-label"
-            :text label-text)))
-
-(defwidget control-panel-column []
+(defwidget knob-column []
     (box
         :orientation "vertical"
         :spacing 10
         :valign "center"
         (children)))
 
-(defwidget control-panel-row []
+(defwidget knob [class variable]
     (box
-        :orientation "horizontal"
-        :spacing 10
-        :halign "center"
-        (children)))
+        :class "group"
+        :space-evenly false
+        (variable-slider
+            :class class
+            :variable variable)
+        (label
+            :class "knob-label"
+            :width 50
+            :xalign 1
+            :text variable)))
 
-(defwidget light-control-panel-row []
-    (control-panel-row
-        (labeled-control
-            :label-text "Color"
-            (box
-                :class "color-box"
-                :style "background-color: ${adjusted-color}"))
-        (labeled-control
-            :label-text "R"
-            (variable-slider
-                :style-class "light-r-slider"
-                :variable light-r))
-        (labeled-control
-            :label-text "G"
-            (variable-slider
-                :style-class "light-g-slider"
-                :variable light-g))
-        (labeled-control
-            :label-text "B"
-            (variable-slider
-                :style-class "light-b-slider"
-                :variable light-b))
-        (labeled-control
-            :label-text "Bright"
-            (variable-slider
-                :style-class "brightness-slider"
-                :variable brightness))
-        (labeled-control
-            :label-text "Temp"
-            (variable-slider
-                :style-class "temperature-slider"
-                :variable temperature))))
-
-(defwidget volume-control-panel-row []
-    (control-panel-row
-        (labeled-control
-            :label-text "Main"
-            (variable-slider
-                :variable main-volume))
-        (labeled-control
-            :label-text "cmus"
-            (variable-slider
-                :variable cmus-volume))
-        (labeled-control
-            :label-text "Focused"
-            (variable-slider
-                :variable focused-volume))))
-
-(defwidget light-volume-control-panel []
-    (control-panel-column
-        (light-control-panel-row)
-        (volume-control-panel-row)))
+(defwidget knobs []
+    (knob-column
+        (knob :class "knob-1" :variable knob-1)
+        (knob :class "knob-2" :variable knob-2)
+        (knob :class "knob-3" :variable knob-3)
+        (knob :class "knob-4" :variable knob-4)
+        (knob :class "knob-5" :variable knob-5)
+        (knob :class "knob-6" :variable knob-6)
+        (knob :class "knob-7" :variable knob-7)
+        (knob :class "knob-8" :variable knob-8)))
 
 (defwidget champion-icon [icon-path align]
     (image
@@ -202,12 +152,6 @@
             :blue-champ-gold blue-champ-5-gold
             :red-champ-gold red-champ-5-gold)))
 
-(defwindow control-panel-window
-    :monitor 0
-    :geometry (geometry
-        :anchor "center")
-    :stacking "overlay"
-    (light-volume-control-panel))
 
 (defwindow league-gold-stats-window
     :monitor 0
@@ -215,3 +159,12 @@
         :anchor "center")
     :stacking "overlay"
     (league-gold-stats))
+
+(defwindow knobs-window
+    :monitor 0
+    :geometry (geometry
+        :x "15px"
+        :y "15px"
+        :anchor "bottom right")
+    :stacking "overlay"
+    (knobs))

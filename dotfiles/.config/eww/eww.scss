@@ -5,50 +5,58 @@
     background-color: #000000;
     border: 1px solid #cdd6f4;
 }
-.champion-icon, .control-panel-label, .color-box, .slider {
+.champion-icon, .knob-label, .slider {
     margin: 10px;
 }
-scale value, .gold-stats-label, .control-panel-label {
+.knob-label, .gold-stats-label {
     color: #cdd6f4;
     font-weight: normal;
+    font-family: 'Victor Mono';
 }
-.control-panel-label, .gold-stats-label {
-    font-size: 20px;
+.knob-label {
+    font-size: 17px;
 }
 .gold-stats-label {
+    font-size: 20px;
     margin-right: 10px;
     margin-left: 10px;
     margin-bottom: 4px;
     margin-top: 4px;
 }
-.color-box, .slider {
-    min-height: 240px;
+.slider {
+    min-width: 200px;
 }
 scale trough highlight {
     background-color: #cba6f7;
+}
+.knob-1 trough highlight {
+    background-color: #f5c2e7;
+}
+.knob-2 trough highlight {
+    background-color: #cba6f7;
+}
+.knob-3 trough highlight {
+    background-color: #74c7ec;
+}
+.knob-4 trough highlight {
+    background-color: #fab387;
+}
+.knob-5 trough highlight {
+    background-color: #f38ba8;
+}
+.knob-6 trough highlight {
+    background-color: #a6e3a1;
+}
+.knob-7 trough highlight {
+    background-color: #89b4fa;
+}
+.knob-8 trough highlight {
+    background-color: #f5e0dc;
 }
 scale trough {
     background-color: #1e1e2e;
     min-width: 40px;
     min-height: 35px;
-}
-scale value {
-    margin-top: 10px;
-}
-.light-r-slider trough highlight {
-    background-color: #f38ba8;
-}
-.light-g-slider trough highlight {
-    background-color: #a6e3a1;
-}
-.light-b-slider trough highlight {
-    background-color: #89b4fa;
-}
-.temperature-slider trough highlight {
-    background-color: #fab387;
-}
-.brightness-slider trough highlight {
-    background-color: #f5e0dc;
 }
 .gold-ratio trough highlight {
     background-color: #89b4fa;
