@@ -265,7 +265,7 @@ for_window [app_id=".*-overlay"]
 
 # various
 default_border normal 1
-titlebar_padding 4 1
+titlebar_padding 4 2
 focus_follows_mouse no
 smart_borders on
 tiling_drag off
