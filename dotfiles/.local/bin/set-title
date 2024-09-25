@@ -1,6 +1,12 @@
 #!/bin/python
 
 from sys import stdin, stdout
+import os
 
+is_tmux = "TMUX" in os.environ
+if is_tmux:
+    stdout.write("\x1bPtmux;\x1b")
 stdout.write(f"\x1b]2;{stdin.read()}\a")
+if is_tmux:
+    stdout.write("\x1b\\")
 stdout.flush()
