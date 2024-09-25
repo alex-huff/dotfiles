@@ -1,0 +1,6 @@
+#!/bin/python
+
+from sys import stdin, stdout
+
+stdout.write(f"\x1b]2;{stdin.read()}\a")
+stdout.flush()
