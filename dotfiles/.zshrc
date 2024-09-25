@@ -3,7 +3,7 @@
 vim ()
 {
     old_foreground=$(get-foreground)
-    set-foreground --reset
+    set-foreground --by-name white
     nvim "$@"
     set-foreground --by-spec "$old_foreground"
 }

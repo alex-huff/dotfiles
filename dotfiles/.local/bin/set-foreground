@@ -6,6 +6,7 @@ import tty
 import argparse
 
 colors = {
+    "white": (255, 255, 255),
     "rosewater": (245, 224, 220),
     "flamingo": (242, 205, 205),
     "pink": (245, 194, 231),
