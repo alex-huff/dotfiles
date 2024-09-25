@@ -1,0 +1,35 @@
+#!/bin/python
+
+from sys import stdin, exit
+import os
+import tty
+import argparse
+
+if not stdin.isatty():
+    exit(-1)
+parser = argparse.ArgumentParser(
+    prog="get-foreground",
+    description="Gets the XParseColor specification for the terminal's current foreground color using OSC 10",
+)
+arguments = parser.parse_args()
+tty_fd = stdin.fileno()
+tty_attrs = tty.tcgetattr(tty_fd)
+try:
+    tty.setraw(tty_fd)
+    command_bytes = b"\x1b]10;?\a"
+    command_memoryview = memoryview(command_bytes)
+    while len(command_memoryview) > 0:
+        written = os.write(tty_fd, command_memoryview)
+        if written < 1:
+            exit(-1)
+        command_memoryview = command_memoryview[written:]
+    response_bytearray = bytearray()
+    bell_byte = b"\a"
+    while not response_bytearray.endswith(bell_byte):
+        read_bytes = os.read(tty_fd, 1024)
+        if not read_bytes:
+            exit(-1)
+        response_bytearray.extend(read_bytes)
+finally:
+    tty.tcsetattr(tty_fd, tty.TCSAFLUSH, tty_attrs)
+print(response_bytearray[5:-1].decode("utf-8"))

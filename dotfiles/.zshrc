@@ -1,9 +1,12 @@
 [[ $- != *i* ]] && return
 
-if command -v nvim &> /dev/null
-then
-    alias vim=nvim
-fi
+vim ()
+{
+    old_foreground=$(get-foreground)
+    set-foreground --reset
+    nvim "$@"
+    set-foreground --by-spec "$old_foreground"
+}
 
 alias cmus='PULSE_SINK=hush cmus'
 alias discord='PULSE_SINK=hush discord'

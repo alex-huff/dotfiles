@@ -1,0 +1,58 @@
+#!/bin/python
+
+from sys import stdout, exit
+import os
+import tty
+import argparse
+
+colors = {
+    "rosewater": (245, 224, 220),
+    "flamingo": (242, 205, 205),
+    "pink": (245, 194, 231),
+    "mauve": (203, 166, 247),
+    "red": (243, 139, 168),
+    "maroon": (235, 160, 172),
+    "peach": (250, 179, 135),
+    "yellow": (249, 226, 175),
+    "green": (166, 227, 161),
+    "teal": (148, 226, 213),
+    "sky": (137, 220, 235),
+    "sapphire": (116, 199, 236),
+    "blue": (137, 180, 250),
+    "lavender": (180, 190, 254),
+}
+RESET_PS = 110
+SET_PS = 10
+
+if not stdout.isatty():
+    exit(-1)
+parser = argparse.ArgumentParser(
+    prog="set-foreground",
+    description="Manages foreground color using OSC 10 and 110",
+)
+mutex_group = parser.add_mutually_exclusive_group(required=True)
+mutex_group.add_argument(
+    "--by-name", help="specify color by name", choices=colors.keys()
+)
+mutex_group.add_argument(
+    "--by-spec", metavar="SPEC", help="specify color by XParseColor specification"
+)
+mutex_group.add_argument(
+    "--reset", action="store_true", help="reset color to terminal's default"
+)
+arguments = parser.parse_args()
+command_template = f"\x1b]%d;%s\a"
+if arguments.reset:
+    command = command_template % (RESET_PS, "")
+else:
+    if arguments.by_name:
+        rgb_color = colors[arguments.by_name]
+        hex_formatted_color = "/".join(
+            f"{component:02x}" * 2 for component in rgb_color
+        )
+        formatted_color = f"rgb:{hex_formatted_color}"
+    else:
+        formatted_color = arguments.by_spec
+    command = command_template % (SET_PS, formatted_color)
+stdout.write(command)
+stdout.flush()

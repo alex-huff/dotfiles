@@ -1,12 +1,16 @@
 #!/bin/python
 
-from sys import stdin, stdout
+from sys import stdout
 import os
+import argparse
 
-is_tmux = "TMUX" in os.environ
-if is_tmux:
-    stdout.write("\x1bPtmux;\x1b")
-stdout.write(f"\x1b]2;{stdin.read()}\a")
-if is_tmux:
-    stdout.write("\x1b\\")
+if not stdout.isatty():
+    exit(-1)
+parser = argparse.ArgumentParser(
+    prog="set-title",
+    description="Sets the title using OSC 2",
+)
+parser.add_argument("title", help="the new title")
+arguments = parser.parse_args()
+stdout.write(f"\x1b]2;{arguments.title}\a")
 stdout.flush()
