@@ -46,8 +46,8 @@ setopt APPEND_HISTORY
 setopt HIST_IGNORE_SPACE
 setopt HIST_IGNORE_ALL_DUPS
 
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-bindkey '^ ' autosuggest-accept
+# source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+# bindkey '^ ' autosuggest-accept
 
 for file in ~/.zsh/conf.zsh.d/*.zsh(N)
 do
