@@ -12,14 +12,11 @@ parser = argparse.ArgumentParser(
     description="Gets the XParseColor specification for the terminal's current foreground color using OSC 10",
 )
 arguments = parser.parse_args()
-should_bypass_tmux = "SSH_TTY" in os.environ and "TMUX" in os.environ
 tty_fd = stdin.fileno()
 tty_attrs = tty.tcgetattr(tty_fd)
 try:
     tty.setraw(tty_fd)
     command_bytes = b"\x1b]10;?\a"
-    if should_bypass_tmux:
-        command_bytes = b"\x1bPtmux;\x1b" + command_bytes + b"\x1b\\"
     command_memoryview = memoryview(command_bytes)
     while len(command_memoryview) > 0:
         written = os.write(tty_fd, command_memoryview)
