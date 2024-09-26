@@ -1,4 +1,4 @@
 #!/bin/sh
 
 font="Victor Mono"
-exec /bin/mpv --af=scaletempo2=max-speed=10 --video-reversal-buffer=4GiB --input-ipc-server=$XDG_RUNTIME_DIR/mpv-ipc-$$.sock --script-opts=osc-boxalpha=0 --sub-font="$font" --sub-scale=0.6 --osd-font="$font" --keep-open=yes "$@"
+exec /bin/mpv --af=scaletempo2=max-speed=10 --video-reversal-buffer=4GiB --input-ipc-server=$XDG_RUNTIME_DIR/mpv-ipc-$$.sock --script-opts=osc-boxalpha=0,osc-fadeduration=0 --sub-font="$font" --sub-scale=0.6 --osd-font="$font" --keep-open=yes "$@"
