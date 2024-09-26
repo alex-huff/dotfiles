@@ -5,30 +5,70 @@ import os
 import tty
 import argparse
 
+
 class ListColorsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         print("\n".join(colors.keys()))
         parser.exit()
 
+
 colors = {
-    "white": (255, 255, 255),
-    "gray": (115, 121, 148),
-    "darkgray": (48, 52, 70),
-    "black": (0, 0, 0),
-    "rosewater": (245, 224, 220),
-    "flamingo": (242, 205, 205),
-    "pink": (245, 194, 231),
-    "mauve": (203, 166, 247),
-    "red": (243, 139, 168),
-    "maroon": (235, 160, 172),
-    "peach": (250, 179, 135),
-    "yellow": (249, 226, 175),
-    "green": (166, 227, 161),
-    "teal": (148, 226, 213),
-    "sky": (137, 220, 235),
-    "sapphire": (116, 199, 236),
-    "blue": (137, 180, 250),
-    "lavender": (180, 190, 254),
+    "white": "FFFFFF",
+    "black": "000000",
+    "dbg0": "282828",
+    "dred0": "cc241d",
+    "dgreen0": "98971a",
+    "dyellow0": "d79921",
+    "dblue0": "458588",
+    "dpurple0": "b16286",
+    "daqua0": "689d6a",
+    "dgray0": "a89984",
+    "dgray1": "928374",
+    "dred1": "fb4934",
+    "dgreen1": "b8bb26",
+    "dyellow1": "fabd2f",
+    "dblue1": "83a598",
+    "dpurple1": "d3869b",
+    "daqua1": "8ec07c",
+    "dbg0h": "1d2021",
+    "dbg1": "3c3836",
+    "dbg2": "504945",
+    "dbg3": "665c54",
+    "dbg4": "7c6f64",
+    "dorange0": "d65d0e",
+    "dbg0s": "32302f",
+    "dfg0": "fbf1c7",
+    "dfg1": "ebdbb2",
+    "dfg2": "d5c4a1",
+    "dfg3": "bdae93",
+    "dorange1": "fe8019",
+    "lbg0": "fbf1c7",
+    "lred0": "cc241d",
+    "lgreen0": "98971a",
+    "lyellow0": "d79921",
+    "lblue0": "458588",
+    "lpurple0": "b16286",
+    "laqua0": "689d6a",
+    "lgray0": "7c6f64",
+    "lgray1": "928374",
+    "lred1": "9d0006",
+    "lgreen1": "79740e",
+    "lyellow1": "b57614",
+    "lblue1": "076678",
+    "lpurple1": "8f3f71",
+    "laqua1": "427b58",
+    "lbg0h": "f9f5d7",
+    "lbg1": "ebdbb2",
+    "lbg2": "d5c4a1",
+    "lbg3": "bdae93",
+    "lbg4": "a89984",
+    "lorange0": "d65d0e",
+    "lbg0s": "f2e5bc",
+    "lfg0": "282828",
+    "lfg1": "3c3836",
+    "lfg2": "504945",
+    "lfg3": "665c54",
+    "lorange1": "fe8019",
 }
 PROGRAM_NAME = os.path.basename(argv[0])
 RESET_PS = 110 if PROGRAM_NAME == "set-foreground" else 111
@@ -63,10 +103,9 @@ if arguments.reset:
 else:
     if arguments.by_name:
         rgb_color = colors[arguments.by_name]
-        hex_formatted_color = "/".join(
-            f"{component:02x}" * 2 for component in rgb_color
+        formatted_color = (
+            f"rgb:{rgb_color[0:2] * 2}/{rgb_color[2:4] * 2}/{rgb_color[4:6] * 2}"
         )
-        formatted_color = f"rgb:{hex_formatted_color}"
     else:
         formatted_color = arguments.by_spec
     command = command_template % (SET_PS, formatted_color)
