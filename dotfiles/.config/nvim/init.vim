@@ -1,5 +1,3 @@
 source ~/.vimrc
-set notermguicolors
-colorscheme vim
-filetype off
+filetype indent off
 set guicursor=i:block
