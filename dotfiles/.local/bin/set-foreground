@@ -1,6 +1,10 @@
 #!/bin/python3
 
-from sys import stdout, exit, argv
+# TODO Rename from set-forground -> color-manager. Switch to subcommand model
+# with subcommands reset [-> (fg, bg)], set -> (fg, bg), get -> (fg, bg), and
+# cycle -> (dark, light).
+
+from sys import exit, argv
 import os
 import tty
 import argparse
@@ -71,8 +75,8 @@ colors = {
     "lorange1": "fe8019",
 }
 PROGRAM_NAME = os.path.basename(argv[0])
-RESET_PS = 110 if PROGRAM_NAME == "set-foreground" else 111
-SET_PS = 10 if PROGRAM_NAME == "set-foreground" else 11
+RESET_PS = b"110" if PROGRAM_NAME == "set-foreground" else b"111"
+SET_PS = b"10" if PROGRAM_NAME == "set-foreground" else b"11"
 
 parser = argparse.ArgumentParser(
     prog=PROGRAM_NAME,
@@ -95,11 +99,9 @@ mutex_group.add_argument(
     "--reset", action="store_true", help="reset color to terminal's default"
 )
 arguments = parser.parse_args()
-if not stdout.isatty():
-    exit(-1)
-command_template = f"\x1b]%d;%s\a"
+command_template = b"\x1b]%b;%b\a"
 if arguments.reset:
-    command = command_template % (RESET_PS, "")
+    command_bytes = command_template % (RESET_PS, b"")
 else:
     if arguments.by_name:
         rgb_color = colors[arguments.by_name]
@@ -108,6 +110,14 @@ else:
         )
     else:
         formatted_color = arguments.by_spec
-    command = command_template % (SET_PS, formatted_color)
-stdout.write(command)
-stdout.flush()
+    command_bytes = command_template % (SET_PS, bytes(formatted_color, "utf-8"))
+command_memoryview = memoryview(command_bytes)
+tty_fd = os.open("/dev/tty", os.O_RDWR)
+try:
+    while len(command_memoryview) > 0:
+        written = os.write(tty_fd, command_memoryview)
+        if written < 1:
+            exit(-1)
+        command_memoryview = command_memoryview[written:]
+finally:
+    os.close(tty_fd)
