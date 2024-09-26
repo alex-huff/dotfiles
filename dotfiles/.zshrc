@@ -4,6 +4,12 @@ alias cmus='PULSE_SINK=hush cmus'
 alias discord='PULSE_SINK=hush discord'
 alias webcord='PULSE_SINK=hush webcord'
 
+for color in $(set-foreground --list-colors)
+do
+    alias fg${color}="set-foreground --by-name $color"
+    alias bg${color}="set-background --by-name $color"
+done
+
 if command -v pyenv &> /dev/null
 then
     export PYENV_ROOT="$HOME/.pyenv"

@@ -5,8 +5,15 @@ import os
 import tty
 import argparse
 
+class ListColorsAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        print("\n".join(colors.keys()))
+        parser.exit()
+
 colors = {
     "white": (255, 255, 255),
+    "gray": (115, 121, 148),
+    "darkgray": (48, 52, 70),
     "black": (0, 0, 0),
     "rosewater": (245, 224, 220),
     "flamingo": (242, 205, 205),
@@ -27,11 +34,15 @@ PROGRAM_NAME = os.path.basename(argv[0])
 RESET_PS = 110 if PROGRAM_NAME == "set-foreground" else 111
 SET_PS = 10 if PROGRAM_NAME == "set-foreground" else 11
 
-if not stdout.isatty():
-    exit(-1)
 parser = argparse.ArgumentParser(
     prog=PROGRAM_NAME,
     description="Manages terminal fg/bg color using OSC 10/11 and 110/111",
+)
+parser.add_argument(
+    "--list-colors",
+    action=ListColorsAction,
+    nargs=0,
+    help="list valid color names",
 )
 mutex_group = parser.add_mutually_exclusive_group(required=True)
 mutex_group.add_argument(
@@ -44,6 +55,8 @@ mutex_group.add_argument(
     "--reset", action="store_true", help="reset color to terminal's default"
 )
 arguments = parser.parse_args()
+if not stdout.isatty():
+    exit(-1)
 command_template = f"\x1b]%d;%s\a"
 if arguments.reset:
     command = command_template % (RESET_PS, "")
