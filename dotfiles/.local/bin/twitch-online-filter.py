@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/python3
 
 import sys
 from itertools import batched, compress, chain
