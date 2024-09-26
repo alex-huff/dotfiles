@@ -1,22 +1,25 @@
 #!/bin/python3
 
-from sys import stdin, exit
+from sys import stdin, exit, argv
 import os
 import tty
 import argparse
 
+PROGRAM_NAME = os.path.basename(argv[0])
+SET_PS = b"10" if PROGRAM_NAME == "get-foreground" else b"11"
+
 if not stdin.isatty():
     exit(-1)
 parser = argparse.ArgumentParser(
-    prog="get-foreground",
-    description="Gets the XParseColor specification for the terminal's current foreground color using OSC 10",
+    prog=PROGRAM_NAME,
+    description="Gets the XParseColor specification for the terminal's current fg/bg color using OSC 10/11",
 )
 arguments = parser.parse_args()
 tty_fd = stdin.fileno()
 tty_attrs = tty.tcgetattr(tty_fd)
 try:
     tty.setraw(tty_fd)
-    command_bytes = b"\x1b]10;?\a"
+    command_bytes = b"\x1b]%b;?\a" % SET_PS
     command_memoryview = memoryview(command_bytes)
     while len(command_memoryview) > 0:
         written = os.write(tty_fd, command_memoryview)

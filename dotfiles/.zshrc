@@ -12,13 +12,12 @@ then
 fi
 vim_exclude_paths=(~/.local/bin)
 vim_path=(${path:|vim_exclude_paths})
-if command -v nvim &> /dev/null
+VIM_EXECUTABLE_PATH=$(which nvim)
+if [ $? -ne 0 ]
 then
-    VIM_PATH=nvim
-else
-    VIM_PATH="$(path=($vim_path) which vim)"
+    VIM_EXECUTABLE_PATH="$(path=($vim_path) which vim)"
 fi
-export VIM_PATH
+export VIM_EXECUTABLE_PATH
 
 setopt vi
 

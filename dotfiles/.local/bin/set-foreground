@@ -1,12 +1,13 @@
 #!/bin/python3
 
-from sys import stdout, exit
+from sys import stdout, exit, argv
 import os
 import tty
 import argparse
 
 colors = {
     "white": (255, 255, 255),
+    "black": (0, 0, 0),
     "rosewater": (245, 224, 220),
     "flamingo": (242, 205, 205),
     "pink": (245, 194, 231),
@@ -22,14 +23,15 @@ colors = {
     "blue": (137, 180, 250),
     "lavender": (180, 190, 254),
 }
-RESET_PS = 110
-SET_PS = 10
+PROGRAM_NAME = os.path.basename(argv[0])
+RESET_PS = 110 if PROGRAM_NAME == "set-foreground" else 111
+SET_PS = 10 if PROGRAM_NAME == "set-foreground" else 11
 
 if not stdout.isatty():
     exit(-1)
 parser = argparse.ArgumentParser(
-    prog="set-foreground",
-    description="Manages foreground color using OSC 10 and 110",
+    prog=PROGRAM_NAME,
+    description="Manages terminal fg/bg color using OSC 10/11 and 110/111",
 )
 mutex_group = parser.add_mutually_exclusive_group(required=True)
 mutex_group.add_argument(

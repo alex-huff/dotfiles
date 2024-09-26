@@ -1,6 +1,9 @@
 #!/bin/zsh
 
 old_foreground=$(get-foreground)
+old_background=$(get-background)
 set-foreground --by-name white
-"$VIM_PATH" "$@"
+set-background --by-name black
+"$VIM_EXECUTABLE_PATH" "$@"
 set-foreground --by-spec "$old_foreground"
+set-background --by-spec "$old_background"
