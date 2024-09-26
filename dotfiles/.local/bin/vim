@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 
 old_foreground=$(get-foreground)
 old_background=$(get-background)
