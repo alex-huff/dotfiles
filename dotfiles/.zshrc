@@ -4,6 +4,22 @@ alias cmus='PULSE_SINK=hush cmus'
 alias discord='PULSE_SINK=hush discord'
 alias webcord='PULSE_SINK=hush webcord'
 
+if command -v pyenv &> /dev/null
+then
+    export PYENV_ROOT="$HOME/.pyenv"
+    [ -d $PYENV_ROOT/bin ] && path=($PYENV_ROOT/bin $path)
+    eval "$(pyenv init -)"
+fi
+vim_exclude_paths=(~/.local/bin)
+vim_path=(${path:|vim_exclude_paths})
+if command -v nvim &> /dev/null
+then
+    VIM_PATH=nvim
+else
+    VIM_PATH="$(path=($vim_path) which vim)"
+fi
+export VIM_PATH
+
 setopt vi
 
 PS1='[%n@%m]> '

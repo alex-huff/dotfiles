@@ -3,12 +3,6 @@ path=(~/.pfetch $path)
 path=(~/.cargo/bin $path)
 path=(~/.local/bin $path)
 path=(~/.local/share/JetBrains/Toolbox/scripts $path)
-if command -v pyenv &> /dev/null
-then
-    export PYENV_ROOT="$HOME/.pyenv"
-    [ -d $PYENV_ROOT/bin ] && path=($PYENV_ROOT/bin $path)
-    eval "$(pyenv init -)"
-fi
 export PATH
 export QT_QPA_PLATFORM=wayland
 export XDG_CURRENT_DESKTOP=sway
