@@ -1,13 +1,5 @@
 [[ $- != *i* ]] && return
 
-vim ()
-{
-    old_foreground=$(get-foreground)
-    set-foreground --by-name white
-    nvim "$@"
-    set-foreground --by-spec "$old_foreground"
-}
-
 alias cmus='PULSE_SINK=hush cmus'
 alias discord='PULSE_SINK=hush discord'
 alias webcord='PULSE_SINK=hush webcord'

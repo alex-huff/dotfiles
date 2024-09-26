@@ -1,0 +1,14 @@
+#!/bin/zsh
+
+exclude_paths=("${0:a:h}")
+vim_path=(${path:|exclude_paths})
+if command -v nvim &> /dev/null
+then
+    installed_vim=nvim
+else
+    installed_vim=$(path=($vim_path) which vim)
+fi
+old_foreground=$(get-foreground)
+set-foreground --by-name white
+$installed_vim "$@"
+set-foreground --by-spec "$old_foreground"
