@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/python3
 
 from enum import Enum, auto
 import math
