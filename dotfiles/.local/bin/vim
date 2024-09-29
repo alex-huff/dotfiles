@@ -2,7 +2,7 @@
 
 old_foreground=$(color-manager get foreground)
 old_background=$(color-manager get background)
-color-manager set foreground --by-name white
+color-manager set foreground --by-name dfg1
 color-manager set background --by-name black
 "$VIM_EXECUTABLE_PATH" "$@"
 color-manager set foreground --by-spec "$old_foreground"
