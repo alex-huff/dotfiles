@@ -1,0 +1,432 @@
+#!/bin/python3
+
+import sys
+import os
+import tty
+import argparse
+import types
+from itertools import chain
+
+flatmap = chain.from_iterable
+
+
+def list_colors(arguments):
+    print("\n".join(COLORS.keys()))
+
+
+def reset(arguments):
+    try_reset(FOREGROUND_RESET_PS, BACKGROUND_RESET_PS)
+
+
+def reset_foreground(arguments):
+    try_reset(FOREGROUND_RESET_PS)
+
+
+def reset_background(arguments):
+    try_reset(BACKGROUND_RESET_PS)
+
+
+def set_foreground(arguments):
+    try_set_color_by_arguments(arguments, FOREGROUND_SET_PS)
+
+
+def set_background(arguments):
+    try_set_color_by_arguments(arguments, BACKGROUND_SET_PS)
+
+
+def get_foreground(arguments):
+    try_query_and_print_color(FOREGROUND_SET_PS)
+
+
+def get_background(arguments):
+    try_query_and_print_color(BACKGROUND_SET_PS)
+
+
+def cycle_dark(arguments):
+    try_cycle_with_palettes(DARK_FOREGROUND_COLOR_CYCLE, DARK_BACKGROUND_COLOR_CYCLE)
+
+
+def cycle_light(arguments):
+    try_cycle_with_palettes(LIGHT_FOREGROUND_COLOR_CYCLE, LIGHT_BACKGROUND_COLOR_CYCLE)
+
+
+def try_reset(*args):
+    commands = (OSC_COLOR_COMMAND_TEMPLATE % (ps, b"") for ps in args)
+    if not send_command(*commands):
+        sys.exit(1)
+
+
+def try_set_color_by_arguments(arguments, ps):
+    if arguments.by_name:
+        rgb_color = COLORS[arguments.by_name]
+        formatted_color = hex_to_x_parse_color(rgb_color)
+    else:
+        formatted_color = arguments.by_spec
+    command_bytes = OSC_COLOR_COMMAND_TEMPLATE % (ps, bytes(formatted_color, "utf-8"))
+    if not send_command(command_bytes):
+        sys.exit(1)
+
+
+def send_command(*args):
+    tty_fd = open_tty()
+    try:
+        for command_bytes in args:
+            if not write_all(tty_fd, command_bytes):
+                return False
+    finally:
+        os.close(tty_fd)
+    return True
+
+
+def try_query_and_print_color(ps):
+    success, color = query_color(ps)
+    if not success:
+        sys.exit(1)
+    print(color)
+
+
+def query_color(ps):
+    tty_fd = open_tty()
+    tty_attrs = tty.tcgetattr(tty_fd)
+    try:
+        tty.setraw(tty_fd)
+        command_bytes = OSC_COLOR_COMMAND_TEMPLATE % (ps, WILDCARD)
+        if not write_all(tty_fd, command_bytes):
+            return False, None
+        success, response_bytearray = read_osc_response(tty_fd)
+        if not success:
+            return False, None
+    finally:
+        tty.tcsetattr(tty_fd, tty.TCSAFLUSH, tty_attrs)
+        os.close(tty_fd)
+    return True, response_bytearray[5:-1].decode("utf-8")
+
+
+def try_cycle_with_palettes(fg_palette, bg_palette):
+    success = cycle_with_palettes(fg_palette, bg_palette)
+    if not success:
+        sys.exit(1)
+
+
+def cycle_with_palettes(fg_palette, bg_palette):
+    tty_fd = open_tty()
+    tty_attrs = tty.tcgetattr(tty_fd)
+    fg_index = 0
+    bg_index = 0
+
+    def update_color(is_foreground=True):
+        ps = FOREGROUND_SET_PS if is_foreground else BACKGROUND_SET_PS
+        palette = fg_palette if is_foreground else bg_palette
+        palette_index = fg_index if is_foreground else bg_index
+        rgb_color = COLORS[palette[palette_index]]
+        formatted_color = hex_to_x_parse_color(rgb_color)
+        command_bytes = OSC_COLOR_COMMAND_TEMPLATE % (
+            ps,
+            bytes(formatted_color, "utf-8"),
+        )
+        return write_all(tty_fd, command_bytes)
+
+    try:
+        tty.setraw(tty_fd)
+        if not (update_color(is_foreground=True) and update_color(is_foreground=False)):
+            return False
+        while True:
+            read_bytes = os.read(tty_fd, MAX_READ)
+            if not read_bytes:
+                return False
+            previous_fg_index, previous_bg_index = fg_index, bg_index
+            for byte in read_bytes:
+                match byte:
+                    case CONTROLS.CTRL_C | CONTROLS.RETURN:
+                        return True
+                    case CONTROLS.LEFT:
+                        bg_index = wrap_index(bg_index, -1, len(bg_palette))
+                    case CONTROLS.RIGHT:
+                        bg_index = wrap_index(bg_index, 1, len(bg_palette))
+                    case CONTROLS.UP:
+                        fg_index = wrap_index(fg_index, 1, len(fg_palette))
+                    case CONTROLS.DOWN:
+                        fg_index = wrap_index(fg_index, -1, len(fg_palette))
+            if fg_index != previous_fg_index:
+                if not update_color(is_foreground=True):
+                    return False
+            if bg_index != previous_bg_index:
+                if not update_color(is_foreground=False):
+                    return False
+    finally:
+        tty.tcsetattr(tty_fd, tty.TCSAFLUSH, tty_attrs)
+        os.close(tty_fd)
+
+
+def hex_to_x_parse_color(hex):
+    return f"rgb:{hex[0:2] * 2}/{hex[2:4] * 2}/{hex[4:6] * 2}"
+
+
+def wrap_index(current, offset, length):
+    return (current + offset) % length
+
+
+def write_all(tty_fd, bytes):
+    bytes_memoryview = memoryview(bytes)
+    while len(bytes_memoryview) > 0:
+        written = os.write(tty_fd, bytes_memoryview)
+        if written < 1:
+            return False
+        bytes_memoryview = bytes_memoryview[written:]
+    return True
+
+
+def read_osc_response(tty_fd):
+    response_bytearray = bytearray()
+    start_found = False
+    end_index = -1
+    while end_index == -1:
+        read_bytes = os.read(tty_fd, MAX_READ)
+        if not read_bytes:
+            return False, response_bytearray
+        check_for_bell_start_index = len(response_bytearray)
+        response_bytearray.extend(read_bytes)
+        if not start_found:
+            start_index = response_bytearray.find(OSC_START)
+            if start_index == -1:
+                escape_index = response_bytearray.rfind(ESCAPE)
+                if escape_index >= 0 and OSC_START.startswith(
+                    response_bytearray[escape_index:]
+                ):
+                    new_start = escape_index
+                else:
+                    new_start = len(response_bytearray)
+                response_bytearray = response_bytearray[new_start:]
+                continue
+            start_found = True
+            response_bytearray = response_bytearray[start_index:]
+        end_index = response_bytearray.find(BELL, check_for_bell_start_index)
+    return True, response_bytearray[:end_index + 1]
+
+
+def open_tty():
+    return os.open("/dev/tty", os.O_RDWR)
+
+
+def add_mutex_color_specification_args_to_parser(parser):
+    mutex_group = parser.add_mutually_exclusive_group(required=True)
+    mutex_group.add_argument(
+        "--by-name", help="specify color by name", choices=COLORS.keys()
+    )
+    mutex_group.add_argument(
+        "--by-spec", metavar="SPEC", help="specify color by XParseColor specification"
+    )
+
+
+def generate_with_prefix(prefix, iterable):
+    for element in iterable:
+        yield f"{prefix}{element}"
+
+
+PROGRAM_NAME = "color-manager"
+MAX_READ = 1024
+FOREGROUND_RESET_PS = b"110"
+FOREGROUND_SET_PS = b"10"
+BACKGROUND_RESET_PS = b"111"
+BACKGROUND_SET_PS = b"11"
+FOREGROUND_ALIASES = ["fg"]
+BACKGROUND_ALIASES = ["bg"]
+ESCAPE = b"\x1b"
+OSC_START = ESCAPE + b"]"
+OSC_COLOR_COMMAND_TEMPLATE = OSC_START + b"%b;%b\a"
+WILDCARD = b"?"
+BELL = b"\a"
+CONTROLS = types.SimpleNamespace()
+CONTROLS.LEFT = ord(b"h")
+CONTROLS.RIGHT = ord(b"l")
+CONTROLS.UP = ord(b"k")
+CONTROLS.DOWN = ord(b"j")
+CONTROLS.RETURN = ord(b"\r")
+CONTROLS.CTRL_C = ord(b"\x03")
+
+COLORS = {
+    "white": "FFFFFF",
+    "black": "000000",
+    "dbg0": "282828",
+    "dred0": "cc241d",
+    "dgreen0": "98971a",
+    "dyellow0": "d79921",
+    "dblue0": "458588",
+    "dpurple0": "b16286",
+    "daqua0": "689d6a",
+    "dgray0": "a89984",
+    "dgray1": "928374",
+    "dred1": "fb4934",
+    "dgreen1": "b8bb26",
+    "dyellow1": "fabd2f",
+    "dblue1": "83a598",
+    "dpurple1": "d3869b",
+    "daqua1": "8ec07c",
+    "dbg0h": "1d2021",
+    "dbg1": "3c3836",
+    "dbg2": "504945",
+    "dbg3": "665c54",
+    "dbg4": "7c6f64",
+    "dorange0": "d65d0e",
+    "dbg0s": "32302f",
+    "dfg0": "fbf1c7",
+    "dfg1": "ebdbb2",
+    "dfg2": "d5c4a1",
+    "dfg3": "bdae93",
+    "dorange1": "fe8019",
+    "lbg0": "fbf1c7",
+    "lred0": "cc241d",
+    "lgreen0": "98971a",
+    "lyellow0": "d79921",
+    "lblue0": "458588",
+    "lpurple0": "b16286",
+    "laqua0": "689d6a",
+    "lgray0": "7c6f64",
+    "lgray1": "928374",
+    "lred1": "9d0006",
+    "lgreen1": "79740e",
+    "lyellow1": "b57614",
+    "lblue1": "076678",
+    "lpurple1": "8f3f71",
+    "laqua1": "427b58",
+    "lbg0h": "f9f5d7",
+    "lbg1": "ebdbb2",
+    "lbg2": "d5c4a1",
+    "lbg3": "bdae93",
+    "lbg4": "a89984",
+    "lorange0": "d65d0e",
+    "lbg0s": "f2e5bc",
+    "lfg0": "282828",
+    "lfg1": "3c3836",
+    "lfg2": "504945",
+    "lfg3": "665c54",
+    "lorange1": "fe8019",
+}
+
+NON_GRAYSCALE_COLOR_CYCLE = list(
+    flatmap(
+        (f"{color}{i}" for i in range(2))
+        for color in ("aqua", "purple", "blue", "yellow", "green", "red", "orange")
+    )
+)
+
+FOREGROUND_COLOR_CYCLE = list(
+    flatmap(
+        (
+            (f"fg{i}" for i in range(4)),
+            (f"gray{i}" for i in range(2)),
+        )
+    )
+)
+FOREGROUND_COLOR_CYCLE.extend(NON_GRAYSCALE_COLOR_CYCLE)
+
+BACKGROUND_COLOR_CYCLE = list(
+    flatmap(
+        (
+            (f"bg0{c}" for c in ("h", "", "s")),
+            (f"bg{i}" for i in range(1, 5)),
+            (f"gray{i}" for i in range(1, -1, -1)),
+        )
+    )
+)
+BACKGROUND_COLOR_CYCLE.extend(NON_GRAYSCALE_COLOR_CYCLE)
+
+DARK_FOREGROUND_COLOR_CYCLE = ["white"]
+DARK_FOREGROUND_COLOR_CYCLE.extend(generate_with_prefix("d", FOREGROUND_COLOR_CYCLE))
+
+DARK_BACKGROUND_COLOR_CYCLE = ["black"]
+DARK_BACKGROUND_COLOR_CYCLE.extend(generate_with_prefix("d", BACKGROUND_COLOR_CYCLE))
+
+LIGHT_FOREGROUND_COLOR_CYCLE = ["black"]
+LIGHT_FOREGROUND_COLOR_CYCLE.extend(generate_with_prefix("l", FOREGROUND_COLOR_CYCLE))
+
+LIGHT_BACKGROUND_COLOR_CYCLE = ["white"]
+LIGHT_BACKGROUND_COLOR_CYCLE.extend(generate_with_prefix("l", BACKGROUND_COLOR_CYCLE))
+
+parser = argparse.ArgumentParser(
+    prog=PROGRAM_NAME,
+    description="Manages terminal foreground/background color using various OSC codes",
+)
+parser.set_defaults(func=lambda _: parser.print_help())
+subparsers = parser.add_subparsers(title="subcommands")
+
+parser_list_colors = subparsers.add_parser(
+    "list-colors", aliases=["ls-colors"], help="Lists the recognized color names"
+)
+parser_list_colors.set_defaults(func=list_colors)
+
+parser_reset = subparsers.add_parser("reset", help="Resets terminal colors")
+parser_reset.set_defaults(func=reset)
+reset_subparsers = parser_reset.add_subparsers(title="subcommands")
+
+parser_reset_foreground = reset_subparsers.add_parser(
+    "foreground",
+    aliases=FOREGROUND_ALIASES,
+    help="Resets the terminal's foreground color",
+)
+parser_reset_foreground.set_defaults(func=reset_foreground)
+
+parser_reset_background = reset_subparsers.add_parser(
+    "background",
+    aliases=BACKGROUND_ALIASES,
+    help="Resets the terminal's background color",
+)
+parser_reset_background.set_defaults(func=reset_background)
+
+parser_set = subparsers.add_parser("set", help="Sets terminal colors")
+parser_set.set_defaults(func=lambda _: parser_set.print_help())
+set_subparsers = parser_set.add_subparsers(title="subcommands")
+
+parser_set_foreground = set_subparsers.add_parser(
+    "foreground",
+    aliases=FOREGROUND_ALIASES,
+    help="Sets the terminal's foreground color",
+)
+parser_set_foreground.set_defaults(func=set_foreground)
+add_mutex_color_specification_args_to_parser(parser_set_foreground)
+
+parser_set_background = set_subparsers.add_parser(
+    "background",
+    aliases=BACKGROUND_ALIASES,
+    help="Sets the terminal's background color",
+)
+parser_set_background.set_defaults(func=set_background)
+add_mutex_color_specification_args_to_parser(parser_set_background)
+
+parser_get = subparsers.add_parser("get", help="Gets terminal colors")
+parser_get.set_defaults(func=lambda _: parser_get.print_help())
+get_subparsers = parser_get.add_subparsers(title="subcommands")
+
+parser_get_foreground = get_subparsers.add_parser(
+    "foreground",
+    aliases=FOREGROUND_ALIASES,
+    help="Gets the terminal's foreground color",
+)
+parser_get_foreground.set_defaults(func=get_foreground)
+
+parser_get_background = get_subparsers.add_parser(
+    "background",
+    aliases=BACKGROUND_ALIASES,
+    help="Gets the terminal's background color",
+)
+parser_get_background.set_defaults(func=get_background)
+
+parser_cycle = subparsers.add_parser(
+    "cycle",
+    help="Cycles through terminal colors with vi movement keys. The keys h and l cycle the background color while j and k cycle the foreground color. Pressing the return key or Ctrl+C will close the program.",
+)
+parser_cycle.set_defaults(func=lambda _: parser_cycle.print_help())
+cycle_subparsers = parser_cycle.add_subparsers(title="subcommands")
+
+parser_cycle_foreground = cycle_subparsers.add_parser(
+    "dark", help="Cycles through colors on dark-mode palette"
+)
+parser_cycle_foreground.set_defaults(func=cycle_dark)
+
+parser_cycle_background = cycle_subparsers.add_parser(
+    "light", help="Cycles through colors on light-mode palette"
+)
+parser_cycle_background.set_defaults(func=cycle_light)
+
+arguments = parser.parse_args()
+arguments.func(arguments)

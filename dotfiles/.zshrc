@@ -4,11 +4,13 @@ alias cmus='PULSE_SINK=hush cmus'
 alias discord='PULSE_SINK=hush discord'
 alias webcord='PULSE_SINK=hush webcord'
 
-for color in $(set-foreground --list-colors)
+for color in $(color-manager list-colors)
 do
-    alias fg${color}="set-foreground --by-name $color"
-    alias bg${color}="set-background --by-name $color"
+    alias fg${color}="color-manager set foreground --by-name $color"
+    alias bg${color}="color-manager set background --by-name $color"
 done
+alias cmcd="color-manager cycle dark"
+alias cmcl="color-manager cycle light"
 
 if command -v pyenv &> /dev/null
 then

@@ -1,9 +1,9 @@
 #!/bin/sh
 
-old_foreground=$(get-foreground)
-old_background=$(get-background)
-set-foreground --by-name white
-set-background --by-name black
+old_foreground=$(color-manager get foreground)
+old_background=$(color-manager get background)
+color-manager set foreground --by-name white
+color-manager set background --by-name black
 "$VIM_EXECUTABLE_PATH" "$@"
-set-foreground --by-spec "$old_foreground"
-set-background --by-spec "$old_background"
+color-manager set foreground --by-spec "$old_foreground"
+color-manager set background --by-spec "$old_background"
