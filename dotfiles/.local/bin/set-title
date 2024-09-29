@@ -1,16 +1,22 @@
 #!/bin/python3
 
-from sys import stdout
 import os
 import argparse
 
-if not stdout.isatty():
-    exit(-1)
 parser = argparse.ArgumentParser(
     prog="set-title",
     description="Sets the title using OSC 2",
 )
 parser.add_argument("title", help="the new title")
 arguments = parser.parse_args()
-stdout.write(f"\x1b]2;{arguments.title}\a")
-stdout.flush()
+command_bytes = b"\x1b]2;%b\a" % bytes(arguments.title, "utf-8")
+command_memoryview = memoryview(command_bytes)
+tty_fd = os.open("/dev/tty", os.O_RDWR)
+try:
+    while len(command_memoryview) > 0:
+        written = os.write(tty_fd, command_memoryview)
+        if written < 1:
+            exit(-1)
+        command_memoryview = command_memoryview[written:]
+finally:
+    os.close(tty_fd)
