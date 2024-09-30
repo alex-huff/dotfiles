@@ -19,14 +19,13 @@ done
 alias cmcd="color-manager cycle dark"
 alias cmcl="color-manager cycle light"
 
-vim_exclude_paths=(~/.local/bin)
-vim_path=(${path:|vim_exclude_paths})
-VIM_EXECUTABLE_PATH=$(which nvim)
+EDITOR=$(which nvim)
 if [ $? -ne 0 ]
 then
-    VIM_EXECUTABLE_PATH="$(path=($vim_path) which vim)"
+    EDITOR="$(which vim)"
 fi
-export VIM_EXECUTABLE_PATH
+export EDITOR
+alias vim="$EDITOR"
 
 setopt vi
 
