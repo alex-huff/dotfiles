@@ -1,5 +1,12 @@
 [[ $- != *i* ]] && return
 
+export PYENV_ROOT="$HOME/.pyenv"
+if [ -d $PYENV_ROOT/bin ]
+then
+    path=($PYENV_ROOT/bin $path)
+    eval "$(pyenv init -)"
+fi
+
 alias cmus='PULSE_SINK=hush cmus'
 alias discord='PULSE_SINK=hush discord'
 alias webcord='PULSE_SINK=hush webcord'
@@ -12,12 +19,6 @@ done
 alias cmcd="color-manager cycle dark"
 alias cmcl="color-manager cycle light"
 
-if command -v pyenv &> /dev/null
-then
-    export PYENV_ROOT="$HOME/.pyenv"
-    [ -d $PYENV_ROOT/bin ] && path=($PYENV_ROOT/bin $path)
-    eval "$(pyenv init -)"
-fi
 vim_exclude_paths=(~/.local/bin)
 vim_path=(${path:|vim_exclude_paths})
 VIM_EXECUTABLE_PATH=$(which nvim)
