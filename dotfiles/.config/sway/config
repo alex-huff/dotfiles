@@ -237,10 +237,10 @@ bindsym $super+r mode "resize"
 # toggle border style
 bindsym $super+Shift+b border toggle
 
-# colors
-client.focused          #b0dfd9 #315a5e #ffffff #b0dfd9 #b0dfd9
-client.unfocused        #313244 #000000 #cdd6f4 #313244 #313244
-client.focused_inactive #426272 #093f4c #cdd6f4 #426272 #426272
+# colors                border  bg      text    ind     child_b
+client.focused          #928374 #ebdbb2 #282828 #928374 #928374
+client.unfocused        #504945 #282828 #ebdbb2 #504945 #504945
+client.focused_inactive #665c54 #504945 #ebdbb2 #665c54 #665c54
 
 # include device specific configuration and overrides
 include device/*

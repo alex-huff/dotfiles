@@ -3,13 +3,13 @@
 }
 .group {
     background-color: #000000;
-    border: 1px solid #cdd6f4;
+    border: 1px solid #ebdbb2;
 }
 .champion-icon, .knob-label, .slider {
     margin: 10px;
 }
 .knob-label, .gold-stats-label {
-    color: #cdd6f4;
+    color: #ebdbb2;
     font-weight: normal;
     font-family: 'Victor Mono';
 }
@@ -27,39 +27,39 @@
     min-width: 200px;
 }
 scale trough highlight {
-    background-color: #cba6f7;
+    background-color: #b16286;
 }
 .knob-1 trough highlight {
-    background-color: #f5c2e7;
+    background-color: #b16286;
 }
 .knob-2 trough highlight {
-    background-color: #cba6f7;
+    background-color: #689d6a;
 }
 .knob-3 trough highlight {
-    background-color: #74c7ec;
+    background-color: #d79921;
 }
 .knob-4 trough highlight {
-    background-color: #fab387;
+    background-color: #fe8019;
 }
 .knob-5 trough highlight {
-    background-color: #f38ba8;
+    background-color: #cc241d;
 }
 .knob-6 trough highlight {
-    background-color: #a6e3a1;
+    background-color: #98971a;
 }
 .knob-7 trough highlight {
-    background-color: #89b4fa;
+    background-color: #458588;
 }
 .knob-8 trough highlight {
-    background-color: #f5e0dc;
+    background-color: #ebdbb2;
 }
 scale trough {
-    background-color: #1e1e2e;
+    background-color: #282828;
     min-width: 40px;
     min-height: 35px;
 }
 .gold-ratio trough highlight {
-    background-color: #89b4fa;
+    background-color: #458588;
 }
 .gold-ratio trough {
     background-color: #f38ba8;

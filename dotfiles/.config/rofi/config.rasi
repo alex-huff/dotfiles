@@ -1,7 +1,7 @@
 * {
     font:                        "Victor Mono 12";
-    selected-normal-foreground:  rgba ( 30, 30, 46, 100 % );
-    foreground:                  rgba ( 205, 214, 244, 100 % );
+    selected-normal-foreground:  rgba ( 40, 40, 40, 100 % );
+    foreground:                  rgba ( 235, 219, 178, 100 % );
     normal-foreground:           @foreground;
     alternate-normal-background: rgba ( 0, 0, 0, 100 % );
     red:                         rgba ( 243, 139, 168, 100 % );
@@ -18,7 +18,7 @@
     normal-background:           @background;
     lightfg:                     rgba ( 88, 104, 117, 100 % );
     selected-normal-background:  @border-color;
-    border-color:                rgba ( 205, 214, 244, 100 % );
+    border-color:                rgba ( 235, 219, 178, 100 % );
     spacing:                     2;
     separatorcolor:              @selected-normal-background;
     urgent-background:           rgba ( 29, 31, 33, 100 % );
