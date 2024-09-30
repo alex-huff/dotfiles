@@ -1,5 +1,4 @@
 typeset -U path PATH
-path=(~/.pfetch $path)
 path=(~/.cargo/bin $path)
 path=(~/.local/bin $path)
 path=(~/.local/share/JetBrains/Toolbox/scripts $path)
