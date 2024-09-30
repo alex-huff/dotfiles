@@ -22,4 +22,5 @@ then
 else
     grim $image_name
 fi
-upload-to-imgur.sh $image_name
+wl-copy -t image/png < $image_name
+# upload-to-imgur.sh $image_name
