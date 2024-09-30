@@ -32,8 +32,8 @@ hi Search       guifg=#000000 guibg=#FABD2F ctermfg=black ctermbg=yellow gui=ITA
 hi CurSearch    guifg=#000000 guibg=#FFFFFF ctermfg=black ctermbg=white  gui=ITALIC    cterm=NONE
 hi Visual       guifg=#000000 guibg=#FFFFFF ctermfg=black ctermbg=white  gui=ITALIC    cterm=NONE
 hi VisualNOS    guifg=#000000 guibg=#FFFFFF ctermfg=black ctermbg=white  gui=ITALIC    cterm=NONE
-hi CursorColumn guifg=#FBF1C7 guibg=#FFFFFF ctermfg=grey  ctermbg=white  gui=NONE      cterm=NONE
-hi CursorLine   guifg=#FBF1C7 guibg=#FFFFFF ctermfg=grey  ctermbg=white  gui=NONE      cterm=NONE
+hi CursorColumn guifg=#000000 guibg=#FFFFFF ctermfg=grey  ctermbg=white  gui=NONE      cterm=NONE
+hi CursorLine   guifg=#000000 guibg=#FFFFFF ctermfg=grey  ctermbg=white  gui=NONE      cterm=NONE
 hi Comment      guifg=#FBF1C7 guibg=#000000 ctermfg=grey  ctermbg=black  gui=ITALIC    cterm=NONE
 hi DiffChange   guifg=#FBF1C7 guibg=#000000 ctermfg=grey  ctermbg=black  gui=NONE      cterm=NONE
 hi DiffDelete   guifg=#FBF1C7 guibg=#000000 ctermfg=grey  ctermbg=black  gui=NONE      cterm=NONE
