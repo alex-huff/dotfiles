@@ -24,7 +24,8 @@ nnoremap <C-k> :wincmd k<CR>
 nnoremap <C-l> :wincmd l<CR>
 nnoremap <C-S-H> :resize -1<CR>
 nnoremap <C-S-L> :resize +1<CR>
-nnoremap <Leader>t :silent !dup<CR>:redraw!<CR>
+nnoremap <Leader>t :botright term<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
+nnoremap <Leader>T :silent !dup<CR>:redraw!<CR>
 nnoremap ,/ :nohlsearch<CR>
 hi Cursor       guifg=#000000 guibg=#FFFFFF ctermfg=black ctermbg=white  gui=NONE      cterm=NONE
 hi IncSearch    guifg=#000000 guibg=#FFFFFF ctermfg=black ctermbg=white  gui=ITALIC    cterm=NONE
