@@ -3,6 +3,7 @@ path=(~/.cargo/bin $path)
 path=(~/.local/bin $path)
 path=(~/.local/share/JetBrains/Toolbox/scripts $path)
 export PATH
+export NO_COLOR=1
 export QT_QPA_PLATFORM=wayland
 export XDG_CURRENT_DESKTOP=sway
 export _JAVA_AWT_WM_NONREPARENTING=1
