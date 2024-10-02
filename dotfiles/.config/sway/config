@@ -238,9 +238,9 @@ bindsym $super+r mode "resize"
 bindsym $super+Shift+b border toggle
 
 # colors                border  bg      text    ind     child_b
-client.focused          #928374 #ebdbb2 #282828 #928374 #928374
+client.focused          #ebdbb2 #bdae93 #282828 #ebdbb2 #ebdbb2
 client.unfocused        #504945 #282828 #ebdbb2 #504945 #504945
-client.focused_inactive #665c54 #504945 #ebdbb2 #665c54 #665c54
+client.focused_inactive #7c6f64 #665c54 #ebdbb2 #7c6f64 #7c6f64
 
 # include device specific configuration and overrides
 include device/*
@@ -264,10 +264,10 @@ for_window [app_id=".*-overlay"]
 }
 
 # various
-default_border normal 1
+default_border pixel 1
 titlebar_padding 4 2
+hide_edge_borders --i3 smart
 focus_follows_mouse no
-smart_borders on
 tiling_drag off
 focus_on_window_activation none
 focus_wrapping no
