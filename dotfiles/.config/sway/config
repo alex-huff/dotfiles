@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Victor Mono Medium 9
+font pango:Victor Mono Medium 1
 
 # export environment
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -238,12 +238,14 @@ bindsym $super+r mode "resize"
 bindsym $super+Shift+b border toggle
 
 # colors                border  bg      text    ind     child_b
-client.focused          #ebdbb2 #bdae93 #282828 #ebdbb2 #ebdbb2
-client.unfocused        #504945 #282828 #ebdbb2 #504945 #504945
-client.focused_inactive #7c6f64 #665c54 #ebdbb2 #7c6f64 #7c6f64
+client.focused          #504945 #d5c4a1 #d5c4a1 #d5c4a1 #d5c4a1
+client.unfocused        #504945 #000000 #000000 #3c3836 #3c3836
+client.focused_inactive #504945 #7c6f64 #7c6f64 #7c6f64 #7c6f64
 
 # include device specific configuration and overrides
 include device/*
+# $main_display should be defined in device/*
+output $main_display bg #000000 solid_color
 
 # rules
 for_window [all] title_format %title (<i>%shell</i>)
@@ -265,8 +267,11 @@ for_window [app_id=".*-overlay"]
 
 # various
 default_border pixel 1
-titlebar_padding 4 2
+titlebar_padding 3 3
 hide_edge_borders --i3 smart
+gaps inner 15
+gaps outer -5
+smart_gaps on
 focus_follows_mouse no
 tiling_drag off
 focus_on_window_activation none
