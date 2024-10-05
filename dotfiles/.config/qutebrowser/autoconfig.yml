@@ -28,6 +28,7 @@ settings:
         j: jseval --quiet scrollHelper.scrollBy(200)
         k: jseval --quiet scrollHelper.scrollBy(-200)
         q: null
+        yh: hint links yank
   colors.tabs.bar.bg:
     global: '#504945'
   colors.tabs.even.bg:
