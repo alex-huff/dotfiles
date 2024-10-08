@@ -24,8 +24,10 @@ nnoremap <C-k> :wincmd k<CR>
 nnoremap <C-l> :wincmd l<CR>
 nnoremap <C-S-H> gT
 nnoremap <C-S-L> gt
-nnoremap <C-S-J> :resize -1<CR>
-nnoremap <C-S-K> :resize +1<CR>
+nnoremap <C-A-J> :resize -1<CR>
+nnoremap <C-A-K> :resize +1<CR>
+nnoremap <C-A-H> :vertical resize -1<CR>
+nnoremap <C-A-L> :vertical resize +1<CR>
 nnoremap <Leader>t :botright term<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
 nnoremap <Leader>T :vertical botright term<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
 nnoremap <Leader>d :silent !dup<CR>:redraw!<CR>
