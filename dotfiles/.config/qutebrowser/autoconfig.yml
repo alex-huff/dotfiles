@@ -14,9 +14,10 @@ settings:
         ',M': hint links spawn mpv {hint-url}
         ',m': spawn mpv {url}
         <Ctrl+d>: jseval --quiet scrollHelper.scrollPage(0.8)
-        <Ctrl+h>: tab-prev
-        <Ctrl+l>: tab-next
+        <Ctrl+Shift+h>: tab-prev
+        <Ctrl+Shift+l>: tab-next
         <Ctrl+u>: jseval --quiet scrollHelper.scrollPage(-0.8)
+        <Ctrl+h>: null
         G: jseval --quiet scrollHelper.scrollToPercent(100)
         H: nop
         J: back
@@ -135,6 +136,6 @@ settings:
   tabs.wrap:
     global: false
   url.default_page:
-    global: about:config
+    global: about:blank
   url.start_pages:
-    global: about:config
+    global: about:blank
