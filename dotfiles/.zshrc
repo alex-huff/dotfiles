@@ -1,9 +1,9 @@
 [[ $- != *i* ]] && return
 
 export PYENV_ROOT="$HOME/.pyenv"
-if [ -d $PYENV_ROOT/bin ]
+if [ -d $PYENV_ROOT/shims ]
 then
-    path=($PYENV_ROOT/bin $path)
+    path=($PYENV_ROOT/shims $path)
     eval "$(pyenv init -)"
 fi
 
