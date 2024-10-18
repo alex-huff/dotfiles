@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Victor Mono Medium 1
+font pango:Victor Mono Medium 10
 
 # export environment
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -10,9 +10,6 @@ exec ~/.config/sway/import-gsettings
 
 # eww
 exec eww daemon
-
-# foot server
-exec foot --server
 
 # start XDG autostart .desktop files
 exec --no-startup-id dex --autostart --environment sway
@@ -46,7 +43,7 @@ bindsym Shift+Control+Alt+Page_Up workspace next
 bindsym $super+Control+l exec swaylock -c 000000 --font "Victor Mono"
 
 # start a terminal
-bindsym $super+Return exec footclient
+bindsym $super+Return exec kitty
 
 # search with firefox
 bindsym $super+Alt+s exec query=$(rofi -dmenu -l 0 -p search) && firefox --search "$query"
@@ -238,9 +235,9 @@ bindsym $super+r mode "resize"
 bindsym $super+Shift+b border toggle
 
 # colors                border  bg      text    ind     child_b
-client.focused          #d5c4a1 #928374 #928374 #d5c4a1 #d5c4a1
-client.unfocused        #504945 #000000 #000000 #504945 #504945
-client.focused_inactive #7c6f64 #504945 #504945 #7c6f64 #7c6f64
+client.focused          #83a598 #076678 #fbf1c7 #83a598 #83a598
+client.unfocused        #504945 #000000 #fbf1c7 #504945 #504945
+client.focused_inactive #7c6f64 #504945 #fbf1c7 #7c6f64 #7c6f64
 
 # include device specific configuration and overrides
 include device/*
@@ -266,7 +263,7 @@ for_window [app_id=".*-overlay"]
 
 # various
 default_border normal 1
-titlebar_padding 3 3
+titlebar_padding 4 2
 hide_edge_borders --i3 smart
 gaps inner 15
 gaps outer -5
