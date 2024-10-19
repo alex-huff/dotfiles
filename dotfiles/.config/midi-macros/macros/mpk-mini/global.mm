@@ -359,3 +359,5 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
             exec(line)
             new_action_condition.notify_all()
 }
+
+F3 MIDI{STATUS==cc}{CC_FUNCTION==72}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}") [BLOCK|DEBOUNCE]-> swaymsg -t get_tree | jq "def recurse_nodes: recurse(.floating_nodes[], .nodes[]); recurse_nodes | select(.focused == true) | recurse_nodes | select(.pid) | .id" | xargs -I "<con_id>" swaymsg "[con_id=<con_id>] opacity <opacity>"
