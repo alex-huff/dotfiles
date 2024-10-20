@@ -88,6 +88,8 @@ settings:
     global: false
   content.prefers_reduced_motion:
     global: true
+  content.proxy:
+    global: system
   downloads.location.prompt:
     global: false
   downloads.location.remember:
@@ -108,7 +110,6 @@ settings:
     - env
     - CHOICE={}
     - kitty
-    - --client-environment
     - --app-id=kitty-dialogue
   fileselect.handler:
     global: external
@@ -117,14 +118,12 @@ settings:
     - env
     - CHOICE={}
     - kitty
-    - --client-environment
     - --app-id=kitty-dialogue
   fileselect.single_file.command:
     global:
     - env
     - CHOICE={}
     - kitty
-    - --client-environment
     - --app-id=kitty-dialogue
   fonts.default_size:
     global: 9pt
