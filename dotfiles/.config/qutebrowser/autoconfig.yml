@@ -127,11 +127,29 @@ settings:
     - --app-id=kitty-dialogue
   fonts.default_size:
     global: 9pt
+  input.insert_mode.auto_enter:
+    global: false
+  input.insert_mode.auto_leave:
+    global: false
+  input.insert_mode.leave_on_load:
+    global: false
+  keyhint.delay:
+    global: 0
   spellcheck.languages:
     global:
     - en-US
+  tabs.focus_stack_size:
+    global: 10
+  tabs.mode_on_change:
+    global: persist
+  tabs.new_position.unrelated:
+    global: next
   tabs.position:
     global: top
+  tabs.show:
+    global: never
+  tabs.tabs_are_windows:
+    global: true
   tabs.wrap:
     global: false
   url.default_page:
