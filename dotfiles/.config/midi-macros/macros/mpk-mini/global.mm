@@ -362,4 +362,22 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
             new_action_condition.notify_all()
 }
 
-F3 MIDI{STATUS==cc}{CC_FUNCTION==72}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}") [BLOCK|DEBOUNCE]-> swaymsg -t get_tree | jq "def recurse_nodes: recurse(.floating_nodes[], .nodes[]); recurse_nodes | select(.focused == true) | recurse_nodes | select(.pid) | .id" | xargs -I "<con_id>" swaymsg "[con_id=<con_id>] opacity <opacity>"
+F3 MIDI{STATUS==cc}{CC_FUNCTION==72}(
+    "<opacity>"->f"{CC_VALUE_SCALED(0, 1)}"
+)
+[BLOCK|DEBOUNCE]->
+{
+    shopt -s lastpipe
+    cat <<"JQ" | sed -E s"|^ {4}||" | read -rd "" build_set_opacity_message
+        def recurse_nodes: recurse(.floating_nodes[], .nodes[]);
+        recurse_nodes |
+            select(.focused == true) |
+            recurse_nodes |
+            select(.pid) |
+            "[con_id=\(.id)] opacity <opacity>"
+    JQ
+    swaymsg -t get_tree |
+        jq -r "$build_set_opacity_message" |
+        read -d "" set_opacity_message
+    swaymsg "$set_opacity_message"
+}
