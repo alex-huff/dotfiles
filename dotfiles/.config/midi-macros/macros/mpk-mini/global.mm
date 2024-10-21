@@ -25,14 +25,16 @@ MIDI{STATUS==cc}{CC_FUNCTION==71}("{}"->CC_VALUE_PERCENT) [BLOCK|DEBOUNCE]-> cmu
 # control focused application volume with knob 3
 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{CC_VALUE_SCALED(0, 1)}") (python)[BLOCK|DEBOUNCE]->
 {
+    import sys
     from subprocess import check_output
-    focused_pid = int(
-        check_output(
-            "focused-pid.sh",
-            text=True,
-            shell=True
-        )
-    )
+    focused_pid = check_output(
+        "focused-pid.sh",
+        text=True,
+        shell=True
+    ).rstrip()
+    if focused_pid == "null":
+        sys.exit(0)
+    focused_pid = int(focused_pid)
     import psutil
     focused_process = psutil.Process(focused_pid)
     process_hierarchy = {p.pid for p in focused_process.children(recursive=True)}
