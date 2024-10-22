@@ -29,7 +29,7 @@ alias vim="$EDITOR"
 
 setopt vi
 
-PS1='[%n@%m]> '
+PS1='%m# '
 
 # Rehash pacman command cache when it goes out of date
 zshcache_time="$(date +%s%N)"
