@@ -53,7 +53,9 @@ settings:
   colors.tabs.selected.odd.fg:
     global: '#fbf1c7'
   colors.webpage.darkmode.enabled:
-    global: false
+    global: true
+  colors.webpage.darkmode.policy.images:
+    global: never
   colors.webpage.preferred_color_scheme:
     global: dark
   completion.open_categories:
