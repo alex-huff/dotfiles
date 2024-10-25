@@ -27,6 +27,13 @@ fi
 export EDITOR
 alias vim="$EDITOR"
 
+alias rg="rg --color=always --colors=path:none --colors=line:none --colors=column:none --colors=match:none --hyperlink-format=kitty"
+alias ls="ls --hyperlink=auto"
+
+alias browse="awrit"
+
+alias fzfp='fzf --preview="fzf-preview.sh {}" --bind "resize:refresh-preview"'
+
 setopt vi
 
 PS1='%m# '
