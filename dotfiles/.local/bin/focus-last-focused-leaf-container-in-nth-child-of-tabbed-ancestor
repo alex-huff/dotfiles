@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ "$#" -lt 2 ]
+then
+    echo "Usage: $(basename "$0") <n> <closest ancestor?>" 1>&2
+    exit 1
+fi
+
+con_id=$(
+    swaymsg -t get_tree |
+        jq --argjson n "$1" --argjson closest_ancestor "$2" -f ~/.local/bin/extract-id-of-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor.jq
+)
+swaymsg "[con_id=$con_id]" focus
