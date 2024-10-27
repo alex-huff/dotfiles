@@ -1,0 +1,24 @@
+#!/bin/sh
+
+read -rd '' rg_prefix <<EOF
+rg \
+    --color=always \
+    --hyperlink-format=kitty \
+    --with-filename \
+    --column \
+    --line-number \
+    --no-heading \
+    --smart-case \
+    --field-match-separator \
+    ":\0"
+EOF
+rg_args=${*@Q}
+FZF_DEFAULT_COMMAND="$rg_prefix .^ $rg_args || true" fzf \
+    --delimiter ":\0" \
+    --ansi \
+    --disabled \
+    --preview "bat --color=always --style=plain --highlight-line {2} {1}" \
+    --preview-window "+{2}/2" \
+    --bind "change:reload:$rg_prefix {q} $rg_args || true" \
+    --bind "ctrl-space:execute(nvim -f {1} -c 'normal '{2}G{3}'|')" \
+    --bind "enter:execute-silent(wl-copy -n {1})" > /dev/null

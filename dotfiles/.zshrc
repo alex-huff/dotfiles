@@ -19,22 +19,25 @@ done
 alias cmcd="color-manager cycle dark"
 alias cmcl="color-manager cycle light"
 
-EDITOR=$(which nvim)
-if [ $? -ne 0 ]
+if (( $+commands[nvim] ))
 then
-    EDITOR="$(which vim)"
+    EDITOR=nvim
+elif (( $+commands[vim] ))
+then
+    EDITOR=vim
+else
+    EDITOR=vi
 fi
 export EDITOR
-alias vim="$EDITOR"
+alias vi="$EDITOR"
 
-alias rg="rg --color=always --colors=path:none --colors=line:none --colors=column:none --colors=match:none --hyperlink-format=kitty"
+alias rg="rg --color=always --hyperlink-format=kitty --column --line-number --no-heading --smart-case"
 alias ls="ls --hyperlink=auto"
 
+alias fp="fzf --preview='fzf-preview.sh {}' --bind 'resize:refresh-preview' --bind 'ctrl-space:execute(nvim {})'"
+alias fr="rg-fzf"
+
 alias browse="awrit"
-
-alias fzfp='fzf --preview="fzf-preview.sh {}" --bind "resize:refresh-preview"'
-
-setopt vi
 
 PS1='%m# '
 
