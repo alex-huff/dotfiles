@@ -12,9 +12,9 @@ then
     eval "$(pyenv init -)"
 fi
 
-alias cmus='PULSE_SINK=hush cmus'
-alias discord='PULSE_SINK=hush discord'
-alias webcord='PULSE_SINK=hush webcord'
+alias cmus="PULSE_SINK=hush cmus"
+alias discord="PULSE_SINK=hush discord"
+alias webcord="PULSE_SINK=hush webcord"
 
 for color in $(color-manager list-colors)
 do
