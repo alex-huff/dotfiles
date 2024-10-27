@@ -1,5 +1,10 @@
 [[ $- != *i* ]] && return
 
+setopt vi
+autoload edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd v edit-command-line
+
 export PYENV_ROOT="$HOME/.pyenv"
 if [ -d $PYENV_ROOT/shims ]
 then
