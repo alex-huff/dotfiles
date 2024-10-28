@@ -39,7 +39,7 @@ alias vi="$EDITOR"
 alias rg="rg --color=always --hyperlink-format=kitty --column --line-number --no-heading --smart-case"
 alias ls="ls --hyperlink=auto"
 
-alias fp="fzf --preview='fzf-preview.sh {}' --bind 'resize:refresh-preview' --bind 'ctrl-space:execute(nvim {})'"
+alias fp="fzf --wrap --preview='fzf-preview.sh {}' --bind 'resize:refresh-preview' --bind 'ctrl-space:execute(nvim {})'"
 alias fr="rg-fzf"
 
 alias browse="awrit"
