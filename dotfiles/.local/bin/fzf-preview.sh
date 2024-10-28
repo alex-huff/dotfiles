@@ -17,7 +17,7 @@ in
                 mdcat --ansi "$file_path"
                 ;;
             *)
-                cat "$file_path"
+                bat --color=always --style=plain "$file_path"
                 ;;
         esac
         ;;
