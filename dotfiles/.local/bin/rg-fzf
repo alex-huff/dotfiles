@@ -1,6 +1,6 @@
 #!/bin/sh
 
-read -rd '' rg_prefix <<EOF
+read -rd "" rg_prefix <<EOF
 rg \
     --color=always \
     --hyperlink-format=kitty \
