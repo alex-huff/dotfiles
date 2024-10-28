@@ -106,7 +106,7 @@ settings:
     - -f
     - '{file}'
     - -c
-    - normal {line}G{column0}l
+    - normal {line}G{column0}|zz
   fileselect.folder.command:
     global:
     - env
