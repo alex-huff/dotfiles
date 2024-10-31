@@ -13,4 +13,5 @@ FZF_DEFAULT_COMMAND=":" fzf \
     --bind "resize:refresh-preview" \
     --bind "change:reload:rg-fzf-rg-wrapper.py {q} $rg_args || true" \
     --bind "ctrl-space:execute($decode_file | xargs -0 nvim -c 'goto '{3}'|normal zz' -f)" \
-    --bind "enter:execute-silent($decode_file | xargs -0 printf '%q' | kitty +kitten clipboard)" > /dev/null
+    --bind "enter:execute-silent($decode_file | kitty +kitten clipboard)" \
+    --bind "ctrl-q:execute-silent($decode_file | xargs -0 printf '%q' | kitty +kitten clipboard)" > /dev/null

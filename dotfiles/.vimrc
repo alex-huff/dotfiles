@@ -35,4 +35,5 @@ nnoremap <C-A-L> :vertical resize +1<CR>
 nnoremap <Leader>t :botright term<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
 nnoremap <Leader>T :vertical botright term<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
 nnoremap <Leader>d :silent !dup<CR>:redraw!<CR>
+nnoremap <Leader>c :execute "edit" fnamemodify(@+, ":~:.")<CR>
 nnoremap ,/ :nohlsearch<CR>
