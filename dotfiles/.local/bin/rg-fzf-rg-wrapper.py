@@ -40,14 +40,14 @@ class RGOptions:
             return lambda *values: self.push_long_arg(processed_name, *values)
 
     def push_args(self, *args):
-        self.arguments.extend(args)
+        self.arguments.extend(str(arg) for arg in args)
         return self
 
     def push_arg(self, arg):
         return self.push_args(arg)
 
     def push_long_arg(self, name, *values):
-        return self.push_args(*(f"--{name}={str(value)}" for value in values)) if values else self.push_arg(f"--{name}")
+        return self.push_args(*(f"--{name}={value}" for value in values)) if values else self.push_arg(f"--{name}")
 
     def pop_arg(self):
         self.arguments.pop()
