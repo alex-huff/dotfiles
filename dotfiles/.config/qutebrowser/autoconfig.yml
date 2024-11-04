@@ -80,7 +80,7 @@ settings:
     global: Mozilla/5.0 ({os_info}) AppleWebKit/{webkit_version} (KHTML, like Gecko)
       {qt_key}/{qt_version} {upstream_browser_key}/{upstream_browser_version} Safari/{webkit_version}
   content.javascript.clipboard:
-    global: access
+    global: access-paste
   content.media.audio_capture:
     global: ask
     https://discord.com: true
@@ -103,10 +103,9 @@ settings:
     - kitty
     - --app-id=kitty-dialogue
     - nvim
-    - -f
-    - '{file}'
     - -c
-    - normal {line}G{column0}|zz
+    - normal {line}G{column1}|zz
+    - '{file}'
   fileselect.folder.command:
     global:
     - env
