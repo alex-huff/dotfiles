@@ -3,6 +3,7 @@
 decode_field2="base32 --decode <<< {2}"
 fzf --disabled \
     --read0 \
+    --tac \
     --delimiter ":" \
     --with-nth "7.." \
     --ansi \
