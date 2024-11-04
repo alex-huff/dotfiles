@@ -46,11 +46,11 @@ class RGOptions:
     def push_arg(self, arg):
         return self.push_args(arg)
 
-    def push_long_arg(self, name, *values):
-        return self.push_args(*(f"--{name}={value}" for value in values)) if values else self.push_arg(f"--{name}")
+    def push_long_arg(self, arg, *values):
+        return self.push_args(*(f"--{arg}={value}" for value in values)) if values else self.push_arg(f"--{arg}")
 
-    def pop_arg(self):
-        self.arguments.pop()
+    def pop_arg(self, num=1):
+        del self.arguments[-num:]
         return self
 
     def push_paths(self, *paths):
@@ -60,9 +60,12 @@ class RGOptions:
     def push_path(self, path):
         return self.push_paths(path)
 
-    def pop_path(self):
-        self.paths.pop()
+    def pop_path(self, num=1):
+        del self.paths[-num:]
         return self
+
+    def help(self):
+        raise Exception(help_message)
 
 def is_data_utf8(data_object):
     return "text" in data_object
@@ -175,6 +178,46 @@ script_basename = os.path.basename(sys.argv[0])
 if len(sys.argv) != 2:
     print(f"Usage: {script_basename} <query>", file=sys.stderr)
     sys.exit(1)
+help_message = \
+"""\
+ripgrep command manipulation:
+    rg.push_arg(arg), rg.push_args(*args), rg.push_long_arg(arg, *values)
+    rg.push_path(path), rg.push_paths(*paths)
+    rg.pop_arg(num=1), rg.pop_path(num=1)
+
+    rg.some_arg()               # same as --some-arg
+    rg.some_arg(value1, value2) # same as --some-arg=value1 --some-arg=value2
+
+Some useful ripgrep options:
+    --regexp=PATTERN --file=PATTERNFILE
+    --invert-match
+    --smart-case --ignore-case
+    --fixed-strings
+    --word-regexp --line-regexp
+    --multiline --multiline-dotall
+    --no-unicode
+    --null-data --crlf
+    --text
+    --unrestricted
+    --ignore-file=PATH --ignore-file-case-insensitive
+    --no-ignore --no-ignore-dot --no-ignore-exclude --no-ignore-global
+        --no-ignore-parent --no-ignore-vcs
+    --hidden
+    --follow
+    --one-file-system
+    --glob=GLOB --iglob=GLOB
+    --type=TYPE --type-not=TYPE --type-add=TYPESPEC --type-clear=TYPE
+    --search-zip
+    --pre=COMMAND --pre-glob
+    --stop-on-nonmatch
+    --max-count=NUM
+    --max-depth=NUM
+    --max-filesize=NUM+SUFFIX?
+    --threads=NUM
+    --encoding=ENCODING
+    --engine=ENGINE
+    --no-config\
+"""
 out = sys.stdout.buffer
 query = sys.argv[1]
 ENCODING = "utf-8"

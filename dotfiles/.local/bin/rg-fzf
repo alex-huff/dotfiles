@@ -3,16 +3,20 @@
 decode_field2="base32 --decode <<< {2}"
 fzf --disabled \
     --read0 \
-    --tac \
+    --gap \
+    --wrap \
+    --tabstop 4 \
     --delimiter ":" \
     --with-nth "7.." \
     --ansi \
     --query "rg.smart_case();;" \
     --preview "if [ {1} = 'match' ]; then $decode_field2 | xargs -0 cat-highlight-byte-region.py {3} {5}; else $decode_field2; fi" \
-    --preview-window "+{6}/2" \
+    --preview-window "top,+{6}/2" \
     --bind "start:reload::" \
     --bind "enter:reload:rg-fzf-rg-wrapper.py {q}" \
     --bind "resize:refresh-preview" \
     --bind "ctrl-space:execute([ {1} = 'match' ] && $decode_field2 | xargs -0 nvim -c 'goto '{4}'|normal zz')" \
     --bind "ctrl-l:execute-silent([ {1} = 'match' ] && $decode_field2 | kitty +kitten clipboard)" \
-    --bind "ctrl-q:execute-silent([ {1} = 'match' ] && $decode_field2 | xargs -0 printf '%q' | kitty +kitten clipboard)" > /dev/null
+    --bind "ctrl-q:execute-silent([ {1} = 'match' ] && $decode_field2 | xargs -0 printf '%q' | kitty +kitten clipboard)" \
+    --bind "home:first" \
+    --bind "end:last" > /dev/null
