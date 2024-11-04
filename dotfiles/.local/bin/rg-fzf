@@ -1,17 +1,17 @@
 #!/bin/sh
 
-decode_file="base32 --decode <<< {1}"
-rg_args=${*@Q}
-FZF_DEFAULT_COMMAND=":" fzf \
+decode_field2="base32 --decode <<< {2}"
+fzf --disabled \
     --read0 \
     --delimiter ":" \
-    --with-nth "6.." \
+    --with-nth "7.." \
     --ansi \
-    --disabled \
-    --preview "$decode_file | xargs -0 cat-highlight-byte-region.py {2} {4}" \
-    --preview-window "+{5}/2" \
+    --query "rg.smart_case();;" \
+    --preview "if [ {1} = 'match' ]; then $decode_field2 | xargs -0 cat-highlight-byte-region.py {3} {5}; else $decode_field2; fi" \
+    --preview-window "+{6}/2" \
+    --bind "start:reload::" \
+    --bind "change:reload:rg-fzf-rg-wrapper.py {q}" \
     --bind "resize:refresh-preview" \
-    --bind "change:reload:rg-fzf-rg-wrapper.py {q} $rg_args || true" \
-    --bind "ctrl-space:execute($decode_file | xargs -0 nvim -c 'goto '{3}'|normal zz' -f)" \
-    --bind "enter:execute-silent($decode_file | kitty +kitten clipboard)" \
-    --bind "ctrl-q:execute-silent($decode_file | xargs -0 printf '%q' | kitty +kitten clipboard)" > /dev/null
+    --bind "ctrl-space:execute([ {1} = 'match' ] && $decode_field2 | xargs -0 nvim -c 'goto '{4}'|normal zz')" \
+    --bind "enter:execute-silent([ {1} = 'match' ] && $decode_field2 | kitty +kitten clipboard)" \
+    --bind "ctrl-q:execute-silent([ {1} = 'match' ] && $decode_field2 | xargs -0 printf '%q' | kitty +kitten clipboard)" > /dev/null

@@ -31,13 +31,13 @@ file_path = sys.argv[3]
 if not os.path.isfile(file_path):
     print("Invalid file", file=sys.stderr)
     sys.exit(1)
+out = sys.stdout.buffer
 file_command = [
     "/bin/file",
     "--brief",
     "--mime-encoding",
     file_path
 ]
-out = sys.stdout.buffer
 CSI_CHARACTER_ATTRIBUTES_TEMPLATE = b"\033[%bm"
 BLACK_BG_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"40")
 RESET_BG_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"49")
