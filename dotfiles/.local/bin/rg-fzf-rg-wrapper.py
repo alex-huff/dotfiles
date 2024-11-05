@@ -11,6 +11,7 @@ import json
 # ":"<base32 encoded absolute path>
 # ":"<byte offset of first match>
 # ":"<line number of start of region>
+# ":"<line number of first match>
 # ":"<line number of end of region>
 # ":"<unicode string basename> | non-<encoding> filename
 # ":"<unicode string match without null bytes> | non-<encoding> data
@@ -19,6 +20,7 @@ import json
 # query-error/rg-error item input format
 # error
 # ":"<base32 encoded error message>
+# ":"b""
 # ":"b""
 # ":"1
 # ":"b""
@@ -108,18 +110,27 @@ def write_match_item(rg_message):
     absolute_offset = rg_data["absolute_offset"]
     file_path = rg_data["path"]
     submatches = rg_data["submatches"]
+    relative_first_match_offset = submatches[0]["start"] if submatches else 0
     region = rg_data["lines"]
     region_bytes = get_data_bytes(region)
     formatted_region_bytes = get_formatted_region(region_bytes, submatches) if is_data_utf8(region) else PLACEHOLDER_DATA_BYTES
-    num_lines = region_bytes.count(NEWLINE_BYTE)
+    num_lines = 0
+    relative_first_match_line = 0
+    for i, byte in enumerate(region_bytes):
+        if byte not in NEWLINE_BYTE:
+            continue
+        num_lines += 1
+        if i < relative_first_match_offset:
+            relative_first_match_line += 1
     if not region_bytes.endswith(NEWLINE_BYTE):
         num_lines += 1
     line_number_start = rg_data["line_number"]
     line_number_start_string_encoded = str(line_number_start).encode(ENCODING)
+    first_match_line = line_number_start + relative_first_match_line
+    first_match_line_string_encoded = str(first_match_line).encode(ENCODING)
     line_number_end = line_number_start + (num_lines - 1)
     line_number_end_string_encoded = str(line_number_end).encode(ENCODING)
-    first_match_offset = absolute_offset + submatches[0]["start"] if submatches else 0
-    first_match_offset += 1
+    first_match_offset = absolute_offset + relative_first_match_offset + 1
     first_match_offset_string_encoded = str(first_match_offset).encode(ENCODING)
     file_path_bytes = get_data_bytes(file_path)
     file_path_bytes = os.path.abspath(file_path_bytes)
@@ -140,6 +151,8 @@ def write_match_item(rg_message):
     out.write(DELIMITER_BYTE)
     out.write(line_number_start_string_encoded)
     out.write(DELIMITER_BYTE)
+    out.write(first_match_line_string_encoded)
+    out.write(DELIMITER_BYTE)
     out.write(line_number_end_string_encoded)
     out.write(DELIMITER_BYTE)
     out.write(file_basename_bytes)
@@ -157,7 +170,7 @@ def write_error_item(error_specifier_bytes, error_message):
     out.write(ERROR_TYPE_BYTES)
     out.write(DELIMITER_BYTE)
     out.write(error_message_base32_bytes)
-    for _ in range(2):
+    for _ in range(3):
         out.write(DELIMITER_BYTE)
     out.write(ONE_BYTE)
     for _ in range(2):
