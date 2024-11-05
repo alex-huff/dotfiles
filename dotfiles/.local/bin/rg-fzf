@@ -3,11 +3,12 @@
 decode_field2="base32 --decode <<< {2}"
 fzf --disabled \
     --read0 \
-    --wrap \
-    --tabstop 4 \
     --delimiter ":" \
-    --with-nth "7.." \
+    --wrap \
     --ansi \
+    --color pointer:3 \
+    --tabstop 4 \
+    --with-nth "7.." \
     --query "rg.smart_case();;" \
     --preview "if [ {1} = 'match' ]; then $decode_field2 | xargs -0 realpath --relative-to=. --zero | xargs -0 printf 'file: %q\n'; $decode_field2 | xargs -0 bat --color=always --style=numbers --highlight-line={4}:{6}; else $decode_field2; fi" \
     --preview-window "top,~1,+{5}+1/2" \
