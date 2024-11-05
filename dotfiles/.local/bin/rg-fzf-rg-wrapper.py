@@ -9,21 +9,19 @@ import json
 # match item input format
 # match
 # ":"<base32 encoded absolute path>
-# ":"<byte offset inclusive beginning of region>
 # ":"<byte offset of first match>
-# ":"<byte offset exclusive end of region>
-# ":"<line number of beginning of region>
-# ":"<unicode string basename> | Invalid <encoding> filename
-# ":"<unicode string match without null bytes> | Invalid <encoding> data
+# ":"<line number of start of region>
+# ":"<line number of end of region>
+# ":"<unicode string basename> | non-<encoding> filename
+# ":"<unicode string match without null bytes> | non-<encoding> data
 # "\0"
 
 # query-error/rg-error item input format
-# query-error | rg-error
+# error
 # ":"<base32 encoded error message>
 # ":"b""
-# ":"b""
-# ":"b""
 # ":"1
+# ":"b""
 # ":"Query error | rg error
 # "\0"
 
@@ -108,23 +106,21 @@ def get_formatted_region(region_bytes, submatches):
 def write_match_item(rg_message):
     rg_data = rg_message["data"]
     absolute_offset = rg_data["absolute_offset"]
-    region = rg_data["lines"]
-    line_number = rg_data["line_number"]
     file_path = rg_data["path"]
     submatches = rg_data["submatches"]
-    region_start_offset = absolute_offset
-    region_start_offset_string_encoded = str(region_start_offset).encode(ENCODING)
-    first_match_offset = region_start_offset + submatches[0]["start"] if submatches else 0
+    region = rg_data["lines"]
+    region_bytes = get_data_bytes(region)
+    formatted_region_bytes = get_formatted_region(region_bytes, submatches) if is_data_utf8(region) else PLACEHOLDER_DATA_BYTES
+    num_lines = region_bytes.count(NEWLINE_BYTE)
+    if not region_bytes.endswith(NEWLINE_BYTE):
+        num_lines += 1
+    line_number_start = rg_data["line_number"]
+    line_number_start_string_encoded = str(line_number_start).encode(ENCODING)
+    line_number_end = line_number_start + (num_lines - 1)
+    line_number_end_string_encoded = str(line_number_end).encode(ENCODING)
+    first_match_offset = absolute_offset + submatches[0]["start"] if submatches else 0
     first_match_offset += 1
     first_match_offset_string_encoded = str(first_match_offset).encode(ENCODING)
-    region_bytes = get_data_bytes(region)
-    region_end_offset = region_start_offset + len(region_bytes)
-    region_end_offset_string_encoded = str(region_end_offset).encode(ENCODING)
-    if not is_data_utf8(region):
-        formatted_region_bytes = INVALID_DATA_BYTES
-    else:
-        formatted_region_bytes = get_formatted_region(region_bytes, submatches)
-    line_number_string_encoded = str(line_number).encode(ENCODING)
     file_path_bytes = get_data_bytes(file_path)
     file_path_bytes = os.path.abspath(file_path_bytes)
     file_path_bytes = os.path.normpath(file_path_bytes)
@@ -134,19 +130,17 @@ def write_match_item(rg_message):
         _ = file_basename_bytes.decode(ENCODING)
         file_basename_bytes = b"%b%b" % (BLUE_BYTES, file_basename_bytes)
     except UnicodeError:
-        file_basename_bytes = INVALID_FILENAME_BYTES
+        file_basename_bytes = PLACEHOLDER_FILENAME_BYTES
     out.write(RESET_BYTES)
     out.write(MATCH_TYPE_BYTES)
     out.write(DELIMITER_BYTE)
     out.write(file_path_base32_bytes)
     out.write(DELIMITER_BYTE)
-    out.write(region_start_offset_string_encoded)
-    out.write(DELIMITER_BYTE)
     out.write(first_match_offset_string_encoded)
     out.write(DELIMITER_BYTE)
-    out.write(region_end_offset_string_encoded)
+    out.write(line_number_start_string_encoded)
     out.write(DELIMITER_BYTE)
-    out.write(line_number_string_encoded)
+    out.write(line_number_end_string_encoded)
     out.write(DELIMITER_BYTE)
     out.write(file_basename_bytes)
     out.write(RESET_BYTES)
@@ -156,19 +150,18 @@ def write_match_item(rg_message):
     out.write(NULL_BYTE)
     out.flush()
 
-def write_error_item(error_type, error_message):
+def write_error_item(error_specifier_bytes, error_message):
     error_message_bytes = error_message.encode(ENCODING)
     error_message_base32_bytes = base64.b32encode(error_message_bytes)
-    error_type_bytes = QUERY_ERROR_TYPE_BYTES if error_type == QUERY_ERROR_TYPE else RG_ERROR_TYPE_BYTES
-    error_specifier_bytes = QUERY_ERROR_SPECIFIER_BYTES if error_type == QUERY_ERROR_TYPE else RG_ERROR_SPECIFIER_BYTES
     out.write(RESET_BYTES)
-    out.write(error_type_bytes)
+    out.write(ERROR_TYPE_BYTES)
     out.write(DELIMITER_BYTE)
     out.write(error_message_base32_bytes)
-    for _ in range(4):
+    for _ in range(2):
         out.write(DELIMITER_BYTE)
     out.write(ONE_BYTE)
-    out.write(DELIMITER_BYTE)
+    for _ in range(2):
+        out.write(DELIMITER_BYTE)
     out.write(error_specifier_bytes)
     out.write(RESET_BYTES)
     out.write(NULL_BYTE)
@@ -178,6 +171,8 @@ script_basename = os.path.basename(sys.argv[0])
 if len(sys.argv) != 2:
     print(f"Usage: {script_basename} <query>", file=sys.stderr)
     sys.exit(1)
+out = sys.stdout.buffer
+query = sys.argv[1]
 help_message = \
 """\
 ripgrep command manipulation:
@@ -218,8 +213,6 @@ Some useful ripgrep options:
     --engine=ENGINE
     --no-config\
 """
-out = sys.stdout.buffer
-query = sys.argv[1]
 ENCODING = "utf-8"
 ENCODING_BYTES = ENCODING.encode(ENCODING)
 CSI_CHARACTER_ATTRIBUTES_TEMPLATE = b"\033[%bm"
@@ -232,14 +225,13 @@ QUERY_DELIMITER = ";;"
 NULL_BYTE = b"\0"
 EMPTY_BYTE = b""
 ONE_BYTE = b"1"
+NEWLINE_BYTE = b"\n"
 MATCH_TYPE = "match"
-QUERY_ERROR_TYPE = "query-error"
-RG_ERROR_TYPE = "rg-error"
+ERROR_TYPE = "error"
 MATCH_TYPE_BYTES = MATCH_TYPE.encode(ENCODING)
-QUERY_ERROR_TYPE_BYTES = QUERY_ERROR_TYPE.encode(ENCODING)
-RG_ERROR_TYPE_BYTES = RG_ERROR_TYPE.encode(ENCODING)
-INVALID_FILENAME_BYTES = b"%bInvalid %b filename" % (RED_BYTES, ENCODING_BYTES)
-INVALID_DATA_BYTES = b"%bInvalid %b data" % (RED_BYTES, ENCODING_BYTES)
+ERROR_TYPE_BYTES = ERROR_TYPE.encode(ENCODING)
+PLACEHOLDER_FILENAME_BYTES = b"%bnon-%b filename" % (RED_BYTES, ENCODING_BYTES)
+PLACEHOLDER_DATA_BYTES = b"%bnon-%b data" % (RED_BYTES, ENCODING_BYTES)
 QUERY_ERROR_SPECIFIER_BYTES = b"%bQuery error" % RED_BYTES
 RG_ERROR_SPECIFIER_BYTES = b"%brg error" % RED_BYTES
 rg_command = [
@@ -270,7 +262,7 @@ if setup_expression_end != -1:
             }
         )
     except Exception as exception:
-        write_error_item(QUERY_ERROR_TYPE, str(exception))
+        write_error_item(QUERY_ERROR_SPECIFIER_BYTES, str(exception))
         sys.exit(0)
 else:
     regex_start = 0
@@ -287,5 +279,5 @@ for rg_json in rg_process.stdout:
     write_match_item(rg_message)
 error_message = rg_process.stderr.read()
 if error_message:
-    write_error_item(RG_ERROR_TYPE, error_message)
+    write_error_item(RG_ERROR_SPECIFIER_BYTES, error_message)
 rg_process.wait()
