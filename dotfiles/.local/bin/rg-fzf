@@ -1,6 +1,37 @@
 #!/bin/sh
 
+function generate_query()
+{
+	python3 <<-EOF - "$@"
+		import sys
+		import os
+		def unexpand_path(path):
+		    return \
+		        f"~{path[len(home_path):]}" \
+		        if os.path.isabs(path) and os.path.commonpath((home_path, path)) == home_path \
+		        else path
+		def generate_quoted_paths(paths):
+		    return (repr(unexpand_path(os.path.normpath(path))) for path in paths)
+		home_path = os.path.expanduser("~")
+		paths_specification = \
+		    f".push_paths({', '.join(generate_quoted_paths(sys.argv[1:]))})" \
+		    if len(sys.argv) > 1 \
+		    else ""
+		print(f"rg{paths_specification}.smart_case();;", end="")
+	EOF
+}
+
 decode_field2="base32 --decode <<< {2}"
+read -rd "" preview_command <<-EOF
+	if [ {1} = "match" ]
+	then
+	    file_path=\$($decode_field2)
+	    realpath --relative-to=. --zero "\$file_path" | xargs -0 printf "file: %q\n"
+	    bat --color=always --style=numbers --highlight-line={4}:{6} "\$file_path"
+	else
+	    $decode_field2
+	fi
+EOF
 fzf --disabled \
     --read0 \
     --delimiter ":" \
@@ -9,8 +40,8 @@ fzf --disabled \
     --color pointer:3 \
     --tabstop 4 \
     --with-nth "7.." \
-    --query "rg.smart_case();;" \
-    --preview "if [ {1} = 'match' ]; then $decode_field2 | xargs -0 realpath --relative-to=. --zero | xargs -0 printf 'file: %q\n'; $decode_field2 | xargs -0 bat --color=always --style=numbers --highlight-line={4}:{6}; else $decode_field2; fi" \
+    --query "$(generate_query "$@")" \
+    --preview "$preview_command" \
     --preview-window "top,~1,+{5}+1/2" \
     --bind "start:reload::" \
     --bind "enter:reload:rg-fzf-rg-wrapper.py {q}" \
