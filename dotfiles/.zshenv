@@ -9,5 +9,5 @@ export XDG_CURRENT_DESKTOP=sway
 export _JAVA_AWT_WM_NONREPARENTING=1
 export _JAVA_OPTIONS="-Dawt.useSystemAAFontSettings=lcd"
 export MOZ_DBUS_REMOTE=1
-export EDITOR=vim
+export EDITOR=nvim
 export FZF_DEFAULT_OPTS='--preview-window=border-sharp'
