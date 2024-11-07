@@ -5,13 +5,6 @@ autoload edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd v edit-command-line
 
-export PYENV_ROOT="$HOME/.pyenv"
-if [ -d $PYENV_ROOT/shims ]
-then
-    path=($PYENV_ROOT/shims $path)
-    eval "$(pyenv init -)"
-fi
-
 alias cmus="PULSE_SINK=hush cmus"
 alias discord="PULSE_SINK=hush discord"
 alias webcord="PULSE_SINK=hush webcord"
@@ -81,6 +74,21 @@ setopt HIST_IGNORE_ALL_DUPS
 
 # source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 # bindkey '^ ' autosuggest-accept
+
+export PYENV_ROOT="$HOME/.pyenv"
+if [ -d $PYENV_ROOT/bin ]
+then
+    path=($PYENV_ROOT/bin $path)
+    eval "$(pyenv init -)"
+fi
+export GOENV_ROOT="$HOME/.goenv"
+if [ -d $GOENV_ROOT/bin ]
+then
+    path=($GOENV_ROOT/bin $path)
+    eval "$(goenv init -)"
+    path=($GOROOT/bin $path)
+    path=($path $GOPATH/bin)
+fi
 
 for file in ~/.zsh/conf.zsh.d/*.zsh(N)
 do
