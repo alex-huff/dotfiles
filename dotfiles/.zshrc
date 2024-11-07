@@ -86,8 +86,6 @@ if [ -d $GOENV_ROOT/bin ]
 then
     path=($GOENV_ROOT/bin $path)
     eval "$(goenv init -)"
-    path=($GOROOT/bin $path)
-    path=($path $GOPATH/bin)
 fi
 
 for file in ~/.zsh/conf.zsh.d/*.zsh(N)
