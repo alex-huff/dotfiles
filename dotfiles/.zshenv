@@ -1,5 +1,5 @@
 typeset -U path PATH
-path=(~/go/bin ~/go/*/bin $path)
+path=(~/go/bin ~/go/*/bin(N) $path)
 path=(~/.cargo/bin $path)
 path=(~/.local/bin $path)
 path=(~/.local/share/JetBrains/Toolbox/scripts $path)
