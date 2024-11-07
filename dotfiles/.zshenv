@@ -2,6 +2,7 @@ typeset -U path PATH
 path=(~/go/bin $path)
 path=(~/.cargo/bin $path)
 path=(~/.local/bin $path)
+path=(~/.pyenv/bin $path)
 path=(~/.local/share/JetBrains/Toolbox/scripts $path)
 export PATH
 export QT_QPA_PLATFORM=wayland
