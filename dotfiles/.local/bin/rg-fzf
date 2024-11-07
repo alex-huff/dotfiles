@@ -1,6 +1,6 @@
 #!/bin/sh
 
-function generate_query()
+generate_query()
 {
 	python3 <<-EOF - "$@"
 		import sys
