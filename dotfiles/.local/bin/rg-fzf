@@ -21,17 +21,20 @@ generate_query()
 	EOF
 }
 
+bat_command=$(command -v bat || command -v batcat || echo ":")
 decode_field2="base32 --decode <<< {2}"
-read -rd "" preview_command <<-EOF
-	if [ {1} = "match" ]
-	then
-	    file_path=\$($decode_field2)
-	    realpath --relative-to=. --zero "\$file_path" | xargs -0 printf "file: %q\n"
-	    bat --color=always --style=numbers --highlight-line={4}:{6} "\$file_path"
-	else
-	    $decode_field2
-	fi
-EOF
+preview_command=$(
+	cat <<-EOF
+		if [ {1} = "match" ]
+		then
+		    file_path=\$($decode_field2)
+		    realpath --relative-to=. --zero "\$file_path" | xargs -0 printf "file: %q\n"
+		    $bat_command --color=always --style=numbers --highlight-line={4}:{6} "\$file_path"
+		else
+		    $decode_field2
+		fi
+	EOF
+)
 fzf --disabled \
     --read0 \
     --delimiter ":" \
