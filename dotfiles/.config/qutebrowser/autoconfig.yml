@@ -104,7 +104,7 @@ settings:
     - --app-id=kitty-dialogue
     - nvim
     - -c
-    - normal {line}G{column1}|zz
+    - normal {line}G{column}|zz
     - '{file}'
   fileselect.folder.command:
     global:
