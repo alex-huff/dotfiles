@@ -13,6 +13,7 @@ set title
 set laststatus=0
 set incsearch
 set background=dark
+set nofixendofline
 let g:gruvbox_italic = 1
 let g:gruvbox_contrast_dark = "hard"
 let g:gruvbox_contrast_light = "soft"
