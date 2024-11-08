@@ -3,7 +3,6 @@ path=(~/go/bin ~/go/*/bin(N) $path)
 path=(~/.cargo/bin $path)
 path=(~/.local/bin $path)
 path=(~/.local/share/JetBrains/Toolbox/scripts $path)
-export PATH
 export QT_QPA_PLATFORM=wayland
 export XDG_CURRENT_DESKTOP=sway
 export _JAVA_AWT_WM_NONREPARENTING=1
