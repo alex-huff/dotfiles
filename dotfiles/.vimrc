@@ -1,4 +1,5 @@
 syntax on
+filetype plugin on
 set termguicolors
 set number
 set relativenumber
@@ -19,6 +20,9 @@ colorscheme gruvbox
 if &termguicolors
     set list
     set listchars=tab:<->,lead:·,trail:·,multispace:·
+endif
+if !has('nvim')
+    packadd comment
 endif
 inoremap <nowait> <C-[> <Esc>
 cnoremap <nowait> <C-[> <C-\><C-N>
