@@ -3,6 +3,7 @@
 import os
 import sys
 from subprocess import Popen, DEVNULL, PIPE
+import math
 import base64
 import json
 
@@ -32,12 +33,9 @@ class RGOptions:
         self.paths = []
         self.arguments = []
 
-    def __getattribute__(self, attribute):
-        try:
-            return super().__getattribute__(attribute)
-        except:
-            processed_name = attribute.replace('_', '-')
-            return lambda *values: self.push_long_arg(processed_name, *values)
+    def __getattr__(self, attribute):
+        processed_name = attribute.replace('_', '-')
+        return lambda *values: self.push_long_arg(processed_name, *values)
 
     def push_args(self, *args):
         self.arguments.extend(str(arg) for arg in args)
@@ -82,56 +80,138 @@ def get_data_bytes(data_object):
     else:
         return get_non_utf8_data_bytes(data_object)
 
-def get_formatted_region(region_bytes, submatches):
-    region_bytes_view = memoryview(region_bytes)
-    processed_region_bytes = bytearray()
-    current_position = 0
-    for match in submatches:
-        start = match["start"]
-        end = match["end"]
-        if start == end:
+def get_utf8_encoded_codepoint_length(first_byte):
+    if first_byte >> 7 == 0b0:
+        return 1
+    elif first_byte >> 5 == 0b110:
+        return 2
+    elif first_byte >> 4 == 0b1110:
+        return 3
+    elif first_byte >> 5 == 0b11110:
+        return 4
+    else:
+        raise UnicodeError("Invalid first byte for UTF-8 code point")
+
+def process_region(region, first_match_byte, submatches):
+    """Processes the "lines" region of a match message.
+
+    Returns a tuple containing:
+    1. The UTF-8 encoded bytearray with ANSI escape sequences that highlight
+       submatches.
+    2. The total number of lines in the region.
+    3. The offset of the line relative to the region start that
+       contains the first match.
+
+    In the case that the given region is not valid UTF-8, a placeholder
+    indicating that the data was not valid UTF-8 is returned as the bytearray.
+
+    In the case that the given region is valid UTF-8 and a null byte is
+    encountered, it will be replaced with the ASCII representation: \\x00 when
+    added to the returned bytearray.
+
+    In the case that the given region is valid UTF-8 and a highlighted region
+    begins or ends in the middle of a multi-byte UTF-8 codepoint, the
+    individual bytes of that codepoint are added to the returned bytearray in
+    an ASCII representation similar to \\x0F. This is to prevent escape
+    sequences splitting up UTF-8 codepoints in a way that the resulting
+    bytearray is not valid UTF-8 anymore.
+    """
+    def generate_escapes():
+        """Generates the position and bytes of each escape sequence that should be
+        injected into the bytes of the formatted region. Submatches that are
+        empty do not generate highlight or reset escape sequences. Consecutive
+        submatches are squashed together so that only one highlight escape and
+        one reset escape are generated.
+        """
+        def update_current_and_next():
+            nonlocal current_submatch, next_submatch
+            if i < len(submatches):
+                current_submatch = submatches[i]
+                next_submatch = submatches[i + 1] if i + 1 < len(submatches) else None
+            else:
+                current_submatch = next_submatch = None
+
+        def increment_current_and_next():
+            nonlocal i
+            i += 1
+            update_current_and_next()
+
+        i = 0
+        current_submatch = next_submatch = None
+        update_current_and_next()
+        while current_submatch:
+            while current_submatch and current_submatch["start"] == current_submatch["end"]:
+                increment_current_and_next()
+            if not current_submatch:
+                break
+            yield current_submatch["start"], YELLOW_BACKGROUND_BYTES
+            while next_submatch and current_submatch["end"] == next_submatch["start"]:
+                increment_current_and_next()
+            yield current_submatch["end"], RESET_BACKGROUND_BYTES
+            increment_current_and_next()
+        yield math.inf, None
+
+    num_lines = 0
+    first_match_line_number = 0
+    is_valid_utf8 = is_data_utf8(region)
+    if is_valid_utf8:
+        processed_region_bytes = bytearray()
+        escapes_generator = generate_escapes()
+        next_escape_position, next_escape = next(escapes_generator)
+        current_codepoint_end = -1
+        currently_representing_bytes_as_ascii = False
+        region_bytes = get_utf8_data_bytes(region)
+    else:
+        processed_region_bytes = PLACEHOLDER_DATA_BYTES
+        region_bytes = get_non_utf8_data_bytes(region)
+    for i, byte in enumerate(region_bytes):
+        if byte in NEWLINE_BYTE:
+            num_lines += 1
+            if i < first_match_byte:
+                first_match_line_number += 1
+        if not is_valid_utf8:
             continue
-        if start > current_position:
-            processed_region_bytes.extend(RESET_BYTES)
-            processed_region_bytes.extend(region_bytes_view[current_position:start])
-            processed_region_bytes.extend(RESET_BYTES)
-            processed_region_bytes.extend(GREEN_BYTES)
-        elif current_position == 0:
-            processed_region_bytes.extend(GREEN_BYTES)
-        processed_region_bytes.extend(region_bytes_view[start:end])
-        current_position = end
-    processed_region_bytes.extend(RESET_BYTES)
-    if current_position < len(region_bytes):
-        processed_region_bytes.extend(region_bytes_view[current_position:])
-    return processed_region_bytes.replace(NULL_BYTE, EMPTY_BYTE)
+        if i == next_escape_position:
+            processed_region_bytes.extend(next_escape)
+            next_escape_position, next_escape = next(escapes_generator)
+        if i > current_codepoint_end:
+            current_codepoint_end = i + get_utf8_encoded_codepoint_length(byte) - 1
+            in_codepoint_split_by_escape = next_escape_position <= current_codepoint_end
+        should_represent_byte_as_ascii = in_codepoint_split_by_escape or byte in NULL_BYTE
+        if should_represent_byte_as_ascii:
+            if not currently_representing_bytes_as_ascii:
+                currently_representing_bytes_as_ascii = True
+                processed_region_bytes.extend(MAGENTA_FOREGROUND_BYTES)
+            processed_region_bytes.extend(b"\\x%02X" % byte)
+        else:
+            if currently_representing_bytes_as_ascii:
+                currently_representing_bytes_as_ascii = False
+                processed_region_bytes.extend(RESET_FOREGROUND_BYTES)
+            processed_region_bytes.append(byte)
+    if not region_bytes.endswith(NEWLINE_BYTE):
+        num_lines += 1
+    return processed_region_bytes, num_lines, first_match_line_number
 
 def write_match_item(rg_message):
     rg_data = rg_message["data"]
-    absolute_offset = rg_data["absolute_offset"]
+    absolute_offset_byte = rg_data["absolute_offset"]
     file_path = rg_data["path"]
     submatches = rg_data["submatches"]
-    relative_first_match_offset = submatches[0]["start"] if submatches else 0
+    first_match_byte = submatches[0]["start"] if submatches else 0
     region = rg_data["lines"]
-    region_bytes = get_data_bytes(region)
-    formatted_region_bytes = get_formatted_region(region_bytes, submatches) if is_data_utf8(region) else PLACEHOLDER_DATA_BYTES
-    num_lines = 0
-    relative_first_match_line = 0
-    for i, byte in enumerate(region_bytes):
-        if byte not in NEWLINE_BYTE:
-            continue
-        num_lines += 1
-        if i < relative_first_match_offset:
-            relative_first_match_line += 1
-    if not region_bytes.endswith(NEWLINE_BYTE):
-        num_lines += 1
-    line_number_start = rg_data["line_number"]
-    line_number_start_string_encoded = str(line_number_start).encode(ENCODING)
-    first_match_line = line_number_start + relative_first_match_line
-    first_match_line_string_encoded = str(first_match_line).encode(ENCODING)
-    line_number_end = line_number_start + (num_lines - 1)
-    line_number_end_string_encoded = str(line_number_end).encode(ENCODING)
-    first_match_offset = absolute_offset + relative_first_match_offset + 1
-    first_match_offset_string_encoded = str(first_match_offset).encode(ENCODING)
+    region_bytes, num_lines, first_match_line_number = process_region(
+        region,
+        first_match_byte,
+        submatches
+    )
+    absolute_start_line_number = rg_data["line_number"]
+    absolute_start_line_number_string_encoded = str(absolute_start_line_number).encode(ENCODING)
+    absolute_first_match_line_number = absolute_start_line_number + first_match_line_number
+    absolute_first_match_line_number_string_encoded = str(absolute_first_match_line_number).encode(ENCODING)
+    absolute_end_line_number = absolute_start_line_number + (num_lines - 1)
+    absolute_end_line_number_string_encoded = str(absolute_end_line_number).encode(ENCODING)
+    absolute_first_match_byte = absolute_offset_byte + first_match_byte + 1
+    absolute_first_match_byte_string_encoded = str(absolute_first_match_byte).encode(ENCODING)
     file_path_bytes = get_data_bytes(file_path)
     file_path_bytes = os.path.abspath(file_path_bytes)
     file_path_bytes = os.path.normpath(file_path_bytes)
@@ -139,7 +219,7 @@ def write_match_item(rg_message):
     file_basename_bytes = os.path.basename(file_path_bytes)
     try:
         _ = file_basename_bytes.decode(ENCODING)
-        file_basename_bytes = b"%b%b" % (BLUE_BYTES, file_basename_bytes)
+        file_basename_bytes = b"%b%b" % (BLUE_FOREGROUND_BYTES, file_basename_bytes)
     except UnicodeError:
         file_basename_bytes = PLACEHOLDER_FILENAME_BYTES
     out.write(RESET_BYTES)
@@ -147,18 +227,18 @@ def write_match_item(rg_message):
     out.write(DELIMITER_BYTE)
     out.write(file_path_base32_bytes)
     out.write(DELIMITER_BYTE)
-    out.write(first_match_offset_string_encoded)
+    out.write(absolute_first_match_byte_string_encoded)
     out.write(DELIMITER_BYTE)
-    out.write(line_number_start_string_encoded)
+    out.write(absolute_start_line_number_string_encoded)
     out.write(DELIMITER_BYTE)
-    out.write(first_match_line_string_encoded)
+    out.write(absolute_first_match_line_number_string_encoded)
     out.write(DELIMITER_BYTE)
-    out.write(line_number_end_string_encoded)
+    out.write(absolute_end_line_number_string_encoded)
     out.write(DELIMITER_BYTE)
     out.write(file_basename_bytes)
     out.write(RESET_BYTES)
     out.write(DELIMITER_BYTE)
-    out.write(formatted_region_bytes)
+    out.write(region_bytes)
     out.write(RESET_BYTES)
     out.write(NULL_BYTE)
     out.flush()
@@ -227,12 +307,14 @@ Some useful ripgrep options:
     --no-config\
 """
 ENCODING = "utf-8"
-ENCODING_BYTES = ENCODING.encode(ENCODING)
 CSI_CHARACTER_ATTRIBUTES_TEMPLATE = b"\033[%bm"
-GREEN_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"32")
-BLUE_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"34")
-RED_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"31")
+YELLOW_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"43")
+BLUE_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"34")
+MAGENTA_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"35")
+RED_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"31")
 RESET_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"0")
+RESET_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"39")
+RESET_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"49")
 DELIMITER_BYTE = b":"
 QUERY_DELIMITER = ";;"
 NULL_BYTE = b"\0"
@@ -243,10 +325,10 @@ MATCH_TYPE = "match"
 ERROR_TYPE = "error"
 MATCH_TYPE_BYTES = MATCH_TYPE.encode(ENCODING)
 ERROR_TYPE_BYTES = ERROR_TYPE.encode(ENCODING)
-PLACEHOLDER_FILENAME_BYTES = b"%bnon-%b filename" % (RED_BYTES, ENCODING_BYTES)
-PLACEHOLDER_DATA_BYTES = b"%bnon-%b data" % (RED_BYTES, ENCODING_BYTES)
-QUERY_ERROR_SPECIFIER_BYTES = b"%bQuery error" % RED_BYTES
-RG_ERROR_SPECIFIER_BYTES = b"%brg error" % RED_BYTES
+PLACEHOLDER_FILENAME_BYTES = b"%bNon-UTF-8 filename" % RED_FOREGROUND_BYTES
+PLACEHOLDER_DATA_BYTES = b"%bNon-UTF-8 data" % RED_FOREGROUND_BYTES
+QUERY_ERROR_SPECIFIER_BYTES = b"%bQuery error" % RED_FOREGROUND_BYTES
+RG_ERROR_SPECIFIER_BYTES = b"%brg error" % RED_FOREGROUND_BYTES
 rg_command = [
     "rg",
     "--line-number",
