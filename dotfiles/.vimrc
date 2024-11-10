@@ -22,9 +22,10 @@ if &termguicolors
     set list
     set listchars=tab:<->,lead:·,trail:·,multispace:·
 endif
-if !has('nvim')
+try
     packadd comment
-endif
+catch /^Vim\%((\a\+)\)\?:E919:/
+endtry
 inoremap <nowait> <C-[> <Esc>
 cnoremap <nowait> <C-[> <C-\><C-N>
 nnoremap <C-H> :wincmd h<CR>
