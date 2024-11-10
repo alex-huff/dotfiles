@@ -23,6 +23,7 @@ settings:
         J: back
         K: forward
         L: edit-url
+        \h: search
         gH: tab-move -
         gL: tab-move +
         gg: jseval --quiet scrollHelper.scrollTo(0)
