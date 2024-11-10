@@ -1,7 +1,7 @@
 #!/bin/sh
 
 original_dir=$(pwd)
-cd ~/lol-data
+cd ~/.lol-data
 archive_path="ddragon.tgz"
 data_dir="data"
 output_dir="ddragon-data"

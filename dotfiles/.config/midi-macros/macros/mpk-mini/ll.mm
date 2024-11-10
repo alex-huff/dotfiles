@@ -3,6 +3,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} -> swaymsg workspace 6
 37{c==9} -> ps ax ho pid,command | sed "/[l]eague/I!d; s/\s*\([0-9]*\).*/\1/" | xargs kill -TERM
 36{c==9} (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"\n"]->
 {
+    import os
     import requests
     import json
     import time
@@ -18,7 +19,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} -> swaymsg workspace 6
             self.team = team
 
     def get_icon_path_from_champion_name(champion_name):
-        return f"/home/alex/lol-data/data/ddragon-data/img/champion/{champion_ids[champion_name]}.png"
+        return os.path.join(lol_data_dir, f"data/ddragon-data/img/champion/{champion_ids[champion_name]}.png")
 
     def get_summoners():
         response = requests.get(f"{base_url}{player_list_endpoint}", verify=root_certificate)
@@ -70,8 +71,8 @@ MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} -> swaymsg workspace 6
             except:
                 time.sleep(30)
 
-    lol_data_dir = "/home/alex/lol-data/"
-    root_certificate = f"{lol_data_dir}riotgames.pem"
+    lol_data_dir = os.path.expanduser("~/.lol-data")
+    root_certificate = os.path.join(lol_data_dir, "riotgames.pem")
     base_url = "https://127.0.0.1:2999/"
     live_client_data_endpoint = "liveclientdata/"
     player_list_endpoint = f"{live_client_data_endpoint}playerlist"
@@ -87,9 +88,9 @@ MIDI{STATUS==cc}{CC_FUNCTION==sustain}{CC_VALUE<64} -> swaymsg workspace 6
     total_key = "total"
     name_key = "name"
     id_key = "id"
-    ddragon_data_dir = f"{lol_data_dir}data/ddragon-data/data/en_US/"
-    item_data_file = f"{ddragon_data_dir}item.json"
-    champion_data_file = f"{ddragon_data_dir}champion.json"
+    ddragon_data_dir = os.path.join(lol_data_dir, "data/ddragon-data/data/en_US/")
+    item_data_file = os.path.join(ddragon_data_dir, "item.json")
+    champion_data_file = os.path.join(ddragon_data_dir, "champion.json")
     item_prices = {}
     champion_ids = {}
     role_order = {

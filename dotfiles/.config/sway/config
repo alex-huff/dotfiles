@@ -253,7 +253,7 @@ client.focused_inactive #7c6f64 #504945 #fbf1c7 #7c6f64 #7c6f64
 # include device specific configuration and overrides
 include device/*
 # $main_display should be defined in device/*
-output $main_display bg ~/assets/noise.png tile #000000
+output $main_display bg ~/.assets/noise.png tile #000000
 
 # rules
 for_window [all] title_format %title (<i>%shell</i>)
