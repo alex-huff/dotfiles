@@ -306,10 +306,12 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
 )
 (python $MM_SCRIPT)[BACKGROUND]->
 {
-    from time import time, sleep
+    from os import path
     from sys import stdin
-    from threading import Thread, Condition
     from subprocess import run, DEVNULL
+    from threading import Thread, Condition
+    from json import load, dump
+    from time import time, sleep
 
     def update_knobs_window(is_open):
         run(f"eww {'open' if is_open else 'close'} knobs-window", stdout=DEVNULL, shell=True)
@@ -355,11 +357,18 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
     new_action_condition = Condition()
     Thread(target=do_hover, daemon=True).start()
     Thread(target=do_update_eww_knobs, daemon=True).start()
-    knob_states = [0 for _ in range(8)]
+    knob_state_file_path = path.expanduser("~/.config/midi-macros/state/knobs.json")
+    try:
+        with open(knob_state_file_path, "r") as knob_state_file:
+            knob_states = load(knob_state_file)
+    except FileNotFoundError:
+        knob_states = [0 for _ in range(8)]
     for line in stdin:
         with new_action_condition:
             exec(line)
             new_action_condition.notify_all()
+    with open(knob_state_file_path, "w") as knob_state_file:
+        dump(knob_states, knob_state_file)
 }
 
 F3 MIDI{STATUS==cc}{CC_FUNCTION==72}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")
