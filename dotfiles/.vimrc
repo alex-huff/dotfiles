@@ -32,6 +32,16 @@ nnoremap <C-H> :wincmd h<CR>
 nnoremap <C-J> :wincmd j<CR>
 nnoremap <C-K> :wincmd k<CR>
 nnoremap <C-L> :wincmd l<CR>
+nnoremap <A-1> 1gt
+nnoremap <A-2> 2gt
+nnoremap <A-3> 3gt
+nnoremap <A-4> 4gt
+nnoremap <A-5> 5gt
+nnoremap <A-6> 6gt
+nnoremap <A-7> 7gt
+nnoremap <A-8> 8gt
+nnoremap <A-9> 9gt
+nnoremap <A-0> 10gt
 nnoremap <C-S-H> gT
 nnoremap <C-S-L> gt
 nnoremap <C-A-J> :resize -1<CR>
