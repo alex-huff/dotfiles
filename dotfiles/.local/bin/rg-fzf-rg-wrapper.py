@@ -144,10 +144,10 @@ def process_region(region, first_match_byte, submatches):
                 increment_current_and_next()
             if not current_submatch:
                 break
-            yield current_submatch["start"], YELLOW_BACKGROUND_BYTES
+            yield current_submatch["start"], BLACK_FOREGROUND_YELLOW_BACKGROUND_BYTES
             while next_submatch and current_submatch["end"] == next_submatch["start"]:
                 increment_current_and_next()
-            yield current_submatch["end"], RESET_BACKGROUND_BYTES
+            yield current_submatch["end"], RESET_FOREGROUND_BACKGROUND_BYTES
             increment_current_and_next()
         yield math.inf, None
 
@@ -181,12 +181,12 @@ def process_region(region, first_match_byte, submatches):
         if should_represent_byte_as_ascii:
             if not currently_representing_bytes_as_ascii:
                 currently_representing_bytes_as_ascii = True
-                processed_region_bytes.extend(MAGENTA_FOREGROUND_BYTES)
+                processed_region_bytes.extend(UNDERLINE_BYTES)
             processed_region_bytes.extend(b"\\x%02X" % byte)
         else:
             if currently_representing_bytes_as_ascii:
                 currently_representing_bytes_as_ascii = False
-                processed_region_bytes.extend(RESET_FOREGROUND_BYTES)
+                processed_region_bytes.extend(NOT_UNDERLINE_BYTES)
             processed_region_bytes.append(byte)
     if not region_bytes.endswith(NEWLINE_BYTE):
         num_lines += 1
@@ -308,13 +308,13 @@ Some useful ripgrep options:
 """
 ENCODING = "utf-8"
 CSI_CHARACTER_ATTRIBUTES_TEMPLATE = b"\033[%bm"
-YELLOW_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"43")
-BLUE_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"34")
-MAGENTA_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"35")
-RED_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"31")
-RESET_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"0")
-RESET_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"39")
-RESET_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % (b"49")
+BLACK_FOREGROUND_YELLOW_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"38;5;232;43"
+BLUE_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"34"
+RED_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"31"
+UNDERLINE_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"4"
+RESET_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"0"
+RESET_FOREGROUND_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"39;49"
+NOT_UNDERLINE_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"24"
 DELIMITER_BYTE = b":"
 QUERY_DELIMITER = ";;"
 NULL_BYTE = b"\0"
