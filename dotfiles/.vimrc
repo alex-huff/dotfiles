@@ -52,5 +52,6 @@ nnoremap <Leader>t :botright terminal<CR><C-\><C-N>:set nonumber norelativenumbe
 nnoremap <Leader>T :vertical botright terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
 nnoremap <Leader><Leader>t :tab terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
 nnoremap <Leader>d :silent !dup<CR>:redraw!<CR>
-nnoremap <Leader>c :execute "edit" fnamemodify(@+, ":~:.")<CR>
+nnoremap <Leader>c :execute "tabedit" fnamemodify(@+, ":~:.")<CR>
+nnoremap <Leader>C :execute "edit" fnamemodify(@+, ":~:.")<CR>
 nnoremap <Leader>h :nohlsearch<CR>
