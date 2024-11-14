@@ -50,7 +50,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{CC_VALUE_SCALED(0, 1)}") (python)[BLO
 }
 
 # laptop brightness
-E3 MIDI{STATUS==cc}{CC_FUNCTION==72}(CC_VALUE_PERCENT) [BACKGROUND|INVOCATION_FORMAT=f"{a}\n"|KILL]->
+MIDI{STATUS==cc}{CC_FUNCTION==75}(CC_VALUE_PERCENT) [BACKGROUND|INVOCATION_FORMAT=f"{a}\n"|KILL]->
 {
     while true
     do
@@ -64,7 +64,7 @@ E3 MIDI{STATUS==cc}{CC_FUNCTION==72}(CC_VALUE_PERCENT) [BACKGROUND|INVOCATION_FO
 41{c==9} -> cmus-remote --prev
 42{c==9} -> cmus-remote --next
 43{c==9} -> cmus-remote -C "toggle repeat_current"
-C3 MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->CC_VALUE) [BLOCK|DEBOUNCE]->
+MIDI{STATUS==cc}{CC_FUNCTION==74}("{}"->CC_VALUE) [BLOCK|DEBOUNCE]->
 {
     current_song_duration=$(cmus-remote -Q | grep duration | cut -d " " -f 2)
     cmus-remote --seek $(python -c "print(round(({} / 127) * $current_song_duration))")
@@ -214,91 +214,91 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
                 pass
 }
 
-# home assistant
-(40+41){c==9} (zsh)[BLOCK|DEBOUNCE]->
-{
-    power_state_file=~/.config/midi-macros/state/power
-    current_state=$(<$power_state_file)
-    if [ $current_state = on ]
-    then
-        new_state=off
-    else
-        new_state=on
-    fi
-    echo $new_state > $power_state_file
-    : $(
-        for light in $(seq 5)
-        do
-            hass-cli state turn_${new_state} light.clc${light} &
-        done
-        for switch in $(seq 2)
-        do
-            hass-cli state turn_${new_state} switch.out${switch}_mss110_main_channel &
-        done
-    )
-}
-(40+42){c==9} -> hass-cli state toggle switch.out1_mss110_main_channel
-(40+43){c==9} -> hass-cli state toggle switch.out2_mss110_main_channel
-# MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{CC_VALUE_SCALED(0, 1)}") [BLOCK|DEBOUNCE]-> hass-cli service call --arguments entity_id=media_player.samsung_the_frame_55,volume_level={} media_player.volume_set
-MIDI{STATUS==cc}{74<=CC_FUNCTION<=76}(
-    f"last_action_time = {TIME}; color[{CC_FUNCTION - 74}] = {round(CC_VALUE_SCALED(0, 255))}\n"
-)
-(python $MM_SCRIPT)[BACKGROUND]->
-{
-    from sys import stdin
-    from threading import Thread, Condition
-    from subprocess import Popen, DEVNULL
-
-    def do_hass_update():
-        last_processed_action_time = None
-        while True:
-            with new_action_condition:
-                new_action_condition.wait_for(lambda: last_action_time != last_processed_action_time)
-                color_json = f"[{', '.join(str(component) for component in color)}]"
-                last_processed_action_time = last_action_time
-            processes = [
-                Popen(
-                    (
-                        "hass-cli",
-                        "raw",
-                        "ws",
-                        "--json",
-                        '{"domain":"light","service":"turn_on","service_data":{"entity_id":"light.clc%s","rgb_color":%s}}' % (light, color_json),
-                        "call_service"
-                    ),
-                    stdout=DEVNULL
-                ) for light in range(1, 6)
-            ]
-            for process in processes:
-                process.wait()
-
-    last_action_time = None
-    new_action_condition = Condition()
-    Thread(target=do_hass_update, daemon=True).start()
-    color = [0, 0, 0]
-    for line in stdin:
-        with new_action_condition:
-            exec(line)
-            new_action_condition.notify_all()
-}
-MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{round(CC_VALUE_SCALED(2000, 6500))}") [BLOCK|DEBOUNCE]->
-{
-    : $(
-        for light in $(seq 5)
-        do
-            hass-cli service call --arguments "entity_id=light.clc${light},kelvin={}" light.turn_on &
-        done
-    )
-}
-MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BLOCK|DEBOUNCE]->
-{
-    : $(
-        for light in $(seq 5)
-        do
-            hass-cli service call --arguments "entity_id=light.clc${light},brightness={}" light.turn_on &
-        done
-    )
-}
+# # home assistant
+# (40+41){c==9} (zsh)[BLOCK|DEBOUNCE]->
+# {
+#     power_state_file=~/.config/midi-macros/state/power
+#     current_state=$(<$power_state_file)
+#     if [ $current_state = on ]
+#     then
+#         new_state=off
+#     else
+#         new_state=on
+#     fi
+#     echo $new_state > $power_state_file
+#     : $(
+#         for light in $(seq 5)
+#         do
+#             hass-cli state turn_${new_state} light.clc${light} &
+#         done
+#         for switch in $(seq 2)
+#         do
+#             hass-cli state turn_${new_state} switch.out${switch}_mss110_main_channel &
+#         done
+#     )
+# }
+# (40+42){c==9} -> hass-cli state toggle switch.out1_mss110_main_channel
+# (40+43){c==9} -> hass-cli state toggle switch.out2_mss110_main_channel
+# # MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{CC_VALUE_SCALED(0, 1)}") [BLOCK|DEBOUNCE]-> hass-cli service call --arguments entity_id=media_player.samsung_the_frame_55,volume_level={} media_player.volume_set
+# MIDI{STATUS==cc}{74<=CC_FUNCTION<=76}(
+#     f"last_action_time = {TIME}; color[{CC_FUNCTION - 74}] = {round(CC_VALUE_SCALED(0, 255))}\n"
+# )
+# (python $MM_SCRIPT)[BACKGROUND]->
+# {
+#     from sys import stdin
+#     from threading import Thread, Condition
+#     from subprocess import Popen, DEVNULL
+# 
+#     def do_hass_update():
+#         last_processed_action_time = None
+#         while True:
+#             with new_action_condition:
+#                 new_action_condition.wait_for(lambda: last_action_time != last_processed_action_time)
+#                 color_json = f"[{', '.join(str(component) for component in color)}]"
+#                 last_processed_action_time = last_action_time
+#             processes = [
+#                 Popen(
+#                     (
+#                         "hass-cli",
+#                         "raw",
+#                         "ws",
+#                         "--json",
+#                         '{"domain":"light","service":"turn_on","service_data":{"entity_id":"light.clc%s","rgb_color":%s}}' % (light, color_json),
+#                         "call_service"
+#                     ),
+#                     stdout=DEVNULL
+#                 ) for light in range(1, 6)
+#             ]
+#             for process in processes:
+#                 process.wait()
+# 
+#     last_action_time = None
+#     new_action_condition = Condition()
+#     Thread(target=do_hass_update, daemon=True).start()
+#     color = [0, 0, 0]
+#     for line in stdin:
+#         with new_action_condition:
+#             exec(line)
+#             new_action_condition.notify_all()
+# }
+# MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{round(CC_VALUE_SCALED(2000, 6500))}") [BLOCK|DEBOUNCE]->
+# {
+#     : $(
+#         for light in $(seq 5)
+#         do
+#             hass-cli service call --arguments "entity_id=light.clc${light},kelvin={}" light.turn_on &
+#         done
+#     )
+# }
+# MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BLOCK|DEBOUNCE]->
+# {
+#     : $(
+#         for light in $(seq 5)
+#         do
+#             hass-cli service call --arguments "entity_id=light.clc${light},brightness={}" light.turn_on &
+#         done
+#     )
+# }
 
 # knobs
 * MIDI{STATUS==cc}{70<=CC_FUNCTION<=77}(
@@ -371,7 +371,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
         dump(knob_states, knob_state_file)
 }
 
-F3 MIDI{STATUS==cc}{CC_FUNCTION==72}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")
+MIDI{STATUS==cc}{CC_FUNCTION==73}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")
 (swaymsg "`swaymsg -t get_tree | jq -rf $MM_SCRIPT`")[BLOCK|DEBOUNCE|SCRIPT_PATH_AS_ENV_VAR]->
 {
     def recurse_nodes: recurse(.floating_nodes[], .nodes[]);
