@@ -28,6 +28,7 @@ import json
 # ":"Query error | rg error
 # "\0"
 
+
 class RGOptions:
     def __init__(self):
         self.paths = []
@@ -65,20 +66,25 @@ class RGOptions:
     def help(self):
         raise Exception(help_message)
 
+
 def is_data_utf8(data_object):
     return "text" in data_object
+
 
 def get_non_utf8_data_bytes(data_object):
     return base64.b64decode(data_object["bytes"])
 
+
 def get_utf8_data_bytes(data_object):
     return data_object["text"].encode(ENCODING)
+
 
 def get_data_bytes(data_object):
     if is_data_utf8(data_object):
         return get_utf8_data_bytes(data_object)
     else:
         return get_non_utf8_data_bytes(data_object)
+
 
 def get_utf8_encoded_codepoint_length(first_byte):
     if first_byte >> 7 == 0b0:
@@ -92,52 +98,51 @@ def get_utf8_encoded_codepoint_length(first_byte):
     else:
         raise UnicodeError("Invalid first byte for UTF-8 code point")
 
+
 def process_region(region, first_match_byte, submatches):
     """Processes the "lines" region of a match message.
 
-    Returns a tuple containing:
-    1. The UTF-8 encoded bytearray with ANSI escape sequences that highlight
-       submatches.
-    2. The total number of lines in the region.
-    3. The offset of the line relative to the region start that
-       contains the first match.
+    Returns a tuple containing: 1. The UTF-8 encoded bytearray with ANSI escape
+    sequences that highlight submatches. 2. The total number of lines in the
+    region. 3. The offset of the line relative to the region start that contains
+    the first match.
 
-    In the case that the given region is not valid UTF-8, a placeholder
-    indicating that the data was not valid UTF-8 is returned as the bytearray.
+    In the case that the given region is not valid UTF-8, a placeholder indicating
+    that the data was not valid UTF-8 is returned as the bytearray.
 
-    The returned bytearray will not represent more than MAX_DISPLAYED_LINES
-    lines or MAX_DISPLAYED_CODEPOINTS codepoints. In the case that the region
-    contains more than the maximum for either lines or codepoints, the region
-    is truncated and shifted so that the first visible submatch is somewhere in
-    the middle of the returned bytearray. When data at the beginning of the
-    region is truncated, the returned bytearray will be prefixed with the
-    continuation marker defined by CONTINUATION_MARKER_BYTES. When data at the
-    end of the region is truncated, the returned bytearray will end with the
-    same continuation marker.
+    The returned bytearray will not represent more than MAX_DISPLAYED_LINES lines
+    or MAX_DISPLAYED_CODEPOINTS codepoints. In the case that the region contains
+    more than the maximum for either lines or codepoints, the region is truncated
+    and shifted so that the first visible submatch is somewhere in the middle of
+    the returned bytearray. When data at the beginning of the region is truncated,
+    the returned bytearray will be prefixed with the continuation marker defined by
+    CONTINUATION_MARKER_BYTES. When data at the end of the region is truncated, the
+    returned bytearray will end with the same continuation marker.
 
     In the case that the given region is valid UTF-8 and a null byte is
     encountered, it will be replaced with the ASCII representation: \\x00 when
     added to the returned bytearray.
 
     In the case that the given region is valid UTF-8 and a highlighted region
-    begins or ends in the middle of a multi-byte UTF-8 codepoint, the
-    individual bytes of that codepoint are added to the returned bytearray in
-    an ASCII representation similar to \\xFF. This is to prevent escape
-    sequences splitting up UTF-8 codepoints in a way that the resulting
-    bytearray is not valid UTF-8 anymore.
+    begins or ends in the middle of a multi-byte UTF-8 codepoint, the individual
+    bytes of that codepoint are added to the returned bytearray in an ASCII
+    representation similar to \\xFF. This is to prevent escape sequences splitting
+    up UTF-8 codepoints in a way that the resulting bytearray is not valid UTF-8
+    anymore.
     """
     def generate_escapes():
         """Generates the position and bytes of each escape sequence that should be
-        injected into the bytes of the formatted region. Submatches that are
-        empty do not generate highlight or reset escape sequences. Consecutive
-        submatches are squashed together so that only one highlight escape and
-        one reset escape are generated.
+        injected into the bytes of the formatted region. Submatches that are empty do
+        not generate highlight or reset escape sequences. Consecutive submatches are
+        squashed together so that only one highlight escape and one reset escape are
+        generated.
         """
         def update_current_and_next():
             nonlocal current_submatch, next_submatch
             if i < len(submatches):
                 current_submatch = submatches[i]
-                next_submatch = submatches[i + 1] if i + 1 < len(submatches) else None
+                next_submatch = submatches[i + 1] if i + \
+                    1 < len(submatches) else None
             else:
                 current_submatch = next_submatch = None
 
@@ -162,8 +167,10 @@ def process_region(region, first_match_byte, submatches):
         yield math.inf, None
 
     def should_start_displaying():
-        within_max_lines_from_first_highlight = (first_highlight_lines_encountered - lines_encountered) <= MAX_DISPLAYED_LINES // 2
-        within_max_codepoints_from_first_highlight = (first_highlight_codepoints_encountered - codepoints_encountered) <= MAX_DISPLAYED_CODEPOINTS // 2
+        within_max_lines_from_first_highlight = (
+            first_highlight_lines_encountered - lines_encountered) <= MAX_DISPLAYED_LINES // 2
+        within_max_codepoints_from_first_highlight = (
+            first_highlight_codepoints_encountered - codepoints_encountered) <= MAX_DISPLAYED_CODEPOINTS // 2
         return within_max_lines_from_first_highlight and within_max_codepoints_from_first_highlight
 
     just_found_newline = False
@@ -213,27 +220,31 @@ def process_region(region, first_match_byte, submatches):
         at_start_of_codepoint = i > current_codepoint_end
         if at_start_of_codepoint:
             codepoints_encountered += 1
-            current_codepoint_end = i + get_utf8_encoded_codepoint_length(byte) - 1
+            current_codepoint_end = i + \
+                get_utf8_encoded_codepoint_length(byte) - 1
             if not currently_displaying:
                 currently_displaying = should_start_displaying()
                 if currently_displaying and codepoints_encountered > 0:
                     processed_region_bytes.extend(BLUE_FOREGROUND_BYTES)
                     processed_region_bytes.extend(CONTINUATION_MARKER_BYTES)
                     processed_region_bytes.extend(RESET_FOREGROUND_BYTES)
-                    previous_byte_was_newline = region_bytes[i - 1] in NEWLINE_BYTE
+                    previous_byte_was_newline = region_bytes[i -
+                                                             1] in NEWLINE_BYTE
                     if previous_byte_was_newline:
                         processed_region_bytes.extend(NEWLINE_BYTE)
             else:
                 codepoints_displayed += 1
             if currently_displaying:
                 if lines_displayed == MAX_DISPLAYED_LINES or codepoints_displayed == MAX_DISPLAYED_CODEPOINTS:
-                    should_print_continuation = not just_found_newline or i < len(region_bytes) - 1
+                    should_print_continuation = not just_found_newline or i < len(
+                        region_bytes) - 1
                     if should_print_continuation:
                         processed_region_bytes.extend(RESET_BYTES)
                         if just_found_newline:
                             processed_region_bytes.extend(NEWLINE_BYTE)
                         processed_region_bytes.extend(BLUE_FOREGROUND_BYTES)
-                        processed_region_bytes.extend(CONTINUATION_MARKER_BYTES)
+                        processed_region_bytes.extend(
+                            CONTINUATION_MARKER_BYTES)
                     finished_displaying = True
                     currently_displaying = False
                     continue
@@ -257,6 +268,7 @@ def process_region(region, first_match_byte, submatches):
             processed_region_bytes.append(byte)
     return processed_region_bytes, lines_encountered + 1, first_match_line_number
 
+
 def write_match_item(rg_message):
     rg_data = rg_message["data"]
     absolute_offset_byte = rg_data["absolute_offset"]
@@ -270,13 +282,17 @@ def write_match_item(rg_message):
         submatches
     )
     absolute_start_line_number = rg_data["line_number"]
-    absolute_start_line_number_string_encoded = str(absolute_start_line_number).encode(ENCODING)
+    absolute_start_line_number_string_encoded = str(
+        absolute_start_line_number).encode(ENCODING)
     absolute_first_match_line_number = absolute_start_line_number + first_match_line_number
-    absolute_first_match_line_number_string_encoded = str(absolute_first_match_line_number).encode(ENCODING)
+    absolute_first_match_line_number_string_encoded = str(
+        absolute_first_match_line_number).encode(ENCODING)
     absolute_end_line_number = absolute_start_line_number + (num_lines - 1)
-    absolute_end_line_number_string_encoded = str(absolute_end_line_number).encode(ENCODING)
+    absolute_end_line_number_string_encoded = str(
+        absolute_end_line_number).encode(ENCODING)
     absolute_first_match_byte = absolute_offset_byte + first_match_byte + 1
-    absolute_first_match_byte_string_encoded = str(absolute_first_match_byte).encode(ENCODING)
+    absolute_first_match_byte_string_encoded = str(
+        absolute_first_match_byte).encode(ENCODING)
     file_path_bytes = get_data_bytes(file_path)
     file_path_bytes = os.path.abspath(file_path_bytes)
     file_path_bytes = os.path.normpath(file_path_bytes)
@@ -284,7 +300,8 @@ def write_match_item(rg_message):
     file_basename_bytes = os.path.basename(file_path_bytes)
     try:
         _ = file_basename_bytes.decode(ENCODING)
-        file_basename_bytes = b"%b%b" % (BLUE_FOREGROUND_BYTES, file_basename_bytes)
+        file_basename_bytes = b"%b%b" % (
+            BLUE_FOREGROUND_BYTES, file_basename_bytes)
     except UnicodeError:
         file_basename_bytes = PLACEHOLDER_FILENAME_BYTES
     out.write(RESET_BYTES)
@@ -308,6 +325,7 @@ def write_match_item(rg_message):
     out.write(NULL_BYTE)
     out.flush()
 
+
 def write_error_item(error_specifier_bytes, error_message):
     error_message_bytes = error_message.encode(ENCODING)
     error_message_base32_bytes = base64.b32encode(error_message_bytes)
@@ -325,14 +343,14 @@ def write_error_item(error_specifier_bytes, error_message):
     out.write(NULL_BYTE)
     out.flush()
 
+
 script_basename = os.path.basename(sys.argv[0])
 if len(sys.argv) != 2:
     print(f"Usage: {script_basename} <query>", file=sys.stderr)
     sys.exit(1)
 out = sys.stdout.buffer
 query = sys.argv[1]
-help_message = \
-"""\
+help_message = """\
 ripgrep command manipulation:
     rg.push_arg(arg), rg.push_args(*args), rg.push_long_arg(arg, *values)
     rg.push_path(path), rg.push_paths(*paths)
@@ -435,7 +453,8 @@ rg_options.regexp(regex)
 rg_command.extend(rg_options.arguments)
 rg_command.append("--")
 rg_command.extend(rg_options.paths)
-rg_process = Popen(rg_command, stdin=DEVNULL, stdout=PIPE, stderr=PIPE, encoding=ENCODING)
+rg_process = Popen(rg_command, stdin=DEVNULL, stdout=PIPE,
+                   stderr=PIPE, encoding=ENCODING)
 for rg_json in rg_process.stdout:
     rg_message = json.loads(rg_json)
     if rg_message["type"] != "match":

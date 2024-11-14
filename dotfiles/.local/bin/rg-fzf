@@ -5,13 +5,19 @@ generate_query()
 	python3 <<-EOF - "$@"
 		import sys
 		import os
+		
+		
 		def unexpand_path(path):
 		    return \
 		        f"~{path[len(home_path):]}" \
 		        if os.path.isabs(path) and os.path.commonpath((home_path, path)) == home_path \
 		        else path
+		
+		
 		def generate_quoted_paths(paths):
 		    return (repr(unexpand_path(os.path.normpath(path))) for path in paths)
+		
+		
 		home_path = os.path.expanduser("~")
 		paths_specification = \
 		    f".push_paths({', '.join(generate_quoted_paths(sys.argv[1:]))})" \
