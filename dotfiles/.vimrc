@@ -55,3 +55,4 @@ nnoremap <Leader>d :silent !dup<CR>:redraw!<CR>
 nnoremap <Leader>c :execute "tabedit" fnamemodify(@+, ":~:.")<CR>
 nnoremap <Leader>C :execute "edit" fnamemodify(@+, ":~:.")<CR>
 nnoremap <Leader>h :nohlsearch<CR>
+nnoremap <Leader>ap :%!autopep8 -<CR>

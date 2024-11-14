@@ -102,10 +102,12 @@ def get_utf8_encoded_codepoint_length(first_byte):
 def process_region(region, first_match_byte, submatches):
     """Processes the "lines" region of a match message.
 
-    Returns a tuple containing: 1. The UTF-8 encoded bytearray with ANSI escape
-    sequences that highlight submatches. 2. The total number of lines in the
-    region. 3. The offset of the line relative to the region start that contains
-    the first match.
+    Returns a tuple containing:
+    1. The UTF-8 encoded bytearray with ANSI escape sequences that highlight
+    submatches.
+    2. The total number of lines in the region.
+    3. The offset of the line relative to the region start that contains the first
+    match.
 
     In the case that the given region is not valid UTF-8, a placeholder indicating
     that the data was not valid UTF-8 is returned as the bytearray.
