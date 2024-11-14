@@ -87,7 +87,7 @@ def get_utf8_encoded_codepoint_length(first_byte):
         return 2
     elif first_byte >> 4 == 0b1110:
         return 3
-    elif first_byte >> 5 == 0b11110:
+    elif first_byte >> 3 == 0b11110:
         return 4
     else:
         raise UnicodeError("Invalid first byte for UTF-8 code point")
@@ -105,6 +105,16 @@ def process_region(region, first_match_byte, submatches):
     In the case that the given region is not valid UTF-8, a placeholder
     indicating that the data was not valid UTF-8 is returned as the bytearray.
 
+    The returned bytearray will not represent more than MAX_DISPLAYED_LINES
+    lines or MAX_DISPLAYED_CODEPOINTS codepoints. In the case that the region
+    contains more than the maximum for either lines or codepoints, the region
+    is truncated and shifted so that the first visible submatch is somewhere in
+    the middle of the returned bytearray. When data at the beginning of the
+    region is truncated, the returned bytearray will be prefixed with the
+    continuation marker defined by CONTINUATION_MARKER_BYTES. When data at the
+    end of the region is truncated, the returned bytearray will end with the
+    same continuation marker.
+
     In the case that the given region is valid UTF-8 and a null byte is
     encountered, it will be replaced with the ASCII representation: \\x00 when
     added to the returned bytearray.
@@ -112,7 +122,7 @@ def process_region(region, first_match_byte, submatches):
     In the case that the given region is valid UTF-8 and a highlighted region
     begins or ends in the middle of a multi-byte UTF-8 codepoint, the
     individual bytes of that codepoint are added to the returned bytearray in
-    an ASCII representation similar to \\x0F. This is to prevent escape
+    an ASCII representation similar to \\xFF. This is to prevent escape
     sequences splitting up UTF-8 codepoints in a way that the resulting
     bytearray is not valid UTF-8 anymore.
     """
@@ -151,31 +161,88 @@ def process_region(region, first_match_byte, submatches):
             increment_current_and_next()
         yield math.inf, None
 
-    num_lines = 0
+    def should_start_displaying():
+        within_max_lines_from_first_highlight = (first_highlight_lines_encountered - lines_encountered) <= MAX_DISPLAYED_LINES // 2
+        within_max_codepoints_from_first_highlight = (first_highlight_codepoints_encountered - codepoints_encountered) <= MAX_DISPLAYED_CODEPOINTS // 2
+        return within_max_lines_from_first_highlight and within_max_codepoints_from_first_highlight
+
+    just_found_newline = False
+    lines_encountered = 0
     first_match_line_number = 0
-    is_valid_utf8 = is_data_utf8(region)
-    if is_valid_utf8:
+    should_display_region = is_data_utf8(region)
+    if should_display_region:
+        region_bytes = get_utf8_data_bytes(region)
         processed_region_bytes = bytearray()
+        codepoints_encountered = -1
+        codepoints_displayed = 0
+        lines_displayed = 0
+        currently_representing_bytes_as_ascii = False
+        currently_displaying = False
+        finished_displaying = False
         escapes_generator = generate_escapes()
         next_escape_position, next_escape = next(escapes_generator)
+        if next_escape:
+            first_highlight_lines_encountered = 0
+            first_highlight_codepoints_encountered = 0
+            current_codepoint_end = -1
+            i = 0
+            while i < next_escape_position:
+                byte = region_bytes[i]
+                if byte in NEWLINE_BYTE:
+                    first_highlight_lines_encountered += 1
+                first_highlight_codepoints_encountered += 1
+                i += get_utf8_encoded_codepoint_length(byte)
+            currently_displaying = False
+        else:
+            currently_displaying = True
         current_codepoint_end = -1
-        currently_representing_bytes_as_ascii = False
-        region_bytes = get_utf8_data_bytes(region)
     else:
-        processed_region_bytes = PLACEHOLDER_DATA_BYTES
         region_bytes = get_non_utf8_data_bytes(region)
+        processed_region_bytes = PLACEHOLDER_DATA_BYTES
     for i, byte in enumerate(region_bytes):
-        if byte in NEWLINE_BYTE:
-            num_lines += 1
+        if just_found_newline:
+            lines_encountered += 1
+        just_found_newline = byte in NEWLINE_BYTE
+        if just_found_newline:
             if i < first_match_byte:
                 first_match_line_number += 1
-        if not is_valid_utf8:
+            if should_display_region and currently_displaying:
+                lines_displayed += 1
+        if not should_display_region or finished_displaying:
+            continue
+        at_start_of_codepoint = i > current_codepoint_end
+        if at_start_of_codepoint:
+            codepoints_encountered += 1
+            current_codepoint_end = i + get_utf8_encoded_codepoint_length(byte) - 1
+            if not currently_displaying:
+                currently_displaying = should_start_displaying()
+                if currently_displaying and codepoints_encountered > 0:
+                    processed_region_bytes.extend(BLUE_FOREGROUND_BYTES)
+                    processed_region_bytes.extend(CONTINUATION_MARKER_BYTES)
+                    processed_region_bytes.extend(RESET_FOREGROUND_BYTES)
+                    previous_byte_was_newline = region_bytes[i - 1] in NEWLINE_BYTE
+                    if previous_byte_was_newline:
+                        processed_region_bytes.extend(NEWLINE_BYTE)
+            else:
+                codepoints_displayed += 1
+            if currently_displaying:
+                if lines_displayed == MAX_DISPLAYED_LINES or codepoints_displayed == MAX_DISPLAYED_CODEPOINTS:
+                    should_print_continuation = not just_found_newline or i < len(region_bytes) - 1
+                    if should_print_continuation:
+                        processed_region_bytes.extend(RESET_BYTES)
+                        if just_found_newline:
+                            processed_region_bytes.extend(NEWLINE_BYTE)
+                        processed_region_bytes.extend(BLUE_FOREGROUND_BYTES)
+                        processed_region_bytes.extend(CONTINUATION_MARKER_BYTES)
+                    finished_displaying = True
+                    currently_displaying = False
+                    continue
+        if not currently_displaying:
             continue
         if i == next_escape_position:
             processed_region_bytes.extend(next_escape)
             next_escape_position, next_escape = next(escapes_generator)
-        if i > current_codepoint_end:
-            current_codepoint_end = i + get_utf8_encoded_codepoint_length(byte) - 1
+        if at_start_of_codepoint:
             in_codepoint_split_by_escape = next_escape_position <= current_codepoint_end
         should_represent_byte_as_ascii = in_codepoint_split_by_escape or byte in NULL_BYTE
         if should_represent_byte_as_ascii:
@@ -188,9 +255,7 @@ def process_region(region, first_match_byte, submatches):
                 currently_representing_bytes_as_ascii = False
                 processed_region_bytes.extend(NOT_UNDERLINE_BYTES)
             processed_region_bytes.append(byte)
-    if not region_bytes.endswith(NEWLINE_BYTE):
-        num_lines += 1
-    return processed_region_bytes, num_lines, first_match_line_number
+    return processed_region_bytes, lines_encountered + 1, first_match_line_number
 
 def write_match_item(rg_message):
     rg_data = rg_message["data"]
@@ -306,6 +371,8 @@ Some useful ripgrep options:
     --engine=ENGINE
     --no-config\
 """
+MAX_DISPLAYED_CODEPOINTS = 2 ** 11 - 1
+MAX_DISPLAYED_LINES = 2 ** 4 - 1
 ENCODING = "utf-8"
 CSI_CHARACTER_ATTRIBUTES_TEMPLATE = b"\033[%bm"
 BLACK_FOREGROUND_YELLOW_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"38;5;232;43"
@@ -313,8 +380,10 @@ BLUE_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"34"
 RED_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"31"
 UNDERLINE_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"4"
 RESET_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"0"
+RESET_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"39"
 RESET_FOREGROUND_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"39;49"
 NOT_UNDERLINE_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"24"
+CONTINUATION_MARKER_BYTES = "…".encode(ENCODING)
 DELIMITER_BYTE = b":"
 QUERY_DELIMITER = ";;"
 NULL_BYTE = b"\0"
