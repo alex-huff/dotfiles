@@ -1,5 +1,10 @@
 [[ $- != *i* ]] && return
 
+if (( $+STARTUP_EVAL ))
+then
+    eval $STARTUP_EVAL
+fi
+
 setopt vi
 autoload edit-command-line
 zle -N edit-command-line
@@ -60,11 +65,11 @@ compinit
 zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
 fpath=(~/.zsh $fpath)
 
-if [ -z $CUSTOM_HISTFILE ]
+if (( $+CUSTOM_HISTFILE ))
 then
-    HISTFILE=~/.zsh_history
-else
     HISTFILE=$CUSTOM_HISTFILE
+else
+    HISTFILE=~/.zsh_history
 fi
 HISTSIZE=100000
 SAVEHIST=100000
