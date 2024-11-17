@@ -47,12 +47,12 @@
 }
 # 37{c==9} -> mc-cli --pid $(focused-pid.sh) send command "fix all"
 # 38{c==9} -> mc-cli --pid $(focused-pid.sh) send command "sell all"
-C3 MIDI{STATUS==cc}{CC_FUNCTION==70}("{}"->f"{round(CC_VALUE_SCALED(30, 110))}") [BLOCK|DEBOUNCE]->
+D3 MIDI{STATUS==cc}{CC_FUNCTION==70}("{}"->f"{round(CC_VALUE_SCALED(30, 110))}") [BLOCK|DEBOUNCE]->
 {
     pid=$(focused-pid.sh)
     mc-cli --pid $pid send chat-local "$(mc-cli --pid $pid set-fov {})"
 }
-C3 MIDI{STATUS==cc}{CC_FUNCTION==75}("{}"->f"{CC_VALUE_SCALED(0, 1):.2f}") [BLOCK|DEBOUNCE]->
+D3 MIDI{STATUS==cc}{CC_FUNCTION==75}("{}"->f"{CC_VALUE_SCALED(0, 1):.2f}") [BLOCK|DEBOUNCE]->
 {
     pid=$(focused-pid.sh)
     mc-cli --pid $pid send chat-local "$(mc-cli --pid $pid set-brightness {})"
