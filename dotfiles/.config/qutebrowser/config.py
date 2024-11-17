@@ -28,7 +28,6 @@ config.unbind("<Ctrl+h>")
 config.unbind("d")
 
 # colors
-config.source("theme.py")
 c.colors.webpage.darkmode.enabled = True
 c.colors.webpage.darkmode.policy.images = "never"
 c.colors.webpage.preferred_color_scheme = "dark"
