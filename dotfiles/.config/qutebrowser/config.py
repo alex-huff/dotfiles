@@ -64,11 +64,11 @@ if os.name == "nt":
         ('export CHOICE=$(wslpath -ua "$1");'
          'cd "$(wslpath -ua "$2")";'
          "kitty --start-as=maximized")
-    file_selection_command = ["wsl", "--exec", "env", r"""STARTUP_EVAL=alias choose='xargs -d "\n" -n1 wslpath -wa >> "$CHOICE"'""",
+    file_selection_command = ["wsl", "--exec", "env", r'CHOOSER=xargs -d "\n" -n1 wslpath -wa >> "$CHOICE"',
                               "sh", "-c", file_selection_script, "_", "{}", home_path]
 else:
     file_selection_command = ["env", f"--chdir={home_path}", "CHOICE={}",
-                              r"""STARTUP_EVAL=alias choose='xargs -d "\n" realpath >> "$CHOICE"'""", "kitty", "--app-id=kitty-dialogue"]
+                              r'CHOOSER=xargs -d "\n" realpath >> "$CHOICE"', "kitty", "--app-id=kitty-dialogue"]
 for selection_type in ("single_file", "multiple_files", "folder"):
     config.set(f"fileselect.{selection_type}.command", file_selection_command)
 

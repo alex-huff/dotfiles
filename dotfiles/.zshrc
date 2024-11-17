@@ -1,10 +1,5 @@
 [[ $- != *i* ]] && return
 
-if (( $+STARTUP_EVAL ))
-then
-    eval $STARTUP_EVAL
-fi
-
 setopt vi
 autoload edit-command-line
 zle -N edit-command-line
@@ -21,6 +16,11 @@ do
 done
 alias cmcd="color-manager cycle dark"
 alias cmcl="color-manager cycle light"
+
+if (( $+CHOOSER ))
+then
+    alias choose="$CHOOSER"
+fi
 
 if (( $+commands[nvim] ))
 then
