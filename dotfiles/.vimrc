@@ -42,6 +42,10 @@ nnoremap <A-7> 7gt
 nnoremap <A-8> 8gt
 nnoremap <A-9> 9gt
 nnoremap <A-0> 10gt
+nnoremap <silent> <C-S-J> :<C-U>execute "move" min([line(".") + v:count1, line("$")])<CR>
+nnoremap <silent> <C-S-K> :<C-U>execute "move" max([line(".") - (v:count1 + 1), 0])<CR>
+vnoremap <silent> <C-S-J> :<C-U>execute "'<,'>move" min([line("'>") + v:count1, line("$")])<CR>V'<o
+vnoremap <silent> <C-S-K> :<C-U>execute "'<,'>move" max([line("'<") - (v:count1 + 1), 0])<CR>V'<o
 nnoremap <C-S-H> gT
 nnoremap <C-S-L> gt
 nnoremap <C-A-J> :resize -1<CR>
