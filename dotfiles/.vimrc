@@ -1,5 +1,6 @@
 syntax on
 filetype plugin on
+set lazyredraw
 set termguicolors
 set number
 set relativenumber
@@ -28,10 +29,10 @@ catch /^Vim\%((\a\+)\)\?:E919:/
 endtry
 inoremap <nowait> <C-[> <Esc>
 cnoremap <nowait> <C-[> <C-\><C-N>
-nnoremap <C-H> :wincmd h<CR>
-nnoremap <C-J> :wincmd j<CR>
-nnoremap <C-K> :wincmd k<CR>
-nnoremap <C-L> :wincmd l<CR>
+nnoremap <silent> <C-H> :wincmd h<CR>
+nnoremap <silent> <C-J> :wincmd j<CR>
+nnoremap <silent> <C-K> :wincmd k<CR>
+nnoremap <silent> <C-L> :wincmd l<CR>
 nnoremap <silent> <A-j> :execute "move" min([line(".") + v:count1, line("$")])<CR>
 nnoremap <silent> <A-k> :execute "move" max([line(".") - (v:count1 + 1), 0])<CR>
 inoremap <silent> <A-j> <Esc>:execute "move" min([line(".") + v:count1, line("$")])<CR>gi
@@ -50,15 +51,15 @@ nnoremap <A-9> 9gt
 nnoremap <A-0> 10gt
 nnoremap <C-S-H> gT
 nnoremap <C-S-L> gt
-nnoremap <C-A-J> :resize -1<CR>
-nnoremap <C-A-K> :resize +1<CR>
-nnoremap <C-A-H> :vertical resize -1<CR>
-nnoremap <C-A-L> :vertical resize +1<CR>
-nnoremap <Leader>t :botright terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
-nnoremap <Leader>T :vertical botright terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
-nnoremap <Leader><Leader>t :tab terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
-nnoremap <Leader>d :silent !dup<CR>:redraw!<CR>
-nnoremap <Leader>c :execute "tabedit" fnamemodify(@+, ":~:.")<CR>
-nnoremap <Leader>C :execute "edit" fnamemodify(@+, ":~:.")<CR>
-nnoremap <Leader>h :nohlsearch<CR>
-nnoremap <Leader>ap :%!autopep8 -<CR>
+nnoremap <silent> <C-A-J> :resize -1<CR>
+nnoremap <silent> <C-A-K> :resize +1<CR>
+nnoremap <silent> <C-A-H> :vertical resize -1<CR>
+nnoremap <silent> <C-A-L> :vertical resize +1<CR>
+nnoremap <silent> <Leader>t :botright terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
+nnoremap <silent> <Leader>T :vertical botright terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
+nnoremap <silent> <Leader><Leader>t :tab terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
+nnoremap <silent> <Leader>d :silent !dup<CR>:redraw!<CR>
+nnoremap <silent> <Leader>c :execute "tabedit" fnamemodify(@+, ":~:.")<CR>
+nnoremap <silent> <Leader>C :execute "edit" fnamemodify(@+, ":~:.")<CR>
+nnoremap <silent> <Leader>h :nohlsearch<CR>
+nnoremap <silent> <Leader>ap :%!autopep8 -<CR>
