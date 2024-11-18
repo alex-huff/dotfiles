@@ -1,3 +1,17 @@
 #!/bin/sh
 
-
+if [ $# -gt 0 ]
+then
+    walker_root="$1"
+else
+    walker_root=.
+fi
+fzf --wrap \
+    --multi \
+    --walker="file,follow,hidden" \
+    --walker-root="$walker_root" \
+    --preview="fzf-preview.sh {}" \
+    --bind="resize:refresh-preview" \
+    --bind="ctrl-space:execute(nvim {})" \
+    --bind="ctrl-l:execute-silent(printf '%s' {} | kitty +kitten clipboard)" \
+    --bind="ctrl-q:execute-silent(printf '%q' {} | kitty +kitten clipboard)"
