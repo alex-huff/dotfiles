@@ -50,7 +50,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{CC_VALUE_SCALED(0, 1)}") (python)[BLO
 }
 
 # laptop brightness
-MIDI{STATUS==cc}{CC_FUNCTION==75}(CC_VALUE_PERCENT) [BACKGROUND|INVOCATION_FORMAT=f"{a}\n"|KILL]->
+MIDI{STATUS==cc}{CC_FUNCTION==73}(CC_VALUE_PERCENT) [BACKGROUND|INVOCATION_FORMAT=f"{a}\n"|KILL]->
 {
     while true
     do
@@ -371,7 +371,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
         dump(knob_states, knob_state_file)
 }
 
-MIDI{STATUS==cc}{CC_FUNCTION==73}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")
+MIDI{STATUS==cc}{CC_FUNCTION==75}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")
 (swaymsg "`swaymsg -t get_tree | jq -rf $MM_SCRIPT`")[BLOCK|DEBOUNCE|SCRIPT_PATH_AS_ENV_VAR]->
 {
     def recurse_nodes: recurse(.floating_nodes[], .nodes[]);
