@@ -123,6 +123,6 @@ c.url.searchengines = {"DEFAULT": "https://duckduckgo.com/?q={}"}
 c.search.wrap = False
 
 # discord overrides
-with config.pattern("*://discord.com/") as discord_c:
+with config.pattern("*://discord.com") as discord_c:
     discord_c.content.desktop_capture = True
     discord_c.content.media.audio_capture = True
