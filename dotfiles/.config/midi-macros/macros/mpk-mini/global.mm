@@ -50,7 +50,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==72}("{}"->f"{CC_VALUE_SCALED(0, 1)}") (python)[BLO
 }
 
 # laptop brightness
-MIDI{STATUS==cc}{CC_FUNCTION==73}(CC_VALUE_PERCENT) [BACKGROUND|INVOCATION_FORMAT=f"{a}\n"|KILL]->
+C3 MIDI{STATUS==cc}{CC_FUNCTION==73}(CC_VALUE_PERCENT) [BACKGROUND|INVOCATION_FORMAT=f"{a}\n"|KILL]->
 {
     while true
     do
@@ -241,8 +241,7 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
 (40+43){c==9} -> hass-cli state toggle switch.out2_mss110_main_channel
 # MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{CC_VALUE_SCALED(0, 1)}") [BLOCK|DEBOUNCE]-> hass-cli service call --arguments entity_id=media_player.samsung_the_frame_55,volume_level={} media_player.volume_set
 C3 MIDI{STATUS==cc}{74<=CC_FUNCTION<=76}(
-    f"last_action_time = {TIME}; color[{CC_FUNCTION - 74}] = {round(CC_VALUE_SCALED(0, 255))}\n"
-)
+    f"last_action_time = {TIME}; color[{CC_FUNCTION - 74}] = {round(CC_VALUE_SCALED(0, 255))}\n")
 (python $MM_SCRIPT)[BACKGROUND]->
 {
     from sys import stdin
@@ -281,7 +280,7 @@ C3 MIDI{STATUS==cc}{74<=CC_FUNCTION<=76}(
             exec(line)
             new_action_condition.notify_all()
 }
-C3 MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{round(CC_VALUE_SCALED(2000, 6500))}") [BLOCK|DEBOUNCE]->
+C3 MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(2000, 6500))}") [BLOCK|DEBOUNCE]->
 {
     : $(
         for light in $(seq 5)
@@ -290,7 +289,7 @@ C3 MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{round(CC_VALUE_SCALED(2000, 6500))
         done
     )
 }
-MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BLOCK|DEBOUNCE]->
+MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BLOCK|DEBOUNCE]->
 {
     : $(
         for light in $(seq 5)
@@ -302,8 +301,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==77}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
 
 # knobs
 * MIDI{STATUS==cc}{70<=CC_FUNCTION<=77}(
-    f"last_action_time = {TIME / 10 ** 9}; knob_states[{CC_FUNCTION - 70}] = {CC_VALUE_PERCENT}\n"
-)
+    f"last_action_time = {TIME / 10 ** 9}; knob_states[{CC_FUNCTION - 70}] = {CC_VALUE_PERCENT}\n")
 (python $MM_SCRIPT)[BACKGROUND]->
 {
     from os import path
@@ -381,3 +379,7 @@ MIDI{STATUS==cc}{CC_FUNCTION==75}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")
         select(.pid) |
         "[con_id=\(.id)] opacity <opacity>"
 }
+
+MIDI{STATUS==cc}{76<=CC_FUNCTION<=77}(
+    "init"->f"gap_type={'inner' if CC_FUNCTION == 76 else 'outer'}; pixels={CC_VALUE}")
+[BLOCK|DEBOUNCE]-> init; swaymsg gaps $gap_type current set $pixels
