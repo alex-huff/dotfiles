@@ -274,12 +274,9 @@ for_window [app_id=".*-overlay"]
 
 # various
 default_border normal 1
+smart_borders no_gaps
 title_align center
 titlebar_padding 20 2
-# hide_edge_borders --i3 smart
-gaps inner 25
-gaps outer 10
-# smart_gaps on
 focus_follows_mouse no
 tiling_drag off
 focus_on_window_activation none
