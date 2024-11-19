@@ -7,9 +7,9 @@ then
 fi
 if [ -n "${SSH_CLIENT+_}" ]
 then
-    icat_transfer_mode=memory
-else
     icat_transfer_mode=stream
+else
+    icat_transfer_mode=memory
 fi
 bat_command=$(command -v bat || command -v batcat || echo :)
 file_path="$1"
