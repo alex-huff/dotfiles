@@ -253,7 +253,7 @@ client.focused_inactive #7c6f64 #504945 #fbf1c7 #7c6f64 #7c6f64
 # include device specific configuration and overrides
 include device/*
 # $main_display should be defined in device/*
-output $main_display bg ~/.assets/noise.png tile #000000
+# output $main_display bg ~/.assets/noise.png tile #000000
 
 # rules
 for_window [all] title_format %title (<i>%shell</i>)
@@ -276,10 +276,10 @@ for_window [app_id=".*-overlay"]
 default_border normal 1
 title_align center
 titlebar_padding 20 2
-hide_edge_borders --i3 smart
-gaps inner 15
-gaps outer -5
-smart_gaps on
+# hide_edge_borders --i3 smart
+gaps inner 25
+gaps outer 10
+# smart_gaps on
 focus_follows_mouse no
 tiling_drag off
 focus_on_window_activation none
