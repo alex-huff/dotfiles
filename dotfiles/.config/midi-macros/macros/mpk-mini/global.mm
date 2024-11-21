@@ -393,11 +393,17 @@ MIDI{STATUS==cc}{76<=CC_FUNCTION<=77}(
 {
     import sys
     from subprocess import run
-    import time
+    from time import time, sleep
     from threading import Thread, Lock
+
+    def sleep_till(time_seconds):
+        total_sleep_time = time_seconds - time()
+        if total_sleep_time > 0:
+            sleep(total_sleep_time)
 
     def manage_window():
         while True:
+            start_time = time()
             with lock:
                 if should_stop:
                     return
@@ -416,7 +422,7 @@ MIDI{STATUS==cc}{76<=CC_FUNCTION<=77}(
                 amount = (str(abs(bend)), "px")
             swaymsg_command = ("swaymsg", action, *modifier, *amount)
             run(swaymsg_command)
-            time.sleep(.01)
+            sleep_till(start_time + .01)
 
     is_resize = False
     is_horizontal = False
