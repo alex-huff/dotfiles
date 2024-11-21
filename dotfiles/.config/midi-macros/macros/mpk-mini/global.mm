@@ -381,5 +381,65 @@ MIDI{STATUS==cc}{CC_FUNCTION==75}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")
 }
 
 MIDI{STATUS==cc}{76<=CC_FUNCTION<=77}(
-    "init"->f"gap_type={'inner' if CC_FUNCTION == 76 else 'outer'}; pixels={CC_VALUE}")
-[BLOCK|DEBOUNCE]-> init; swaymsg gaps $gap_type current set $pixels
+    "<init>"->f"gap_type={'inner' if CC_FUNCTION==76 else 'outer'}; pixels={CC_VALUE}")
+[BLOCK|DEBOUNCE]-> <init>; swaymsg gaps $gap_type current set $pixels
+
+* MIDI{
+    (STATUS==pb and
+     len(TRIGGER)<2 and
+     (not TRIGGER or 48<=TRIGGER[0].getNote()<=51))
+}(f"note={TRIGGER[0].getNote()-48 if TRIGGER else None};bend={round(((DATA_2-64)*128+DATA_1)/384)}\n")
+(python $MM_SCRIPT)[BACKGROUND]->
+{
+    import sys
+    from subprocess import run
+    import time
+    from threading import Thread, Lock
+
+    def manage_window():
+        while True:
+            with lock:
+                if should_stop:
+                    return
+                action = "resize" if is_resize else "move"
+                if is_resize:
+                    action = "resize"
+                    type = "grow" if bend >= 0 else "shrink"
+                    dimension = "width" if is_horizontal else "height"
+                    modifier = (type, dimension)
+                else:
+                    action = "move"
+                    if is_horizontal:
+                        modifier = ("right",) if bend >= 0 else ("left",)
+                    else:
+                        modifier = ("up",) if bend >= 0 else ("down",)
+                amount = (str(abs(bend)), "px")
+            swaymsg_command = ("swaymsg", action, *modifier, *amount)
+            run(swaymsg_command)
+            time.sleep(.01)
+
+    is_resize = False
+    is_horizontal = False
+    should_stop = False
+    bend = 0
+    manage_window_thread = None
+    lock = Lock()
+    for line in map(str.rstrip, sys.stdin):
+        with lock:
+            old_bend = bend
+            exec(line)
+            if note != None:
+                is_resize = note < 2
+                is_horizontal = note % 2 == 0
+            was_bent = old_bend != 0
+            is_bent = bend != 0
+            if note != None and not was_bent and is_bent:
+                manage_window_thread = Thread(target=manage_window)
+                manage_window_thread.start()
+            elif was_bent and not is_bent:
+                should_stop = True
+        if should_stop:
+            if manage_window_thread:
+                manage_window_thread.join()
+            should_stop = False
+}
