@@ -33,12 +33,12 @@ nnoremap <silent> <C-H> :wincmd h<CR>
 nnoremap <silent> <C-J> :wincmd j<CR>
 nnoremap <silent> <C-K> :wincmd k<CR>
 nnoremap <silent> <C-L> :wincmd l<CR>
-nnoremap <silent> <A-J> :execute "move" min([line(".") + v:count1, line("$")])<CR>
-nnoremap <silent> <A-K> :execute "move" max([line(".") - (v:count1 + 1), 0])<CR>
-inoremap <silent> <A-J> <Esc>:execute "move" min([line(".") + v:count1, line("$")])<CR>gi
-inoremap <silent> <A-K> <Esc>:execute "move" max([line(".") - (v:count1 + 1), 0])<CR>gi
-vnoremap <silent> <A-J> :<C-U>silent execute "'<,'>move" min([line("'>") + v:count1, line("$")])<CR>gv
-vnoremap <silent> <A-K> :<C-U>silent execute "'<,'>move" max([line("'<") - (v:count1 + 1), 0])<CR>gv
+nnoremap <silent> <A-j> :execute "move" min([line(".") + v:count1, line("$")])<CR>
+nnoremap <silent> <A-k> :execute "move" max([line(".") - (v:count1 + 1), 0])<CR>
+inoremap <silent> <A-j> <Esc>:execute "move" min([line(".") + v:count1, line("$")])<CR>gi
+inoremap <silent> <A-k> <Esc>:execute "move" max([line(".") - (v:count1 + 1), 0])<CR>gi
+vnoremap <silent> <A-j> :<C-U>silent execute "'<,'>move" min([line("'>") + v:count1, line("$")])<CR>gv
+vnoremap <silent> <A-k> :<C-U>silent execute "'<,'>move" max([line("'<") - (v:count1 + 1), 0])<CR>gv
 nnoremap <A-1> 1gt
 nnoremap <A-2> 2gt
 nnoremap <A-3> 3gt
