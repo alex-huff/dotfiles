@@ -256,13 +256,14 @@ include device/*
 # output $main_display bg ~/.assets/noise.png tile #000000
 
 # rules
+bindsym $super+Alt+b exec killall --process-group kitty-panel || kitty-panel
 for_window [all] title_format %title (<i>%shell</i>)
 for_window [title="Authentication required"] floating enable
 for_window [app_id="blueman-applet"] kill
 for_window [app_id=".*-dialogue"]
 {
-    floating enable
-    resize set width 1280 height 720
+    move container to scratchpad
+    scratchpad show
 }
 for_window [app_id=".*-overlay"]
 {

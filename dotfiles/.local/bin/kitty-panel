@@ -1,0 +1,26 @@
+#!/bin/sh
+
+status_command=$(
+	cat <<-"EOF"
+		date_string=$(date "+%A %B %d %H:%M:%S %Y")
+		memory_string=$(free --line --human | sed "s/  \+/ /g; s/\([0-9]\+\w*\) \(\w\+\)/\1  |  \2/g; s/\b[a-zA-Z]\+\b/\0:/g")
+		uptime_string=$(uptime --pretty)
+		total_width=$(($COLUMNS - 2))
+		used_width=$((${#date_string} + ${#memory_string} + ${#uptime_string}))
+		unused_width=$(($total_width - $used_width))
+		left_gap_width=$(($unused_width / 2))
+		if [ $(($unused_width % 2)) -eq 0 ]
+		then
+		    right_gap_width=$left_gap_width
+		else
+		    right_gap_width=$(($left_gap_width + 1))
+		fi
+		printf " "
+		printf "$date_string"
+		printf "%${left_gap_width}s"
+		printf "$memory_string"
+		printf "%${right_gap_width}s"
+		printf "$uptime_string"
+	EOF
+)
+kitty +kitten panel -o window_padding_width=1 watch -tn1 "$status_command"
