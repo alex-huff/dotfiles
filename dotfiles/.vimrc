@@ -2,6 +2,7 @@ syntax on
 filetype plugin on
 set lazyredraw
 set termguicolors
+set nowrap
 set number
 set relativenumber
 set ignorecase
@@ -33,6 +34,10 @@ nnoremap <silent> <C-H> :wincmd h<CR>
 nnoremap <silent> <C-J> :wincmd j<CR>
 nnoremap <silent> <C-K> :wincmd k<CR>
 nnoremap <silent> <C-L> :wincmd l<CR>
+nnoremap <silent> <A-n> :cnext<CR>
+nnoremap <silent> <A-p> :cprevious<CR>
+nnoremap <A-h> zH
+nnoremap <A-l> zL
 nnoremap <silent> <A-j> :execute "move" min([line(".") + v:count1, line("$")])<CR>
 nnoremap <silent> <A-k> :execute "move" max([line(".") - (v:count1 + 1), 0])<CR>
 inoremap <silent> <A-j> <Esc>:execute "move" min([line(".") + v:count1, line("$")])<CR>gi
