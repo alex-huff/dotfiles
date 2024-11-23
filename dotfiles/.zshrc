@@ -22,6 +22,11 @@ then
     alias choose="$CHOOSER"
 fi
 
+if (( $+commands[kitty] ))
+then
+    alias ssh="kitty +kitten ssh"
+fi
+
 if (( $+commands[nvim] ))
 then
     EDITOR=nvim
