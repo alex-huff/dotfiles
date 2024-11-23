@@ -243,7 +243,10 @@ mode "resize"
 bindsym $super+r mode "resize"
 
 # toggle border style
-bindsym $super+Shift+b border toggle
+bindsym $super+Alt+b border toggle
+
+# toggle top panel
+bindsym $super+Shift+b exec killall --process-group kitty-panel || kitty-panel
 
 # colors                border  bg      text    ind     child_b
 client.focused          #83a598 #076678 #fbf1c7 #83a598 #83a598
@@ -256,7 +259,6 @@ include device/*
 # output $main_display bg ~/.assets/noise.png tile #000000
 
 # rules
-bindsym $super+Alt+b exec killall --process-group kitty-panel || kitty-panel
 for_window [all] title_format %title (<i>%shell</i>)
 for_window [title="Authentication required"] floating enable
 for_window [app_id="blueman-applet"] kill
