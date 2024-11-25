@@ -1,3 +1,3 @@
 #!/bin/sh
 
-swaymsg -t get_tree | jq ".. | select(.type?) | select(.focused==true).pid"
+swaymsg -t get_tree | jq "recurse(.floating_nodes[], .nodes[]) | select(.focused==true).pid"
