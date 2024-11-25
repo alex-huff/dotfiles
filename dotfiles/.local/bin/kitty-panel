@@ -1,26 +1,40 @@
 #!/bin/sh
 
 status_command=$(
-	cat <<-"EOF"
+	cat <<-"EOC"
 		date_string=$(date "+%A %B %d %H:%M:%S %Y")
-		memory_string=$(free --line --human | sed "s/  \+/ /g; s/\([0-9]\+\w*\) \(\w\+\)/\1  |  \2/g; s/\b[a-zA-Z]\+\b/\0:/g")
+		IFS="," read memory_string memory_second_bar_index < <(
+			python <<-EOP
+				from subprocess import check_output
+				from itertools import batched
+				free_output = check_output(("free", "--line", "--human"), text=True)
+				formatted_statistics = list(f"{stat}: {value}" for stat, value in batched(free_output.split(), n=2))
+				seperator = "  |  "
+				memory_string = seperator.join(formatted_statistics)
+				memory_second_bar_index = sum(len(formatted_statistics[i]) for i in (0, 1)) + len(seperator) + len(seperator) // 2
+				print(f"{memory_string},{memory_second_bar_index}")
+			EOP
+		)
 		uptime_string=$(uptime --pretty)
-		total_width=$(($COLUMNS - 2))
-		used_width=$((${#date_string} + ${#memory_string} + ${#uptime_string}))
-		unused_width=$(($total_width - $used_width))
-		left_gap_width=$(($unused_width / 2))
-		if [ $(($unused_width % 2)) -eq 0 ]
-		then
-		    right_gap_width=$left_gap_width
-		else
-		    right_gap_width=$(($left_gap_width + 1))
-		fi
-		printf " "
+		padding=2
+		total_width=$COLUMNS
+		middle_column=$(($total_width / 2))
+		date_end=$(($padding + ${#date_string}))
+		memory_start=$(($middle_column - $memory_second_bar_index))
+		left_gap_width=$(($memory_start - $date_end))
+		memory_end=$(($memory_start + ${#memory_string}))
+		uptime_start=$(($total_width - $padding - ${#uptime_string}))
+		right_gap_width=$(($uptime_start - $memory_end))
+		printf "%${padding}s"
 		printf "$date_string"
 		printf "%${left_gap_width}s"
 		printf "$memory_string"
 		printf "%${right_gap_width}s"
 		printf "$uptime_string"
-	EOF
+	EOC
 )
-kitty +kitten panel -o window_padding_width=1 watch -tn1 "$status_command"
+kitty +kitten panel \
+    --override window_padding_width=2 \
+    --override placement_strategy=center \
+    --override font_size=10 \
+    watch --no-title --color --interval=1 "$status_command"
