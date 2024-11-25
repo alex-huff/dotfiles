@@ -1,17 +1,9 @@
 # subprofile switching
 48{c==9} -> switch-mm-subprofile.sh "MPK mini"
 
-# switch/move-container-to workspace
-C5{v>64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg move container to workspace {}
-C5{v<=64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg workspace {}
-
 # clipboard manager
 B4{v>64} NOTES[1:]("{}"->[-]ASPN) -> wl-paste -n > ~/.config/midi-macros/clipboards/{} && echo Saving clipboard to file: {}
 B4{v<=64} NOTES[1:]("{}"->[-]ASPN) -> wl-copy < ~/.config/midi-macros/clipboards/{} && echo Yanking file: {} to clipboard
-
-# lock/unlock
-(43+39){c==9} -> $(which kill) -USR1 swaylock || swaylock -c 000000 --font "Victor Mono"
-(39+43){c==9} -> swaymsg output '$main_display' toggle
 
 # mute mic with pedal
 MIDI{STATUS==cc}{CC_FUNCTION==sustain}("{}"->f"{CC_VALUE >= 64}") [BLOCK|DEBOUNCE]-> pactl set-source-mute $MICROPHONE_SOURCE {} && speak-it <<< "muted {}"
@@ -214,6 +206,106 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
                 pass
 }
 
+# switch/move-container-to workspace
+C5{v>64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg move container to workspace {}
+C5{v<=64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg workspace {}
+
+# lock/unlock
+(43+39){c==9} -> $(which kill) -USR1 swaylock || swaylock -c 000000 --font "Victor Mono"
+(39+43){c==9} -> swaymsg output '$main_display' toggle
+
+D3 MIDI{STATUS==cc}{CC_FUNCTION==75}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")
+(swaymsg "`swaymsg -t get_tree | jq -rf $MM_SCRIPT`")[BLOCK|DEBOUNCE|SCRIPT_PATH_AS_ENV_VAR]->
+{
+    def recurse_nodes: recurse(.floating_nodes[], .nodes[]);
+    recurse_nodes |
+        select(.focused == true) |
+        recurse_nodes |
+        select(.pid) |
+        "[con_id=\(.id)] opacity <opacity>"
+}
+
+MIDI{STATUS==cc}{76<=CC_FUNCTION<=77}(
+    "<init>"->f"gap_type={'inner' if CC_FUNCTION==76 else 'outer'}; pixels={CC_VALUE}")
+[BLOCK|DEBOUNCE]-> <init>; swaymsg gaps $gap_type current set $pixels
+
+* MIDI{
+    (STATUS==pb and
+     len(TRIGGER)<2 and
+     (not TRIGGER or 48<=TRIGGER[0].getNote()<=51))
+}(f"note={TRIGGER[0].getNote()-48 if TRIGGER else None};bend={round(((DATA_2-64)*128+DATA_1)/384)}\n")
+(python $MM_SCRIPT)[BACKGROUND]->
+{
+    import sys
+    from subprocess import run
+    from time import time, sleep
+    from threading import Thread, Lock
+
+    def sleep_till(time_seconds):
+        total_sleep_time = time_seconds - time()
+        if total_sleep_time > 0:
+            sleep(total_sleep_time)
+
+    def manage_window():
+        while True:
+            start_time = time()
+            with lock:
+                if should_stop:
+                    return
+                action = "resize" if is_resize else "move"
+                if is_resize:
+                    action = "resize"
+                    type = "grow" if bend >= 0 else "shrink"
+                    dimension = "width" if is_horizontal else "height"
+                    modifier = (type, dimension)
+                else:
+                    action = "move"
+                    if is_horizontal:
+                        modifier = ("right",) if bend >= 0 else ("left",)
+                    else:
+                        modifier = ("up",) if bend >= 0 else ("down",)
+                amount = (str(abs(bend)), "px")
+            swaymsg_command = ("swaymsg", action, *modifier, *amount)
+            run(swaymsg_command)
+            sleep_till(start_time + .01)
+
+    is_resize = False
+    is_horizontal = False
+    should_stop = False
+    bend = 0
+    manage_window_thread = None
+    lock = Lock()
+    for line in map(str.rstrip, sys.stdin):
+        with lock:
+            old_bend = bend
+            exec(line)
+            if note != None:
+                is_resize = note < 2
+                is_horizontal = note % 2 == 0
+            was_bent = old_bend != 0
+            is_bent = bend != 0
+            if note != None and not was_bent and is_bent:
+                manage_window_thread = Thread(target=manage_window)
+                manage_window_thread.start()
+            elif was_bent and not is_bent:
+                should_stop = True
+        if should_stop:
+            if manage_window_thread:
+                manage_window_thread.join()
+            should_stop = False
+}
+
+# kitty
+MIDI{STATUS==cc}{CC_FUNCTION==75}(
+    "<size>"->f"{CC_VALUE_SCALED(4, 60)}"
+)
+[BLOCK|DEBOUNCE]->
+{
+    focused_pid=$(focused-pid.sh)
+    export KITTY_PUBLIC_KEY=$(cat "$XDG_RUNTIME_DIR/kitty/public-keys/$focused_pid")
+    kitten @ --to "unix:$XDG_RUNTIME_DIR/kitty-$focused_pid" set-font-size <size>
+}
+
 # home assistant
 (40+41){c==9} (zsh)[BLOCK|DEBOUNCE]->
 {
@@ -301,7 +393,9 @@ MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
 
 # knobs
 * MIDI{STATUS==cc}{70<=CC_FUNCTION<=77}(
-    f"last_action_time = {TIME / 10 ** 9}; knob_states[{CC_FUNCTION - 70}] = {CC_VALUE_PERCENT}\n")
+    (f"last_action_time = {TIME / 10 ** 9};"
+     f"knob_states[{CC_FUNCTION - 70}] = {CC_VALUE_PERCENT}\n")
+)
 (python $MM_SCRIPT)[BACKGROUND]->
 {
     from os import path
@@ -367,85 +461,4 @@ MIDI{STATUS==cc}{CC_FUNCTION==73}("{}"->f"{round(CC_VALUE_SCALED(0, 255))}") [BL
             new_action_condition.notify_all()
     with open(knob_state_file_path, "w") as knob_state_file:
         dump(knob_states, knob_state_file)
-}
-
-MIDI{STATUS==cc}{CC_FUNCTION==75}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")
-(swaymsg "`swaymsg -t get_tree | jq -rf $MM_SCRIPT`")[BLOCK|DEBOUNCE|SCRIPT_PATH_AS_ENV_VAR]->
-{
-    def recurse_nodes: recurse(.floating_nodes[], .nodes[]);
-    recurse_nodes |
-        select(.focused == true) |
-        recurse_nodes |
-        select(.pid) |
-        "[con_id=\(.id)] opacity <opacity>"
-}
-
-MIDI{STATUS==cc}{76<=CC_FUNCTION<=77}(
-    "<init>"->f"gap_type={'inner' if CC_FUNCTION==76 else 'outer'}; pixels={CC_VALUE}")
-[BLOCK|DEBOUNCE]-> <init>; swaymsg gaps $gap_type current set $pixels
-
-* MIDI{
-    (STATUS==pb and
-     len(TRIGGER)<2 and
-     (not TRIGGER or 48<=TRIGGER[0].getNote()<=51))
-}(f"note={TRIGGER[0].getNote()-48 if TRIGGER else None};bend={round(((DATA_2-64)*128+DATA_1)/384)}\n")
-(python $MM_SCRIPT)[BACKGROUND]->
-{
-    import sys
-    from subprocess import run
-    from time import time, sleep
-    from threading import Thread, Lock
-
-    def sleep_till(time_seconds):
-        total_sleep_time = time_seconds - time()
-        if total_sleep_time > 0:
-            sleep(total_sleep_time)
-
-    def manage_window():
-        while True:
-            start_time = time()
-            with lock:
-                if should_stop:
-                    return
-                action = "resize" if is_resize else "move"
-                if is_resize:
-                    action = "resize"
-                    type = "grow" if bend >= 0 else "shrink"
-                    dimension = "width" if is_horizontal else "height"
-                    modifier = (type, dimension)
-                else:
-                    action = "move"
-                    if is_horizontal:
-                        modifier = ("right",) if bend >= 0 else ("left",)
-                    else:
-                        modifier = ("up",) if bend >= 0 else ("down",)
-                amount = (str(abs(bend)), "px")
-            swaymsg_command = ("swaymsg", action, *modifier, *amount)
-            run(swaymsg_command)
-            sleep_till(start_time + .01)
-
-    is_resize = False
-    is_horizontal = False
-    should_stop = False
-    bend = 0
-    manage_window_thread = None
-    lock = Lock()
-    for line in map(str.rstrip, sys.stdin):
-        with lock:
-            old_bend = bend
-            exec(line)
-            if note != None:
-                is_resize = note < 2
-                is_horizontal = note % 2 == 0
-            was_bent = old_bend != 0
-            is_bent = bend != 0
-            if note != None and not was_bent and is_bent:
-                manage_window_thread = Thread(target=manage_window)
-                manage_window_thread.start()
-            elif was_bent and not is_bent:
-                should_stop = True
-        if should_stop:
-            if manage_window_thread:
-                manage_window_thread.join()
-            should_stop = False
 }
