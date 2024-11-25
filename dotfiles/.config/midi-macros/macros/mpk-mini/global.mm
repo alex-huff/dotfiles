@@ -211,7 +211,7 @@ C5{v>64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg move container to workspa
 C5{v<=64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg workspace {}
 
 # lock/unlock
-(43+39){c==9} -> $(which kill) -USR1 swaylock || swaylock -c 000000 --font "Victor Mono"
+(43+39){c==9} -> $(which kill) -USR1 swaylock || swaylock --color 000000 --font "Terminess Nerd Font" --font-size 20
 (39+43){c==9} -> swaymsg output '$main_display' toggle
 
 D3 MIDI{STATUS==cc}{CC_FUNCTION==75}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")

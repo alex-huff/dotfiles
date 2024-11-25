@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Victor Mono Medium 10
+font pango:Terminess Nerd Font Medium 12
 
 # export environment
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -40,7 +40,7 @@ bindsym Shift+Control+Alt+Page_Down workspace prev
 bindsym Shift+Control+Alt+Page_Up workspace next
 
 # lock the system
-bindsym $super+Control+l exec swaylock -c 000000 --font "Victor Mono"
+bindsym $super+Control+l exec swaylock --color 000000 --font "Terminess Nerd Font" --font-size 20
 
 # start a terminal
 bindsym $super+Return exec kitty
@@ -93,7 +93,7 @@ bindsym $super+t exec twitch.sh
 bindsym $super+n exec switch-connection.sh
 
 # rofi
-bindsym $super+d exec rofi -show drun
+bindsym $super+d exec rofi -drun-display-format "{name} [<span color='#928374'>({generic})</span>]" -show drun
 
 # change focus
 bindsym $super+h focus left
@@ -223,7 +223,7 @@ bindsym $super+Alt+c reload
 bindsym $super+Shift+r restart
 
 # exit sway
-bindsym $super+Shift+e exec "swaynag --font 'Victor Mono' -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your session.' -B 'Yes, exit sway' 'swaymsg exit'"
+bindsym $super+Shift+e exec swaynag --background fabd2f --button-background fabd2f --border 000000 --button-text 000000 --text 000000 --message-padding 5 --border-bottom-size 0 --button-border-size 1 --font "Terminess Nerd Font 15" --type warning --message "Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
 
 # resize window
 mode "resize"
@@ -249,9 +249,9 @@ bindsym $super+Alt+b border toggle
 bindsym $super+Shift+b exec killall --process-group kitty-panel || kitty-panel
 
 # colors                border  bg      text    ind     child_b
-client.focused          #83a598 #076678 #fbf1c7 #83a598 #83a598
-client.unfocused        #504945 #000000 #fbf1c7 #504945 #504945
-client.focused_inactive #7c6f64 #504945 #fbf1c7 #7c6f64 #7c6f64
+client.focused          #83a598 #076678 #ebdbb2 #83a598 #83a598
+client.unfocused        #504945 #000000 #ebdbb2 #504945 #504945
+client.focused_inactive #7c6f64 #504945 #ebdbb2 #7c6f64 #7c6f64
 
 # include device specific configuration and overrides
 include device/*
@@ -259,7 +259,6 @@ include device/*
 # output $main_display bg ~/.assets/noise.png tile #000000
 
 # rules
-for_window [all] title_format %title (<i>%shell</i>)
 for_window [title="Authentication required"] floating enable
 for_window [app_id="blueman-applet"] kill
 for_window [app_id=".*-dialogue"]

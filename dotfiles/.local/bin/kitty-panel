@@ -36,5 +36,5 @@ status_command=$(
 kitty +kitten panel \
     --override window_padding_width=2 \
     --override placement_strategy=center \
-    --override font_size=10 \
+    --override font_size=12 \
     watch --no-title --color --interval=1 "$status_command"
