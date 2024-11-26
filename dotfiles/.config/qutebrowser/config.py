@@ -14,8 +14,8 @@ config.bind("H", "nop")
 config.bind("J", "back")
 config.bind("K", "forward")
 config.bind("L", "edit-url")
-config.bind("\h", "search")
-config.bind("\m", "clear-messages")
+config.bind(r"\h", "search")
+config.bind(r"\m", "clear-messages")
 config.bind("gH", "tab-move -")
 config.bind("gL", "tab-move +")
 config.bind("gg", "jseval --quiet scrollHelper.scrollTo(0)")
@@ -72,8 +72,6 @@ for selection_type in ("single_file", "multiple_files", "folder"):
     config.set(f"fileselect.{selection_type}.command", file_selection_command)
 
 # various
-c.messages.timeout = 0
-
 c.auto_save.session = False
 
 c.completion.quick = False
