@@ -11,6 +11,7 @@ fzf --wrap \
     --walker="file,follow,hidden" \
     --walker-root="$walker_root" \
     --preview="fzf-preview.sh {}" \
+    --preview-window="top" \
     --bind="resize:refresh-preview" \
     --bind="ctrl-space:execute(nvim {})" \
     --bind="ctrl-l:execute-silent(printf '%s' {} | kitty +kitten clipboard)" \
