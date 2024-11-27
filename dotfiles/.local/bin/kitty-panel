@@ -2,39 +2,95 @@
 
 status_command=$(
 	cat <<-"EOC"
+		separator="|"
 		date_string=$(date "+%A %B %d %H:%M:%S %Y")
-		IFS="," read memory_string memory_second_bar_index < <(
-			python <<-EOP
+		IFS="," read memory_string memory_middle_separator_index < <(
+			python3 <<-EOP
 				from subprocess import check_output
 				from itertools import batched
 				free_output = check_output(("free", "--line", "--human"), text=True)
-				formatted_statistics = list(f"{stat}: {value}" for stat, value in batched(free_output.split(), n=2))
-				seperator = "  |  "
+				formatted_statistics = list(
+				    f"{stat}: {value}" for stat, value in batched(free_output.split(), n=2)
+				)
+				seperator = "  $separator  "
 				memory_string = seperator.join(formatted_statistics)
-				memory_second_bar_index = sum(len(formatted_statistics[i]) for i in (0, 1)) + len(seperator) + len(seperator) // 2
-				print(f"{memory_string},{memory_second_bar_index}")
+				memory_middle_separator_index = sum(
+				    len(formatted_statistics[i]) for i in (0, 1)
+				) + len(seperator) + len(seperator) // 2
+				print(f"{memory_string},{memory_middle_separator_index}")
 			EOP
 		)
-		uptime_string=$(uptime --pretty)
+		# sed script to filter output of cmus-remote --query
+		filter_relevant_info=$(
+			cat <<-"EOI"
+				s/^(status|duration|position) (.*)$/\2/
+				t print
+				s/^tag (artist|title) (.*)$/\2/
+				T
+				:print
+				p
+			EOI
+		)
+		song_playing=false
+		cmus_info=$(cmus-remote --query 2>/dev/null)
+		if [ $? -eq 0 ]
+		then
+		    IFS=$'\t' read status duration position artist song < <(
+		        printf "%s" "$cmus_info" \
+		            | sed --silent --regexp-extended "$filter_relevant_info" \
+		            | tr "\n" "\t"
+		    )
+		    if [ "$status" = "playing" ]
+		    then
+		        format_time()
+		        {
+		            printf "%02d:%02d" $(($1 / 60)) $(($1 % 60))
+		        }
+		        trim()
+		        {
+		            if [ ${#1} -gt $2 ]
+		            then
+		                printf "%s…" "$(echo "$1" | cut --characters -$(($2 - 1)))"
+		            else
+		                printf "%s" "$1"
+		            fi
+		        }
+		        current_song_string=$(
+		            max_artist_length=25
+		            max_song_length=$max_artist_length
+		            printf "%s / %s "$separator" %s "$separator" %s" \
+		                $(format_time $position) $(format_time $duration) \
+		                "$(trim "$artist" $max_artist_length)" "$(trim "$song" $max_song_length)"
+		        )
+		        song_playing=true
+		    fi
+		fi
+		if [ $song_playing = true ]
+		then
+		    right_string=$current_song_string
+		else
+		    uptime_string=$(uptime --pretty)
+		    right_string=$uptime_string
+		fi
 		padding=2
 		total_width=$COLUMNS
 		middle_column=$(($total_width / 2))
 		date_end=$(($padding + ${#date_string}))
-		memory_start=$(($middle_column - $memory_second_bar_index))
+		memory_start=$(($middle_column - $memory_middle_separator_index))
 		left_gap_width=$(($memory_start - $date_end))
 		memory_end=$(($memory_start + ${#memory_string}))
-		uptime_start=$(($total_width - $padding - ${#uptime_string}))
-		right_gap_width=$(($uptime_start - $memory_end))
+		right_start=$(($total_width - $padding - ${#right_string}))
+		right_gap_width=$(($right_start - $memory_end))
 		printf "%${padding}s"
-		printf "$date_string"
+		printf "%s" "$date_string"
 		printf "%${left_gap_width}s"
-		printf "$memory_string"
+		printf "%s" "$memory_string"
 		printf "%${right_gap_width}s"
-		printf "$uptime_string"
+		printf "%s" "$right_string"
 	EOC
 )
 kitty +kitten panel \
     --override window_padding_width=2 \
     --override placement_strategy=center \
-    --override font_size=10 \
-    watch --no-title --color --interval=1 "$status_command"
+    --override font_size=11 \
+    watch --no-title --interval=1 "$status_command"
