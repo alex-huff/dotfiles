@@ -74,7 +74,7 @@ bindsym $super+Shift+o exec wf-recorder-imgur.sh
 bindsym $super+Alt+p exec hyprpicker -a
 
 # mc
-bindsym $super+m exec open-mc-mod-configuration.sh
+bindsym $super+Shift+m exec open-mc-mod-configuration.sh
 
 # totp
 bindsym $super+g exec totp.sh
@@ -82,9 +82,6 @@ bindsym $super+g exec totp.sh
 # cmus
 bindsym $super+c exec cmus-play-playlist.zsh
 bindsym $super+Shift+c exec song="music/$(find ~/music -type f -name '*.mp3' | sed 's|^/home/.*/music/\(.*\)\.mp3$|\1|' | rofi -theme-str 'window {width: 800;}' -i -dmenu).mp3" && cmus-remote --file "$song"
-
-# soundboard
-bindsym $super+Shift+m exec song=$(find ~/soundboard -type f -name '*.mp3' -printf '%f\n' | rofi -dmenu) && discord-play ~/soundboard/"$song"
 
 # twitch
 bindsym $super+t exec twitch.sh
@@ -226,21 +223,46 @@ bindsym $super+Shift+r restart
 bindsym $super+Shift+e exec swaynag --background fabd2f --button-background fabd2f --border 000000 --button-text 000000 --text 000000 --message-padding 5 --border-bottom-size 0 --button-border-size 1 --font "Victor Mono 15" --type warning --message "Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
 
 # resize window
-mode "resize"
+mode resize
 {
     bindsym h resize shrink width 10 px or 10 ppt
     bindsym j resize shrink height 10 px or 10 ppt
     bindsym k resize grow height 10 px or 10 ppt
     bindsym l resize grow width 10 px or 10 ppt
-    bindsym Left resize shrink width 10 px or 10 ppt
-    bindsym Up resize grow height 10 px or 10 ppt
-    bindsym Down resize shrink height 10 px or 10 ppt
-    bindsym Right resize grow width 10 px or 10 ppt
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-    bindsym $super+r mode "default"
+    bindsym Escape mode default
+    bindsym Control+bracketleft mode default
+    bindsym $super+r mode default
 }
-bindsym $super+r mode "resize"
+bindsym $super+r mode resize
+
+# move mouse with keyboard
+mode mouse
+{
+    bindsym f mode default, exec "wl-kbptr --config ~/.config/wl-kbptr/config; swaymsg mode mouse"
+    bindsym h seat - cursor move -10 0
+    bindsym b seat - cursor move -10 0
+    bindsym j seat - cursor move 0 10
+    bindsym k seat - cursor move 0 -10
+    bindsym l seat - cursor move 10 0
+    bindsym w seat - cursor move 10 0
+    bindsym Alt+h seat - cursor move -100 0
+    bindsym Shift+b seat - cursor move -100 0
+    bindsym Control+d seat - cursor move 0 100
+    bindsym Control+u seat - cursor move 0 -100
+    bindsym Alt+l seat - cursor move 100 0
+    bindsym Shift+w seat - cursor move 100 0
+    bindsym 0 seat - cursor move -2147483648 0
+    bindsym Shift+6 seat - cursor move -2147483648 0
+    bindsym Shift+4 seat - cursor move 2147483647 0
+    bindsym p seat - cursor press button1
+    bindsym r seat - cursor release button1
+    bindsym Shift+p seat - cursor press button2
+    bindsym Shift+r seat - cursor release button2
+    bindsym Escape mode default
+    bindsym Control+bracketleft mode default
+    bindsym $super+m mode default
+}
+bindsym $super+m mode mouse
 
 # toggle border style
 bindsym $super+Alt+b border toggle
