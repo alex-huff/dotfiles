@@ -3,7 +3,7 @@ Name=Discord Hush
 StartupWMClass=discord
 Comment=All-in-one voice and text chat for gamers that's free, secure, and works on both your desktop and phone.
 GenericName=Internet Messenger
-Exec=sh -c "PULSE_SINK=hush discord"
+Exec=sh -c "PULSE_SINK=hush ELECTRON_OZONE_PLATFORM_HINT=wayland discord"
 Icon=discord
 Type=Application
 Categories=Network;InstantMessaging;
