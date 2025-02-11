@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Victor Mono 12
+font pango:Adwaita Mono 12
 
 # export environment
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -40,7 +40,7 @@ bindsym Shift+Control+Alt+Page_Down workspace prev
 bindsym Shift+Control+Alt+Page_Up workspace next
 
 # lock the system
-bindsym $super+Control+l exec swaylock --color 000000 --font "Victor Mono" --font-size 20
+bindsym $super+Control+l exec swaylock --color 000000 --font "Adwaita Mono" --font-size 20
 
 # start a terminal
 bindsym $super+Return exec kitty
@@ -220,7 +220,7 @@ bindsym $super+Alt+c reload
 bindsym $super+Shift+r restart
 
 # exit sway
-bindsym $super+Shift+e exec swaynag --background fabd2f --button-background fabd2f --border 000000 --button-text 000000 --text 000000 --message-padding 5 --border-bottom-size 0 --button-border-size 1 --font "Victor Mono 15" --type warning --message "Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
+bindsym $super+Shift+e exec swaynag --background fabd2f --button-background fabd2f --border 000000 --button-text 000000 --text 000000 --message-padding 5 --border-bottom-size 0 --button-border-size 1 --font "Adwaita Mono 15" --type warning --message "Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
 
 # resize window
 mode resize
@@ -278,7 +278,7 @@ client.focused_inactive #7c6f64 #504945 #ebdbb2 #7c6f64 #7c6f64
 # include device specific configuration and overrides
 include device/*
 # $main_display should be defined in device/*
-# output $main_display bg ~/.assets/noise.png tile #000000
+output $main_display bg ~/.assets/noise.png tile #000000
 
 # rules
 for_window [title="Authentication required"] floating enable

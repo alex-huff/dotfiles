@@ -1,5 +1,5 @@
 :root {
-    --chat-font-used: 'Victor Mono', normal ;
+    --chat-font-used: 'Adwaita Mono', normal ;
     --chat-font-size: 15.5px;
 }
 
@@ -11,6 +11,6 @@
     font-size: var(--chat-font-size) !important;
 }
 
-.cozy_f5c119 .timestamp_cdbd93.alt__6c563, .compact__54ecc .timestamp_cdbd93 {
-    font-size: 0.626rem !important;
+.compact_c19a55 .timestamp_c19a55, .cozy_c19a55 .timestamp_c19a55.alt_c19a55 {
+    font-size: 0.6275rem !important;
 }
