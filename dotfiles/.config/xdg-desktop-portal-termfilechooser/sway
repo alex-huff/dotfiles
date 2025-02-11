@@ -1,0 +1,2 @@
+[filechooser]
+cmd=~/.local/bin/file-chooser.sh
