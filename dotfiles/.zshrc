@@ -47,7 +47,7 @@ alias fr="rg-fzf"
 
 alias browse="awrit"
 
-PS1='%m# '
+PS1='%m$ '
 
 # Rehash pacman command cache when it goes out of date
 zshcache_time="$(date +%s%N)"
