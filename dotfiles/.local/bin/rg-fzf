@@ -57,6 +57,6 @@ fzf --disabled \
     --bind="resize:refresh-preview" \
     --bind="ctrl-space:execute([ {1} = 'match' ] && $decode_field2 | xargs -0 nvim -c 'goto '{3}'|normal zz')" \
     --bind="ctrl-l:execute-silent([ {1} = 'match' ] && $decode_field2 | kitty +kitten clipboard)" \
-    --bind="ctrl-q:execute-silent([ {1} = 'match' ] && $decode_field2 | xargs -0 printf '%q' | kitty +kitten clipboard)" \
+    --bind="ctrl-q:execute-silent([ {1} = 'match' ] && $decode_field2 | xargs -0 printf %q | kitty +kitten clipboard)" \
     --bind="home:first" \
     --bind="end:last" > /dev/null

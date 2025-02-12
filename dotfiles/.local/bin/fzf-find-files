@@ -14,5 +14,5 @@ fzf --wrap \
     --preview-window="top" \
     --bind="resize:refresh-preview" \
     --bind="ctrl-space:execute(nvim {})" \
-    --bind="ctrl-l:execute-silent(printf '%s' {} | kitty +kitten clipboard)" \
-    --bind="ctrl-q:execute-silent(printf '%q' {} | kitty +kitten clipboard)"
+    --bind='ctrl-l:execute-silent(printf %s "$(realpath {})" | kitty +kitten clipboard)' \
+    --bind='ctrl-q:execute-silent(printf %q "$(realpath {})" | kitty +kitten clipboard)'
