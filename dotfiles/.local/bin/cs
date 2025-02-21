@@ -1,0 +1,9 @@
+#!/bin/zsh --interactive
+
+if [ $# -lt 1 ]
+then
+    instance=1.8.9
+else
+    instance="$1"
+fi
+cd ~/.local/share/FjordLauncher/instances/"$instance"/.minecraft/schematics && fzf | choose
