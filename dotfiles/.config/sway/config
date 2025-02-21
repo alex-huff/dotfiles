@@ -12,7 +12,7 @@ exec ~/.config/sway/import-gsettings
 exec eww daemon
 
 # start XDG autostart .desktop files
-exec --no-startup-id dex --autostart --environment sway
+exec --no-startup-id dex --autostart --environment=sway
 
 # use pactl to adjust volume in PulseAudio
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +1%
@@ -40,13 +40,13 @@ bindsym Shift+Control+Alt+Page_Down workspace prev
 bindsym Shift+Control+Alt+Page_Up workspace next
 
 # lock the system
-bindsym $super+Control+l exec swaylock --color 000000 --font "Adwaita Mono" --font-size 20
+bindsym $super+Control+l exec swaylock --color=000000 --font="Adwaita Mono" --font-size=20
 
 # start a terminal
 bindsym $super+Return exec kitty
 
-# search with firefox
-bindsym $super+Alt+s exec query=$(rofi -dmenu -l 0 -p search) && firefox --search "$query"
+# search with qutebrowser
+bindsym $super+Alt+s exec query=$(rofi -dmenu -l 0 -p search) && qutebrowser --target=tab "$query"
 
 # decode qrcode
 bindsym $super+q exec decode-qrcode-on-screen.sh | wl-copy
@@ -211,7 +211,7 @@ bindsym $super+Control+0 exec focus-last-focused-leaf-container-in-nth-child-of-
 
 # mark
 bindsym $super+Shift+apostrophe exec (mark_name="$(rofi -dmenu -l 0 -p 'mark name')" && swaymsg mark "$mark_name") || swaymsg '[con_id="__focused__"]' unmark
-bindsym $super+apostrophe exec to_focus="$(swaymsg -t get_marks | jq -r '.[]' | rofi -dmenu -p 'jump to')" && swaymsg '[con_mark="'$to_focus'"]' focus
+bindsym $super+apostrophe exec to_focus="$(swaymsg --type=get_marks | jq -r '.[]' | rofi -dmenu -p 'jump to')" && swaymsg '[con_mark="'$to_focus'"]' focus
 
 # reload the configuration file
 bindsym $super+Alt+c reload
@@ -220,7 +220,7 @@ bindsym $super+Alt+c reload
 bindsym $super+Shift+r restart
 
 # exit sway
-bindsym $super+Shift+e exec swaynag --background fabd2f --button-background fabd2f --border 000000 --button-text 000000 --text 000000 --message-padding 5 --border-bottom-size 0 --button-border-size 1 --font "Adwaita Mono 15" --type warning --message "Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
+bindsym $super+Shift+e exec swaynag --background=fabd2f --button-background=fabd2f --border=000000 --button-text=000000 --text=000000 --message-padding=5 --border-bottom-size=0 --button-border-size=1 --font="Adwaita Mono 15" --type=warning --message="Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
 
 # resize window
 mode resize
