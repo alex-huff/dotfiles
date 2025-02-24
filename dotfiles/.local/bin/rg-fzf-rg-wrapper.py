@@ -52,16 +52,12 @@ class RGOptions:
         del self.arguments[-num:]
         return self
 
-    def push_paths(self, *paths):
-        self.paths.extend(os.path.expanduser(path) for path in paths)
+    def add_paths(self, *paths):
+        self.paths.extend(os.path.expanduser(path) for path in paths if path)
         return self
 
-    def push_path(self, path):
-        return self.push_paths(path)
-
-    def pop_path(self, num=1):
-        del self.paths[-num:]
-        return self
+    def add_path(self, path):
+        return self.paths(path)
 
     def help(self):
         raise Exception(help_message)
@@ -355,11 +351,19 @@ query = sys.argv[1]
 help_message = """\
 ripgrep command manipulation:
     rg.push_arg(arg), rg.push_args(*args), rg.push_long_arg(arg, *values)
-    rg.push_path(path), rg.push_paths(*paths)
-    rg.pop_arg(num=1), rg.pop_path(num=1)
+    rg.pop_arg(num=1)
+    rg.add_path(path), rg.add_paths(*paths)
 
     rg.some_arg()               # same as --some-arg
     rg.some_arg(value1, value2) # same as --some-arg=value1 --some-arg=value2
+
+    temporarily disable an argument like so:
+        rg.some_arg()           # --some-arg enabled
+        rg.some_arg().pop_arg() # --some-arg disabled
+
+    temporarily disable a path like so:
+        rg.add_path("~/foo")   # ~/foo enabled
+        rg.add_path("~/foo"*0) # ~/foo disabled
 
 Some useful ripgrep options:
     --regexp=PATTERN --file=PATTERNFILE

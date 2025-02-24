@@ -20,7 +20,7 @@ generate_query()
 		
 		home_path = os.path.expanduser("~")
 		paths_specification = \
-		    f".push_paths({', '.join(generate_quoted_paths(sys.argv[1:]))})" \
+		    f".add_paths({', '.join(generate_quoted_paths(sys.argv[1:]))})" \
 		    if len(sys.argv) > 1 \
 		    else ""
 		print(f"rg{paths_specification}.smart_case();;", end="")
