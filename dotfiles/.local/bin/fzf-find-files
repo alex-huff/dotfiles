@@ -6,13 +6,21 @@ then
 else
     walker_root=.
 fi
-fzf --wrap \
+if [ -n "${SSH_CLIENT+_}" ]
+then
+    icat_transfer_mode=stream
+else
+    icat_transfer_mode=memory
+fi
+fzf --height=${FZF_HEIGHT:-0} \
+    --wrap \
     --multi \
     --walker="file,follow,hidden" \
     --walker-root="$walker_root" \
-    --preview="fzf-preview.sh {}" \
+    --preview="fzf-preview.sh $icat_transfer_mode {}" \
     --preview-window="top" \
     --bind="resize:refresh-preview" \
     --bind="ctrl-space:execute(nvim {})" \
     --bind='ctrl-l:execute-silent(printf %s "$(realpath {})" | kitty +kitten clipboard)' \
     --bind='ctrl-q:execute-silent(printf %q "$(realpath {})" | kitty +kitten clipboard)'
+kitty +kitten icat --clear --transfer-mode=$icat_transfer_mode --stdin=no

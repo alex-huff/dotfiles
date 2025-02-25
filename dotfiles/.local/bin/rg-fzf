@@ -41,7 +41,8 @@ preview_command=$(
 		fi
 	EOF
 )
-fzf --disabled \
+fzf --height=${FZF_HEIGHT:-0} \
+    --disabled \
     --read0 \
     --delimiter=":" \
     --wrap \

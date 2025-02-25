@@ -1,19 +1,14 @@
 #!/bin/sh
 
 set -e
-if [ $# -lt 1 ]
+if [ $# -lt 2 ]
 then
     exit 1
 fi
-if [ -n "${SSH_CLIENT+_}" ]
-then
-    icat_transfer_mode=stream
-else
-    icat_transfer_mode=memory
-fi
 bat_command=$(command -v bat || command -v batcat || echo :)
-file_path="$1"
-mime_type="$(file -E --dereference --brief --mime-type "$1")"
+icat_transfer_mode=$1
+file_path=$2
+mime_type=$(file -E --dereference --brief --mime-type "$file_path")
 kitty +kitten icat --clear --transfer-mode=$icat_transfer_mode --stdin=no
 case "$mime_type"
 in
