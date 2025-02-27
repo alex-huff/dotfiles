@@ -1,6 +1,7 @@
 [[ $- != *i* ]] && return
 
-setopt vi
+setopt INTERACTIVE_COMMENTS
+setopt VI
 autoload edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd v edit-command-line
