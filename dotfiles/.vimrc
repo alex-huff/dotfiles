@@ -17,6 +17,8 @@ set incsearch
 set background=dark
 set nofixendofline
 if has("gui_running")
+    set guioptions-=T
+    set guioptions-=m
     if has("gui_gtk")
         set guifont=Adwaita\ Mono\ 18
     elseif has("gui_win32")
