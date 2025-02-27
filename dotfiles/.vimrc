@@ -16,6 +16,13 @@ set laststatus=0
 set incsearch
 set background=dark
 set nofixendofline
+if has("gui_running")
+    if has("gui_gtk")
+        set guifont=Adwaita\ Mono\ 18
+    elseif has("gui_win32")
+        set guifont=Adwaita_Mono:h18
+    endif
+endif
 let g:gruvbox_italic = 1
 let g:gruvbox_contrast_dark = "hard"
 let g:gruvbox_contrast_light = "soft"
