@@ -79,3 +79,4 @@ nnoremap <silent> <Leader>c :execute "tabedit" fnameescape(fnamemodify(@+, ":~:.
 nnoremap <silent> <Leader>C :execute "edit" fnameescape(fnamemodify(@+, ":~:."))<CR>
 nnoremap <silent> <Leader>h :nohlsearch<CR>
 nnoremap <silent> <Leader>ap :%!autopep8 -<CR>
+nnoremap <silent> <Leader>f :FZF<CR>
