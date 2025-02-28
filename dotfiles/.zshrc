@@ -23,6 +23,11 @@ then
     alias choose="$CHOOSER"
 fi
 
+if (( $+commands[fzf] ))
+then
+    source <(fzf --zsh)
+fi
+
 if (( $+commands[kitty] ))
 then
     alias ssh="kitty +kitten ssh"
