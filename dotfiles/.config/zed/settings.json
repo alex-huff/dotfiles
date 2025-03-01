@@ -1,0 +1,40 @@
+// documentation: https://zed.dev/docs/configuring-zed
+{
+  "autosave": "off",
+  "format_on_save": "off",
+  "ui_font_family": "Victor Mono",
+  "buffer_font_family": "Victor Mono",
+  "base_keymap": "JetBrains",
+  "theme": "Gruvbox Dark Hard",
+  "vim_mode": true,
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "ui_font_size": 18,
+  "buffer_font_size": 24,
+  "experimental.theme_overrides": {
+    "editor.background": "#000"
+  },
+  "vim": {
+    "use_smartcase_find": true,
+    "toggle_relative_line_numbers": true,
+    "highlight_on_yank_duration": 0,
+    "relative_line_numbers": true,
+    "scrollbar": { "show": "never" }
+  },
+  "gutter": {
+    "code_actions": false,
+    "runnables": false,
+    "folds": false
+  },
+  "git": {
+    "git_gutter": "hide",
+    "inline_blame": {
+      "enabled": false
+    }
+  },
+  "scrollbar": {
+    "show": "never"
+  }
+}

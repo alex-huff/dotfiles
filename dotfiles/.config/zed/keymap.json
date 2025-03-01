@@ -1,0 +1,17 @@
+// documentation: https://zed.dev/docs/key-bindings
+[
+  {
+    "context": "vim_mode == normal",
+    "bindings": {
+      "ctrl-shift-l": "pane::ActivateNextItem",
+      "ctrl-shift-h": "pane::ActivatePrevItem",
+      "ctrl-shift-w": "pane::CloseActiveItem"
+    }
+  },
+  {
+    "context": "Editor && mode == full",
+    "bindings": {
+      "alt-7": ["pane::ActivateItem", 6]
+    }
+  }
+]
