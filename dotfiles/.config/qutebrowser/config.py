@@ -33,11 +33,11 @@ c.colors.webpage.darkmode.policy.images = "never"
 c.colors.webpage.preferred_color_scheme = "dark"
 
 # font
-c.fonts.default_family = "Adwaita Mono"
+c.fonts.default_family = "Victor Mono"
 c.fonts.default_size = "14pt"
 c.fonts.hints = "10pt default_family"
 for font_type in ("cursive", "fantasy", "fixed", "sans_serif", "serif", "standard"):
-    config.set(f"fonts.web.family.{font_type}", "Adwaita Mono")
+    config.set(f"fonts.web.family.{font_type}", "Victor Mono")
 
 # posix specific
 if os.name == "posix":

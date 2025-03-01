@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Adwaita Mono 12
+font pango:Victor Mono 12
 
 # export environment
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -40,7 +40,7 @@ bindsym Shift+Control+Alt+Page_Down workspace prev
 bindsym Shift+Control+Alt+Page_Up workspace next
 
 # lock the system
-bindsym $super+Control+l exec swaylock --color=000000 --font="Adwaita Mono" --font-size=20
+bindsym $super+Control+l exec swaylock --color=000000 --font="Victor Mono" --font-size=20
 
 # start a terminal
 bindsym $super+Return exec kitty
@@ -81,7 +81,7 @@ bindsym $super+g exec totp.sh
 
 # cmus
 bindsym $super+Shift+c exec cmus-play-playlist.zsh
-bindsym $super+c exec song="music/$(tofi --prompt="song: " --font="Adwaita Mono" --font-size=18 --width=100% --height=100% --text-color=#EBDBB2 --background-color=#000000 --selection-background=#83a598 --selection-color=#000000 --selection-background-padding=2 --outline-width=0 --border-width=0 < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
+bindsym $super+c exec song="music/$(tofi --prompt="song: " --font="Victor Mono" --font-size=18 --width=100% --height=100% --text-color=#EBDBB2 --background-color=#000000 --selection-background=#83a598 --selection-color=#000000 --selection-background-padding=2 --outline-width=0 --border-width=0 < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
 
 # twitch
 bindsym $super+t exec twitch.sh
@@ -220,7 +220,7 @@ bindsym $super+Alt+c reload
 bindsym $super+Shift+r restart
 
 # exit sway
-bindsym $super+Shift+e exec swaynag --background=fabd2f --button-background=fabd2f --border=000000 --button-text=000000 --text=000000 --message-padding=5 --border-bottom-size=0 --button-border-size=1 --font="Adwaita Mono 15" --type=warning --message="Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
+bindsym $super+Shift+e exec swaynag --background=fabd2f --button-background=fabd2f --border=000000 --button-text=000000 --text=000000 --message-padding=5 --border-bottom-size=0 --button-border-size=1 --font="Victor Mono 15" --type=warning --message="Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
 
 # resize window
 mode resize
