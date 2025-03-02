@@ -11,6 +11,10 @@
     "diagnostics": false,
     "metrics": false
   },
+  "show_edit_predictions": false,
+  "features": {
+    "edit_prediction_provider": null
+  },
   "ui_font_size": 18,
   "buffer_font_size": 24,
   "experimental.theme_overrides": {
@@ -36,5 +40,22 @@
   },
   "scrollbar": {
     "show": "never"
+  },
+  "collaboration_panel": {
+    "button": false
+  },
+  "git_panel": {
+    "button": false
+  },
+  "notification_panel": {
+    "button": false
+  },
+  "assistant": {
+    "version": "2",
+    "enabled": false,
+    "button": false
+  },
+  "terminal": {
+    "button": false
   }
 }
