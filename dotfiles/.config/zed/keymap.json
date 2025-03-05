@@ -4,7 +4,7 @@
     "context": "vim_mode == normal",
     "bindings": {
       "ctrl-shift-l": "pane::ActivateNextItem",
-      "ctrl-shift-h": "pane::ActivatePrevItem",
+      "ctrl-shift-h": "pane::ActivatePreviousItem",
       "ctrl-shift-w": "pane::CloseActiveItem"
     }
   },
