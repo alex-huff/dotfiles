@@ -92,6 +92,9 @@ bindsym $super+n exec switch-connection.sh
 # rofi
 bindsym $super+d exec rofi -show drun
 
+# app swither
+bindsym $super+Tab exec kitty +kitten panel --layer=overlay --focus-policy=exclusive --edge=center sh -c 'con_id=$(swaymsg -t get_tree | jq --raw-output0 '"'"'recurse(.floating_nodes[], .nodes[]) | select(has("pid")) | "\(.app_id // .window_properties.class): \(.name)|\(.id)"'"'"' | fzf --read0 --delimiter="|" --wrap --color="pointer:3" --with-nth="{..-2}" --accept-nth=-1) && swaymsg "[con_id=$con_id]" focus'
+
 # change focus
 bindsym $super+h focus left
 bindsym $super+j focus down

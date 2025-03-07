@@ -47,7 +47,7 @@ fzf --height=${FZF_HEIGHT:-0} \
     --delimiter=":" \
     --wrap \
     --ansi \
-    --color=pointer:3 \
+    --color="pointer:3" \
     --tabstop=4 \
     --with-nth="7.." \
     --query="$(generate_query "$@")" \
