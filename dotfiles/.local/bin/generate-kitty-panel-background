@@ -1,0 +1,19 @@
+#!/bin/python3
+
+import os
+from PIL import Image
+
+display_width = 1920
+display_height = 1080
+horizontal_margin = 200
+vertical_margin = 100
+width, height = display_width - 2 * horizontal_margin, display_height - 2 * vertical_margin
+border_color = (235, 219, 178)
+bg = Image.new("RGB", (width, height))
+for y in (0, height - 1):
+    for x in range(0, width):
+        bg.putpixel((x, y), border_color)
+for x in (0, width - 1):
+    for y in range(1, height - 1):
+        bg.putpixel((x, y), border_color)
+bg.save(os.path.expanduser("~/.assets/app_selector_background.png"))
