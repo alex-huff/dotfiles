@@ -94,4 +94,4 @@ kitty +kitten panel \
     --override placement_strategy=center \
     --override font_size=11.6 \
     --override background_opacity=0.9 \
-    watch --no-title --interval=1 "$status_command"
+    watch --no-title --precise --interval=1 "$status_command"
