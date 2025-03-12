@@ -22,9 +22,9 @@ if has("gui_running")
     set guioptions-=L
     set guioptions-=r
     if has("gui_gtk")
-        set guifont=Adwaita\ Mono\ 18
+        set guifont=Victor\ Mono\ 18
     elseif has("gui_win32")
-        set guifont=Adwaita_Mono:h18
+        set guifont=Victor_Mono:h18
     endif
 endif
 let g:gruvbox_italic = 1
@@ -80,3 +80,4 @@ nnoremap <silent> <Leader>C :execute "edit" fnameescape(fnamemodify(@+, ":~:."))
 nnoremap <silent> <Leader>h :nohlsearch<CR>
 nnoremap <silent> <Leader>ap :%!autopep8 -<CR>
 nnoremap <silent> <Leader>f :FZF<CR>
+nnoremap <silent> <C-L> :let @+ = fnamemodify(@%, ":p")<CR>
