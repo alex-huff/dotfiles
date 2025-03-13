@@ -807,6 +807,9 @@ async def update_bar_forever(bar_event_queue):
         seconds_specifier = f"{seconds:02}"
         return f"{hours_specifier}{minutes_specifier}{seconds_specifier}"
 
+    def clamp(value, min_value, max_value):
+        return max(min_value, min(value, max_value))
+
     loop = asyncio.get_running_loop()
     write_transport, write_protocol = await loop.connect_write_pipe(
         asyncio.streams.FlowControlMixin, sys.stdout
@@ -930,11 +933,9 @@ async def update_bar_forever(bar_event_queue):
                 if media_player_start_column < current_column:
                     writer.write(SEPARATOR_BYTES)
                     raise IndexError()
-                room_for_progress_bar = media_player_start_column > current_column + 3
+                progress_bar_width = (media_player_start_column - current_column) + 1
+                room_for_progress_bar = progress_bar_width > 4
                 if room_for_progress_bar:
-                    progress_bar_width = (
-                        media_player_start_column - 1
-                    ) - current_column
                     progress = (
                         media_player_to_show["track_current_second"]
                         / media_player_to_show["track_length_seconds"]
@@ -947,14 +948,14 @@ async def update_bar_forever(bar_event_queue):
                         if progress_width
                         else VERTICAL_SINGLE_RIGHT_BYTES
                     )
-                    writer.write(DOUBLE_HORIZONTAL_BYTES * progress_width)
+                    double_horizontal_width = clamp(progress_width - 1, 0, progress_bar_width - 2)
+                    writer.write(DOUBLE_HORIZONTAL_BYTES * double_horizontal_width)
+                    single_horizontal_width = (progress_bar_width - 2) - double_horizontal_width
+                    writer.write(SINGLE_HORIZONTAL_BYTES * single_horizontal_width)
                     writer.write(
-                        SINGLE_HORIZONTAL_BYTES * (progress_bar_width - progress_width)
-                    )
-                    writer.write(
-                        VERTICAL_SINGLE_LEFT_BYTES
-                        if progress_width < progress_bar_width
-                        else VERTICAL_DOUBLE_LEFT_BYTES
+                        VERTICAL_DOUBLE_LEFT_BYTES
+                        if progress_width == progress_bar_width
+                        else VERTICAL_SINGLE_LEFT_BYTES
                     )
                 else:
                     writer.write(SEPARATOR_BYTES)
