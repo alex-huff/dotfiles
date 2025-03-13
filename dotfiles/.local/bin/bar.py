@@ -757,6 +757,8 @@ async def run_clock_forever(bar_event_queue):
 
 
 async def update_bar_forever(bar_event_queue):
+    TERMINAL_WIDTH = shutil.get_terminal_size().columns
+    assert TERMINAL_WIDTH > 0
     SECONDS_IN_MINUTE = 60
     SECONDS_IN_HOUR = 60 * 60
     SEPARATOR = "│"
@@ -777,7 +779,6 @@ async def update_bar_forever(bar_event_queue):
     CHARACTER_ATTRIBUTES_TEMPLATE = CSI_START + b"%bm"
     BOLD_REVERSED = CHARACTER_ATTRIBUTES_TEMPLATE % b"1;7"
     NOT_BOLD_NOT_REVERSED = CHARACTER_ATTRIBUTES_TEMPLATE % b"22;27"
-    TERMINAL_WIDTH = shutil.get_terminal_size().columns
     PLAYBACK_STATUS_PRIORITY = {"Playing": 0, "Paused": 1, "Stopped": 2}
     PLAYBACK_STATUS_SPECIFIER = {"Playing": "󰐊", "Paused": "󰏤", "Stopped": "󰓛"}
 
@@ -841,7 +842,7 @@ async def update_bar_forever(bar_event_queue):
                         formatted_workspaces_bytes.extend(NOT_BOLD_NOT_REVERSED)
             case BarEventType.CLOCK_UPDATE:
                 current_datetime = datetime.datetime.fromtimestamp(bar_event.payload)
-                formatted_datetime = f" {current_datetime:%a %b %d %H:%M:%S %Y} "
+                formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S %Y} "
                 formatted_datetime_width = wcwidth.wcswidth(formatted_datetime)
                 formatted_datetime_bytes = formatted_datetime.encode("utf-8")
         if bar_event.event_type.is_media_player_event():
@@ -899,12 +900,12 @@ async def update_bar_forever(bar_event_queue):
                 if current_column > TERMINAL_WIDTH:
                     # no room for separator
                     raise IndexError()
-                writer.write(SEPARATOR_BYTES)
-                current_column += 1
             if (
                 formatted_workspaces_bytes is not None
-                and (current_column + formatted_workspaces_width) <= TERMINAL_WIDTH + 1
+                and (current_column + formatted_workspaces_width + 1) <= TERMINAL_WIDTH + 1
             ):
+                writer.write(SEPARATOR_BYTES)
+                current_column += 1
                 writer.write(formatted_workspaces_bytes)
                 current_column += formatted_workspaces_width
                 if current_column > TERMINAL_WIDTH:
