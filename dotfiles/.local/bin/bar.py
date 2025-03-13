@@ -787,6 +787,8 @@ async def update_bar_forever(bar_event_queue):
     BEGIN_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"h"
     END_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"l"
     CHARACTER_ATTRIBUTES_TEMPLATE = CSI_START + b"%bm"
+    BLACK_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"40"
+    RESET_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"49"
     BOLD_REVERSED = CHARACTER_ATTRIBUTES_TEMPLATE % b"1;7"
     NOT_BOLD_NOT_REVERSED = CHARACTER_ATTRIBUTES_TEMPLATE % b"22;27"
     PLAYBACK_STATUS_PRIORITY = {"Playing": 0, "Paused": 1, "Stopped": 2}
@@ -844,15 +846,19 @@ async def update_bar_forever(bar_event_queue):
                     + len(workspaces) * 2
                 )
                 formatted_workspaces_bytes = bytearray()
-                for workspace in workspaces:
+                for i, workspace in enumerate(workspaces):
                     focused = workspace["focused"]
                     if focused:
                         formatted_workspaces_bytes.extend(BOLD_REVERSED)
+                    elif i % 2 == 0:
+                        formatted_workspaces_bytes.extend(BLACK_BACKGROUND)
                     formatted_workspaces_bytes.extend(b" ")
                     formatted_workspaces_bytes.extend(workspace["name"].encode("utf-8"))
                     formatted_workspaces_bytes.extend(b" ")
                     if focused:
                         formatted_workspaces_bytes.extend(NOT_BOLD_NOT_REVERSED)
+                    elif i % 2 == 0:
+                        formatted_workspaces_bytes.extend(RESET_BACKGROUND)
             case BarEventType.CLOCK_UPDATE:
                 current_datetime = datetime.datetime.fromtimestamp(bar_event.payload)
                 formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S %Y} "
