@@ -759,8 +759,13 @@ async def run_clock_forever(bar_event_queue):
 async def update_bar_forever(bar_event_queue):
     SECONDS_IN_MINUTE = 60
     SECONDS_IN_HOUR = 60 * 60
-    SEPERATOR = "│"
-    SEPERATOR_BYTES = SEPERATOR.encode("utf-8")
+    SEPARATOR = "│"
+    SEPARATOR_BYTES = SEPARATOR.encode("utf-8")
+    VERTICAL_SINGLE_LEFT_BYTES = "┤".encode("utf-8")
+    VERTICAL_DOUBLE_LEFT_BYTES = "╡".encode("utf-8")
+    VERTICAL_DOUBLE_RIGHT_BYTES = "╞".encode("utf-8")
+    DOUBLE_HORIZONTAL_BYTES = "═".encode("utf-8")
+    SINGLE_HORIZONTAL_BYTES = "─".encode("utf-8")
     ESCAPE = b"\x1b"
     CSI_START = ESCAPE + b"["
     CLEAR_LINE = CSI_START + b"2K"
@@ -770,10 +775,8 @@ async def update_bar_forever(bar_event_queue):
     BEGIN_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"h"
     END_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"l"
     CHARACTER_ATTRIBUTES_TEMPLATE = CSI_START + b"%bm"
-    BLUE_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"44"
-    RESET_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"49"
-    BOLD = CHARACTER_ATTRIBUTES_TEMPLATE % b"1"
-    NOT_BOLD = CHARACTER_ATTRIBUTES_TEMPLATE % b"22"
+    BOLD_REVERSED = CHARACTER_ATTRIBUTES_TEMPLATE % b"1;7"
+    NOT_BOLD_NOT_REVERSED = CHARACTER_ATTRIBUTES_TEMPLATE % b"22;27"
     TERMINAL_WIDTH = shutil.get_terminal_size().columns
     PLAYBACK_STATUS_PRIORITY = {"Playing": 0, "Paused": 1, "Stopped": 2}
     PLAYBACK_STATUS_SPECIFIER = {"Playing": "󰐊", "Paused": "󰏤", "Stopped": "󰓛"}
@@ -830,14 +833,12 @@ async def update_bar_forever(bar_event_queue):
                 for workspace in workspaces:
                     focused = workspace["focused"]
                     if focused:
-                        formatted_workspaces_bytes.extend(BLUE_BACKGROUND)
-                        formatted_workspaces_bytes.extend(BOLD)
+                        formatted_workspaces_bytes.extend(BOLD_REVERSED)
                     formatted_workspaces_bytes.extend(b" ")
                     formatted_workspaces_bytes.extend(workspace["name"].encode("utf-8"))
                     formatted_workspaces_bytes.extend(b" ")
                     if focused:
-                        formatted_workspaces_bytes.extend(RESET_BACKGROUND)
-                        formatted_workspaces_bytes.extend(NOT_BOLD)
+                        formatted_workspaces_bytes.extend(NOT_BOLD_NOT_REVERSED)
             case BarEventType.CLOCK_UPDATE:
                 current_datetime = datetime.datetime.fromtimestamp(bar_event.payload)
                 formatted_datetime = f" {current_datetime:%a %b %d %H:%M:%S %Y} "
@@ -881,7 +882,7 @@ async def update_bar_forever(bar_event_queue):
                     media_player_to_show["playback_status"]
                 ]
                 formatted_loop_status = media_player_to_show["loop_status"].lower()
-                formatted_media_player = f" {formatted_artist} {SEPERATOR} {formatted_title} {SEPERATOR} {formatted_playback_status} {formatted_current_second} / {formatted_length_seconds} {SEPERATOR} 󰑖 {formatted_loop_status} "
+                formatted_media_player = f" {formatted_playback_status} {formatted_current_second} / {formatted_length_seconds} {SEPARATOR} 󰑖 {formatted_loop_status} {SEPARATOR} {formatted_artist} {SEPARATOR} {formatted_title} "
                 formatted_media_player_width = wcwidth.wcswidth(formatted_media_player)
                 formatted_media_player_bytes = formatted_media_player.encode("utf-8")
         current_column = 1
@@ -896,8 +897,9 @@ async def update_bar_forever(bar_event_queue):
                 writer.write(formatted_datetime_bytes)
                 current_column += formatted_datetime_width
                 if current_column > TERMINAL_WIDTH:
+                    # no room for separator
                     raise IndexError()
-                writer.write(SEPERATOR_BYTES)
+                writer.write(SEPARATOR_BYTES)
                 current_column += 1
             if (
                 formatted_workspaces_bytes is not None
@@ -906,16 +908,29 @@ async def update_bar_forever(bar_event_queue):
                 writer.write(formatted_workspaces_bytes)
                 current_column += formatted_workspaces_width
                 if current_column > TERMINAL_WIDTH:
+                    # no room for separator
                     raise IndexError()
-                writer.write(SEPERATOR_BYTES)
-                current_column += 1
             if formatted_media_player_bytes is not None:
+                current_column += 1 # leave room for either '│', '├' or '╞'
                 media_player_start_column = TERMINAL_WIDTH - (
                     formatted_media_player_width - 1
                 )
-                if media_player_start_column >= current_column:
-                    jump_to_column(media_player_start_column)
-                    writer.write(formatted_media_player_bytes)
+                if media_player_start_column < current_column:
+                    writer.write(SEPARATOR_BYTES)
+                    raise IndexError()
+                room_for_progress_bar = media_player_start_column > current_column + 3
+                writer.write(VERTICAL_DOUBLE_RIGHT_BYTES if room_for_progress_bar else SEPARATOR_BYTES)
+                if room_for_progress_bar:
+                    progress_bar_width = (media_player_start_column - 1) - current_column
+                    progress = media_player_to_show["track_current_second"] / media_player_to_show["track_length_seconds"]
+                    progress_width = min(round(progress_bar_width * progress), progress_bar_width)
+                    writer.write(DOUBLE_HORIZONTAL_BYTES * progress_width)
+                    writer.write(SINGLE_HORIZONTAL_BYTES * (progress_bar_width - progress_width))
+                    writer.write(VERTICAL_SINGLE_LEFT_BYTES if progress_width < progress_bar_width else VERTICAL_DOUBLE_LEFT_BYTES)
+                jump_to_column(media_player_start_column)
+                writer.write(formatted_media_player_bytes)
+            else:
+                writer.write(SEPARATOR_BYTES)
         except IndexError:
             ...
         finally:
