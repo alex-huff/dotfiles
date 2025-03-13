@@ -1,22 +1,23 @@
 #!/bin/python3
 
-import os
-import sys
-import time
+import asyncio
+import datetime
 import json
 import math
-import regex
-import struct
+import os
 import shutil
-import asyncio
-import wcwidth
-import datetime
+import struct
+import sys
+import time
 from copy import deepcopy
 from enum import IntEnum, auto
+
+import regex
+import wcwidth
+from dbus_next._private.util import replace_fds_with_idx, replace_idx_with_fds
 from dbus_next.aio import MessageBus
 from dbus_next.message import Message, MessageFlag
 from dbus_next.proxy_object import BaseProxyInterface
-from dbus_next._private.util import replace_fds_with_idx, replace_idx_with_fds
 
 
 class BarEvent:
@@ -49,8 +50,10 @@ class MediaPlayerState:
         self.bar_event_queue = bar_event_queue
         self.loop = asyncio.get_running_loop()
         self.playback_status = properties["PlaybackStatus"].value
-        self.loop_status = properties["LoopStatus"].value
-        self.rate = properties["Rate"].value
+        self.loop_status = (
+            properties["LoopStatus"].value if "LoopStatus" in properties else "None"
+        )
+        self.rate = properties["Rate"].value if "Rate" in properties else 1.0
         self.set_metadata(properties["Metadata"].value)
         self.seek(properties["Position"].value)
         self.loop_time_started_playing_from_last_known_position = None
@@ -354,9 +357,15 @@ async def watch_media_player_forever(
                 case "Metadata":
                     old_track_id = media_player_state.track_id
                     old_track_length = media_player_state.track_length
+                    old_track_title = media_player_state.track_title
                     old_visible_metadata = media_player_state.get_visible_metadata()
                     media_player_state.set_metadata(value)
-                    switched_track = old_track_id != media_player_state.track_id
+                    # hack: Firefox doesn't change 'track_id' when switching
+                    # tracks so we also consider a title change a track switch
+                    switched_track = (
+                        old_track_id != media_player_state.track_id
+                        or old_track_title != media_player_state.track_title
+                    )
                     changed_track_length = (
                         old_track_length != media_player_state.track_length
                     )
@@ -765,6 +774,7 @@ async def update_bar_forever(bar_event_queue):
     SEPARATOR_BYTES = SEPARATOR.encode("utf-8")
     VERTICAL_SINGLE_LEFT_BYTES = "┤".encode("utf-8")
     VERTICAL_DOUBLE_LEFT_BYTES = "╡".encode("utf-8")
+    VERTICAL_SINGLE_RIGHT_BYTES = "├".encode("utf-8")
     VERTICAL_DOUBLE_RIGHT_BYTES = "╞".encode("utf-8")
     DOUBLE_HORIZONTAL_BYTES = "═".encode("utf-8")
     SINGLE_HORIZONTAL_BYTES = "─".encode("utf-8")
@@ -902,7 +912,8 @@ async def update_bar_forever(bar_event_queue):
                     raise IndexError()
             if (
                 formatted_workspaces_bytes is not None
-                and (current_column + formatted_workspaces_width + 1) <= TERMINAL_WIDTH + 1
+                and (current_column + formatted_workspaces_width + 1)
+                <= TERMINAL_WIDTH + 1
             ):
                 writer.write(SEPARATOR_BYTES)
                 current_column += 1
@@ -912,7 +923,7 @@ async def update_bar_forever(bar_event_queue):
                     # no room for separator
                     raise IndexError()
             if formatted_media_player_bytes is not None:
-                current_column += 1 # leave room for either '│', '├' or '╞'
+                current_column += 1  # leave room for either '│', '├' or '╞'
                 media_player_start_column = TERMINAL_WIDTH - (
                     formatted_media_player_width - 1
                 )
@@ -920,14 +931,33 @@ async def update_bar_forever(bar_event_queue):
                     writer.write(SEPARATOR_BYTES)
                     raise IndexError()
                 room_for_progress_bar = media_player_start_column > current_column + 3
-                writer.write(VERTICAL_DOUBLE_RIGHT_BYTES if room_for_progress_bar else SEPARATOR_BYTES)
                 if room_for_progress_bar:
-                    progress_bar_width = (media_player_start_column - 1) - current_column
-                    progress = media_player_to_show["track_current_second"] / media_player_to_show["track_length_seconds"]
-                    progress_width = min(round(progress_bar_width * progress), progress_bar_width)
+                    progress_bar_width = (
+                        media_player_start_column - 1
+                    ) - current_column
+                    progress = (
+                        media_player_to_show["track_current_second"]
+                        / media_player_to_show["track_length_seconds"]
+                    )
+                    progress_width = min(
+                        round(progress_bar_width * progress), progress_bar_width
+                    )
+                    writer.write(
+                        VERTICAL_DOUBLE_RIGHT_BYTES
+                        if progress_width
+                        else VERTICAL_SINGLE_RIGHT_BYTES
+                    )
                     writer.write(DOUBLE_HORIZONTAL_BYTES * progress_width)
-                    writer.write(SINGLE_HORIZONTAL_BYTES * (progress_bar_width - progress_width))
-                    writer.write(VERTICAL_SINGLE_LEFT_BYTES if progress_width < progress_bar_width else VERTICAL_DOUBLE_LEFT_BYTES)
+                    writer.write(
+                        SINGLE_HORIZONTAL_BYTES * (progress_bar_width - progress_width)
+                    )
+                    writer.write(
+                        VERTICAL_SINGLE_LEFT_BYTES
+                        if progress_width < progress_bar_width
+                        else VERTICAL_DOUBLE_LEFT_BYTES
+                    )
+                else:
+                    writer.write(SEPARATOR_BYTES)
                 jump_to_column(media_player_start_column)
                 writer.write(formatted_media_player_bytes)
             else:
