@@ -6,6 +6,7 @@ import json
 import math
 import os
 import shutil
+import signal
 import struct
 import sys
 import time
@@ -34,6 +35,8 @@ class BarEventType(IntEnum):
     WORKSPACES_UPDATE = auto()
 
     CLOCK_UPDATE = auto()
+
+    RESIZE = auto()
 
     def is_media_player_event(self):
         return (
@@ -766,8 +769,6 @@ async def run_clock_forever(bar_event_queue):
 
 
 async def update_bar_forever(bar_event_queue):
-    TERMINAL_WIDTH = shutil.get_terminal_size().columns
-    assert TERMINAL_WIDTH > 0
     SECONDS_IN_MINUTE = 60
     SECONDS_IN_HOUR = 60 * 60
     SEPARATOR = "│"
@@ -812,7 +813,17 @@ async def update_bar_forever(bar_event_queue):
     def clamp(value, min_value, max_value):
         return max(min_value, min(value, max_value))
 
+    def on_resize(*args):
+        nonlocal terminal_width
+        old_terminal_width = terminal_width
+        terminal_width = shutil.get_terminal_size().columns
+        assert terminal_width > 0
+        if old_terminal_width != terminal_width:
+            bar_event_queue.put_nowait(BarEvent(BarEventType.RESIZE, None))
+
+    terminal_width = shutil.get_terminal_size().columns
     loop = asyncio.get_running_loop()
+    loop.add_signal_handler(signal.SIGWINCH, on_resize)
     write_transport, write_protocol = await loop.connect_write_pipe(
         asyncio.streams.FlowControlMixin, sys.stdout
     )
@@ -864,6 +875,8 @@ async def update_bar_forever(bar_event_queue):
                 formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S %Y} "
                 formatted_datetime_width = wcwidth.wcswidth(formatted_datetime)
                 formatted_datetime_bytes = formatted_datetime.encode("utf-8")
+            case BarEventType.RESIZE:
+                ...
         if bar_event.event_type.is_media_player_event():
             last_shown_media_player = media_player_to_show
             media_player_to_show = (
@@ -918,28 +931,28 @@ async def update_bar_forever(bar_event_queue):
         try:
             if (
                 formatted_datetime_bytes is not None
-                and formatted_datetime_width <= TERMINAL_WIDTH
+                and formatted_datetime_width <= terminal_width
             ):
                 writer.write(formatted_datetime_bytes)
                 current_column += formatted_datetime_width
-                if current_column > TERMINAL_WIDTH:
+                if current_column > terminal_width:
                     # no room for separator
                     raise IndexError()
             if (
                 formatted_workspaces_bytes is not None
                 and (current_column + formatted_workspaces_width + 1)
-                <= TERMINAL_WIDTH + 1
+                <= terminal_width + 1
             ):
                 writer.write(SEPARATOR_BYTES)
                 current_column += 1
                 writer.write(formatted_workspaces_bytes)
                 current_column += formatted_workspaces_width
-                if current_column > TERMINAL_WIDTH:
+                if current_column > terminal_width:
                     # no room for separator
                     raise IndexError()
             if formatted_media_player_bytes is not None:
                 current_column += 1  # leave room for either '│', '├' or '╞'
-                media_player_start_column = TERMINAL_WIDTH - (
+                media_player_start_column = terminal_width - (
                     formatted_media_player_width - 1
                 )
                 if media_player_start_column < current_column:
