@@ -890,8 +890,11 @@ async def update_bar_forever(bar_event_queue):
                 ) = None
             else:
                 artist = media_player_to_show["track_artist"]
-                formatted_artist = "/".join(artist) if artist else "Unknown"
-                formatted_title = media_player_to_show["track_title"] or "Unknown"
+                if artist:
+                    artist = "/".join(artist)
+                formatted_artist = f" {SEPARATOR} {artist}" if artist else ""
+                title = media_player_to_show["track_title"]
+                formatted_title = f" {SEPARATOR} {title}" if title else ""
                 formatted_current_second = format_second_duration(
                     media_player_to_show["track_current_second"]
                 )
@@ -901,8 +904,11 @@ async def update_bar_forever(bar_event_queue):
                 formatted_playback_status = PLAYBACK_STATUS_SPECIFIER[
                     media_player_to_show["playback_status"]
                 ]
-                formatted_loop_status = media_player_to_show["loop_status"].lower()
-                formatted_media_player = f" {formatted_playback_status} {formatted_current_second} / {formatted_length_seconds} {SEPARATOR} 󰑖 {formatted_loop_status} {SEPARATOR} {formatted_artist} {SEPARATOR} {formatted_title} "
+                loop_status = media_player_to_show["loop_status"].lower()
+                formatted_loop_status = (
+                    f" {SEPARATOR} 󰑖 {loop_status}" if loop_status != "none" else ""
+                )
+                formatted_media_player = f" {formatted_playback_status} {formatted_current_second} / {formatted_length_seconds}{formatted_loop_status}{formatted_artist}{formatted_title} "
                 formatted_media_player_width = wcwidth.wcswidth(formatted_media_player)
                 formatted_media_player_bytes = formatted_media_player.encode("utf-8")
         current_column = 1
@@ -954,9 +960,13 @@ async def update_bar_forever(bar_event_queue):
                         if progress_width
                         else VERTICAL_SINGLE_RIGHT_BYTES
                     )
-                    double_horizontal_width = clamp(progress_width - 1, 0, progress_bar_width - 2)
+                    double_horizontal_width = clamp(
+                        progress_width - 1, 0, progress_bar_width - 2
+                    )
                     writer.write(DOUBLE_HORIZONTAL_BYTES * double_horizontal_width)
-                    single_horizontal_width = (progress_bar_width - 2) - double_horizontal_width
+                    single_horizontal_width = (
+                        progress_bar_width - 2
+                    ) - double_horizontal_width
                     writer.write(SINGLE_HORIZONTAL_BYTES * single_horizontal_width)
                     writer.write(
                         VERTICAL_DOUBLE_LEFT_BYTES
