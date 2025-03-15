@@ -790,6 +790,8 @@ async def update_bar_forever(bar_event_queue):
     CHARACTER_ATTRIBUTES_TEMPLATE = CSI_START + b"%bm"
     BLACK_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;40;40;40"
     RESET_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"49"
+    GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;146;131;116"
+    RESET_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"39"
     BOLD_REVERSED = CHARACTER_ATTRIBUTES_TEMPLATE % b"1;7"
     NOT_BOLD_NOT_REVERSED = CHARACTER_ATTRIBUTES_TEMPLATE % b"22;27"
     PLAYBACK_STATUS_PRIORITY = {"Playing": 0, "Paused": 1, "Stopped": 2}
@@ -968,6 +970,10 @@ async def update_bar_forever(bar_event_queue):
                     progress_width = min(
                         round(progress_bar_width * progress), progress_bar_width
                     )
+                    empty_bar = progress_width == 0
+                    full_bar = progress_width == progress_bar_width
+                    if empty_bar:
+                        writer.write(GRAY_FOREGROUND)
                     writer.write(
                         VERTICAL_DOUBLE_RIGHT_BYTES
                         if progress_width
@@ -980,12 +986,16 @@ async def update_bar_forever(bar_event_queue):
                     single_horizontal_width = (
                         progress_bar_width - 2
                     ) - double_horizontal_width
+                    if not empty_bar and not full_bar:
+                        writer.write(GRAY_FOREGROUND)
                     writer.write(SINGLE_HORIZONTAL_BYTES * single_horizontal_width)
                     writer.write(
                         VERTICAL_DOUBLE_LEFT_BYTES
                         if progress_width == progress_bar_width
                         else VERTICAL_SINGLE_LEFT_BYTES
                     )
+                    if not full_bar:
+                        writer.write(RESET_FOREGROUND)
                 else:
                     writer.write(SEPARATOR_BYTES)
                 jump_to_column(media_player_start_column)
