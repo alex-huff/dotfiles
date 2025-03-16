@@ -14,7 +14,7 @@ from copy import deepcopy
 from enum import IntEnum, auto
 from xml.etree import ElementTree
 
-import regex
+import re
 import wcwidth
 from dbus_next._private.util import replace_fds_with_idx, replace_idx_with_fds
 from dbus_next.aio import MessageBus
@@ -183,7 +183,7 @@ class MediaPlayerState:
 
 
 async def watch_all_media_players_forever(task_group, bar_event_queue):
-    MEDIA_PLAYER_BUS_NAME_REGEX = regex.compile(r"org\.mpris\.MediaPlayer2\.(.*)")
+    MEDIA_PLAYER_BUS_NAME_REGEX = re.compile(r"org\.mpris\.MediaPlayer2\.(.*)")
     DBUS_BUS_NAME = "org.freedesktop.DBus"
     DBUS_OBJECT_PATH = "/org/freedesktop/DBus"
     DBUS_INTERFACE = "org.freedesktop.DBus"
