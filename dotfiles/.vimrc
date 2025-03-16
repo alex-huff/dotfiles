@@ -39,6 +39,19 @@ try
     packadd comment
 catch /^Vim\%((\a\+)\)\?:E919:/
 endtry
+function s:save_location_to_clipboard()
+    let [bufnum, lnum, col, off, curswant] = getcurpos()
+    let start_of_line_offset = line2byte(lnum)
+    let @+ = $"{fnamemodify(@%, ":p")}:{start_of_line_offset + (col - 1)}"
+endfunction
+function s:jump_to_clipboard_location(open_cmd)
+    let separator_idx = match(@+, ":\\d\\+$")
+    let file_path = @+[0:separator_idx - 1]
+    let byte_offset = @+[separator_idx + 1:]
+    execute a:open_cmd fnameescape(fnamemodify(file_path, ":~:."))
+    execute "goto" byte_offset
+    normal zz
+endfunction
 inoremap <nowait> <C-[> <Esc>
 cnoremap <nowait> <C-[> <C-\><C-N>
 nnoremap <silent> <C-H> :wincmd h<CR>
@@ -75,9 +88,9 @@ nnoremap <silent> <C-A-L> :vertical resize +1<CR>
 nnoremap <silent> <Leader>t :botright terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
 nnoremap <silent> <Leader>T :vertical botright terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
 nnoremap <silent> <Leader><Leader>t :tab terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
-nnoremap <silent> <Leader>c :execute "tabedit" fnameescape(fnamemodify(@+, ":~:."))<CR>
-nnoremap <silent> <Leader>C :execute "edit" fnameescape(fnamemodify(@+, ":~:."))<CR>
+nnoremap <silent> <Leader>c :call <SID>jump_to_clipboard_location("tabedit")<CR>
+nnoremap <silent> <Leader>C :call <SID>jump_to_clipboard_location("edit")<CR>
 nnoremap <silent> <Leader>h :nohlsearch<CR>
 nnoremap <silent> <Leader>ap :%!autopep8 -<CR>
 nnoremap <silent> <Leader>f :FZF<CR>
-nnoremap <silent> <C-L> :let @+ = fnamemodify(@%, ":p")<CR>
+nnoremap <silent> <C-L> :call <SID>save_location_to_clipboard()<CR>
