@@ -5,6 +5,7 @@ import datetime
 import json
 import math
 import os
+import re
 import shutil
 import signal
 import struct
@@ -14,7 +15,6 @@ from copy import deepcopy
 from enum import IntEnum, auto
 from xml.etree import ElementTree
 
-import re
 import wcwidth
 from dbus_next._private.util import replace_fds_with_idx, replace_idx_with_fds
 from dbus_next.aio import MessageBus
@@ -2436,9 +2436,10 @@ async def update_bar_forever(bar_event_queue):
                 progress_bar_width = (media_player_start_column - current_column) + 1
                 room_for_progress_bar = progress_bar_width > 4
                 if room_for_progress_bar:
+                    current_second = media_player_to_show["track_current_second"]
+                    length_seconds = media_player_to_show["track_length_seconds"]
                     progress = (
-                        media_player_to_show["track_current_second"]
-                        / media_player_to_show["track_length_seconds"]
+                        (current_second / length_seconds) if length_seconds else 1
                     )
                     progress_width = min(
                         progress_bar_width, round(progress_bar_width * progress)
