@@ -2394,9 +2394,9 @@ async def update_bar_forever(bar_event_queue):
                 ]
                 loop_status = media_player_to_show["loop_status"].lower()
                 formatted_loop_status = (
-                    f" {SEPARATOR} 󰑖 {loop_status}" if loop_status != "none" else ""
+                    f" {SEPARATOR} 󰑖  {loop_status}" if loop_status != "none" else ""
                 )
-                formatted_media_player = f" {formatted_playback_status} {formatted_current_second} / {formatted_length_seconds}{formatted_loop_status}{formatted_artist}{formatted_title} "
+                formatted_media_player = f" {formatted_playback_status}  {formatted_current_second} / {formatted_length_seconds}{formatted_loop_status}{formatted_artist}{formatted_title} "
                 formatted_media_player_width = wcwidth.wcswidth(formatted_media_player)
                 formatted_media_player_bytes = formatted_media_player.encode("utf-8")
         current_column = 1
