@@ -43,7 +43,7 @@ bindsym Shift+Control+Alt+Page_Up workspace next
 bindsym $super+Control+l exec swaylock --color=000000 --font="Victor Mono" --font-size=20
 
 # start a terminal
-bindsym $super+Return exec kitty
+bindsym $super+Return exec kitty --single-instance
 
 # search with qutebrowser
 bindsym $super+Alt+s exec query=$(rofi -dmenu -l 0 -p search) && qutebrowser --target=tab "$query"
