@@ -2293,8 +2293,7 @@ async def update_bar_forever(bar_event_queue):
         old_terminal_width = terminal_width
         terminal_width = shutil.get_terminal_size().columns
         assert terminal_width > 0
-        if old_terminal_width != terminal_width:
-            bar_event_queue.put_nowait(BarEvent(BarEventType.RESIZE, None))
+        bar_event_queue.put_nowait(BarEvent(BarEventType.RESIZE, None))
 
     terminal_width = shutil.get_terminal_size().columns
     loop = asyncio.get_running_loop()
