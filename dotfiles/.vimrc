@@ -124,8 +124,8 @@ nnoremap <silent> <Leader>c :call <SID>jump_to_clipboard_location("tabedit")<CR>
 nnoremap <silent> <Leader>C :call <SID>jump_to_clipboard_location("edit")<CR>
 nnoremap <silent> <C-L> :call <SID>save_location_to_clipboard()<CR>
 nnoremap <silent> <Leader>h :nohlsearch<CR>
-nnoremap <silent> <Leader>gn :call <SID>do_ruff_format(getcursorcharpos())<CR>
-nnoremap <silent> <expr> gn <SID>setup_ruff_format_operatorfunc()
-vnoremap <silent> <expr> gn <SID>setup_ruff_format_operatorfunc()
-nnoremap <silent> <expr> gnn <SID>setup_ruff_format_operatorfunc() .. "_"
+nnoremap <silent> <Leader>gb :call <SID>do_ruff_format(getcursorcharpos())<CR>
+nnoremap <silent> <expr> gb <SID>setup_ruff_format_operatorfunc()
+vnoremap <silent> <expr> gb <SID>setup_ruff_format_operatorfunc()
+nnoremap <silent> <expr> gbb <SID>setup_ruff_format_operatorfunc() .. "_"
 nnoremap <silent> <Leader>f :FZF<CR>
