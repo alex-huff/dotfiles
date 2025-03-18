@@ -50,7 +50,39 @@ function s:jump_to_clipboard_location(open_cmd)
     let byte_offset = @+[separator_idx + 1:]
     execute a:open_cmd fnameescape(fnamemodify(file_path, ":~:."))
     execute "goto" byte_offset
-    normal zz
+    normal! zz
+endfunction
+function s:do_ruff_format(original_cursor, use_range=v:false, start_line=1, end_line=1, start_column=1, end_column=1)
+    " Do a 'fake' change so that undo restores cursor position correctly. This
+    " is needed because undoing a filter restores cursor position to the start
+    " of the range filtered instead of where the cursor was before the filter
+    " took place. Since 'i_' and 'x' are considered a change and are executed
+    " before the filter, when undoing a 'do_ruff_format' invocation the cursor
+    " is correctly restored to the position before this fake change.
+    normal! i_
+    normal! x
+    let range_specifier = ""
+    if a:use_range
+        let range_start_specifier = $"{a:start_line}:{a:start_column}"
+        let range_end_specifier = $"{a:end_line}:{a:end_column}"
+        let range_specifier = $" --range={range_start_specifier}-{range_end_specifier}"
+    endif
+    execute $"%!ruff format -{range_specifier}"
+    call setcursorcharpos(a:original_cursor[1:])
+endfunction
+function s:ruff_format_operatorfunc(original_cursor, type)
+    if a:type == "block"
+        return
+    endif
+    let [_, start_line, start_column, _] = getcharpos("'[")
+    let [_, end_line, end_column, _] = getcharpos("']")
+    let is_line = a:type == "line"
+    call s:do_ruff_format(a:original_cursor, v:true, start_line, end_line + (is_line ? 1 : 0), (is_line ? 1 : start_column), (is_line ? 1 : end_column + 1))
+endfunction
+function s:setup_ruff_format_operatorfunc()
+    let original_cursor = getcursorcharpos()
+    let &operatorfunc = { type -> s:ruff_format_operatorfunc(original_cursor, type) }
+    return "g@"
 endfunction
 inoremap <nowait> <C-[> <Esc>
 cnoremap <nowait> <C-[> <C-\><C-N>
@@ -90,7 +122,10 @@ nnoremap <silent> <Leader>T :vertical botright terminal<CR><C-\><C-N>:set nonumb
 nnoremap <silent> <Leader><Leader>t :tab terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
 nnoremap <silent> <Leader>c :call <SID>jump_to_clipboard_location("tabedit")<CR>
 nnoremap <silent> <Leader>C :call <SID>jump_to_clipboard_location("edit")<CR>
-nnoremap <silent> <Leader>h :nohlsearch<CR>
-nnoremap <silent> <Leader>ap :%!autopep8 -<CR>
-nnoremap <silent> <Leader>f :FZF<CR>
 nnoremap <silent> <C-L> :call <SID>save_location_to_clipboard()<CR>
+nnoremap <silent> <Leader>h :nohlsearch<CR>
+nnoremap <silent> <Leader>gn :call <SID>do_ruff_format(getcursorcharpos())<CR>
+nnoremap <silent> <expr> gn <SID>setup_ruff_format_operatorfunc()
+vnoremap <silent> <expr> gn <SID>setup_ruff_format_operatorfunc()
+nnoremap <silent> <expr> gnn <SID>setup_ruff_format_operatorfunc() .. "_"
+nnoremap <silent> <Leader>f :FZF<CR>
