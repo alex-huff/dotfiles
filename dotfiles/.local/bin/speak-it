@@ -1,2 +1,2 @@
 #!/bin/sh
-piper --model ~/voices/en_US-hfc_male-medium.onnx --output_raw | pw-play --format s16 --rate 22050 --channels 1 -
+piper --model ~/voices/en_US-hfc_male-medium.onnx -f - | pw-play -
