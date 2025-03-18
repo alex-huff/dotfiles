@@ -274,7 +274,7 @@ bindsym $super+Alt+b border toggle
 bindsym $super+Shift+b exec killall --process-group kitty-panel-2 || kitty-panel-2
 
 # colors                border  bg      text    ind     child_b
-client.focused          #d5c4a1 #d5c4a1 #000000 #d5c4a1 #d5c4a1
+client.focused          #bdae93 #ebdbb2 #000000 #bdae93 #bdae93
 client.unfocused        #504945 #000000 #ebdbb2 #504945 #504945
 client.focused_inactive #7c6f64 #504945 #ebdbb2 #7c6f64 #7c6f64
 
