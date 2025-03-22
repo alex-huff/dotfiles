@@ -2260,12 +2260,16 @@ async def update_bar_forever(bar_event_queue):
     BEGIN_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"h"
     END_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"l"
     CHARACTER_ATTRIBUTES_TEMPLATE = CSI_START + b"%bm"
-    BLACK_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;40;40;40"
-    RESET_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"49"
+    DARK_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;40;40;40"
+    GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;189;174;147"
+    LIGHT_GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;213;196;161"
+    WHITE_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;251;241;199"
+    BLACK_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;0;0;0"
+    DARK_GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;60;56;54"
     GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;146;131;116"
-    RESET_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"39"
-    BOLD_REVERSED = CHARACTER_ATTRIBUTES_TEMPLATE % b"1;7"
-    NOT_BOLD_NOT_REVERSED = CHARACTER_ATTRIBUTES_TEMPLATE % b"22;27"
+    LIGHT_GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;235;219;178"
+    BOLD = CHARACTER_ATTRIBUTES_TEMPLATE % b"1"
+    NOT_BOLD = CHARACTER_ATTRIBUTES_TEMPLATE % b"22"
     PLAYBACK_STATUS_PRIORITY = {"Playing": 0, "Paused": 1, "Stopped": 2}
     PLAYBACK_STATUS_SPECIFIER = {"Playing": "󰐊", "Paused": "󰏤", "Stopped": "󰓛"}
 
@@ -2333,20 +2337,27 @@ async def update_bar_forever(bar_event_queue):
                 formatted_workspaces_bytes = bytearray()
                 for i, workspace in enumerate(workspaces):
                     focused = workspace["focused"]
+                    formatted_workspaces_bytes.extend(BOLD)
                     if focused:
-                        formatted_workspaces_bytes.extend(BOLD_REVERSED)
-                    elif i % 2 == 0:
-                        formatted_workspaces_bytes.extend(BLACK_BACKGROUND)
+                        formatted_workspaces_bytes.extend(LIGHT_GRAY_FOREGROUND)
+                        formatted_workspaces_bytes.extend(DARK_BACKGROUND)
+                    elif i % 2 == 1:
+                        formatted_workspaces_bytes.extend(GRAY_BACKGROUND)
+                    else:
+                        formatted_workspaces_bytes.extend(DARK_GRAY_FOREGROUND)
+                        formatted_workspaces_bytes.extend(LIGHT_GRAY_BACKGROUND)
                     formatted_workspaces_bytes.extend(b" ")
                     formatted_workspaces_bytes.extend(workspace["name"].encode("utf-8"))
                     formatted_workspaces_bytes.extend(b" ")
-                    if focused:
-                        formatted_workspaces_bytes.extend(NOT_BOLD_NOT_REVERSED)
-                    elif i % 2 == 0:
-                        formatted_workspaces_bytes.extend(RESET_BACKGROUND)
+                    formatted_workspaces_bytes.extend(NOT_BOLD)
+                    if focused or i % 2 == 0:
+                        formatted_workspaces_bytes.extend(BLACK_FOREGROUND)
+                        formatted_workspaces_bytes.extend(WHITE_BACKGROUND)
+                    else:
+                        formatted_workspaces_bytes.extend(WHITE_BACKGROUND)
             case BarEventType.CLOCK_UPDATE:
                 current_datetime = datetime.datetime.fromtimestamp(bar_event.payload)
-                formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S %Y} "
+                formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S} "
                 formatted_datetime_width = wcwidth.wcswidth(formatted_datetime)
                 formatted_datetime_bytes = formatted_datetime.encode("utf-8")
             case BarEventType.RESIZE:
@@ -2400,6 +2411,7 @@ async def update_bar_forever(bar_event_queue):
                 formatted_media_player_bytes = formatted_media_player.encode("utf-8")
         current_column = 1
         writer.write(BEGIN_SYNCHRONIZED_UPDATE)
+        writer.write(WHITE_BACKGROUND)
         jump_to_column(current_column)
         writer.write(CLEAR_LINE)
         try:
@@ -2468,7 +2480,7 @@ async def update_bar_forever(bar_event_queue):
                         else VERTICAL_SINGLE_LEFT_BYTES
                     )
                     if not full_bar:
-                        writer.write(RESET_FOREGROUND)
+                        writer.write(BLACK_FOREGROUND)
                 else:
                     writer.write(SEPARATOR_BYTES)
                 jump_to_column(media_player_start_column)

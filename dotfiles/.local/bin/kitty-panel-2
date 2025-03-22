@@ -1,8 +1,9 @@
 #!/bin/sh
 
 kitty +kitten panel \
+    --edge=bottom \
     --override window_padding_width=2 \
-    --override placement_strategy=center \
-    --override font_size=12 \
-    --override background_opacity=0.9 \
+    --override placement_strategy=bottom \
+    --override font_size=14 \
+    --override background=#665c54 \
     bar.py
