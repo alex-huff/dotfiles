@@ -2,8 +2,7 @@
 
 kitty +kitten panel \
     --edge=bottom \
-    --override window_padding_width=2 \
+    --override window_padding_width=0 \
     --override placement_strategy=bottom \
     --override font_size=14 \
-    --override background=#665c54 \
     bar.py

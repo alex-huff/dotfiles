@@ -2244,13 +2244,17 @@ async def update_bar_forever(bar_event_queue):
     SECONDS_IN_MINUTE = 60
     SECONDS_IN_HOUR = 60 * 60
     SEPARATOR = "│"
+    LEFT_SEPARATOR = "▏"
+    RIGHT_SEPARATOR = "▕"
     SEPARATOR_BYTES = SEPARATOR.encode("utf-8")
-    VERTICAL_SINGLE_LEFT_BYTES = "┤".encode("utf-8")
-    VERTICAL_DOUBLE_LEFT_BYTES = "╡".encode("utf-8")
-    VERTICAL_SINGLE_RIGHT_BYTES = "├".encode("utf-8")
-    VERTICAL_DOUBLE_RIGHT_BYTES = "╞".encode("utf-8")
-    DOUBLE_HORIZONTAL_BYTES = "═".encode("utf-8")
-    SINGLE_HORIZONTAL_BYTES = "─".encode("utf-8")
+    LEFT_SEPARATOR_BYTES = LEFT_SEPARATOR.encode("utf-8")
+    RIGHT_SEPARATOR_BYTES = RIGHT_SEPARATOR.encode("utf-8")
+    VERTICAL_THIN_LEFT_BYTES = "┐".encode("utf-8")
+    VERTICAL_THIN_RIGHT_BYTES = "┌".encode("utf-8")
+    VERTICAL_THICK_RIGHT_BYTES = "┍".encode("utf-8")
+    THICK_HORIZONTAL_BYTES = "━".encode("utf-8")
+    THIN_HORIZONTAL_BYTES = "─".encode("utf-8")
+    PROGRESS_MARKER_BYTES = "○".encode("utf-8")
     ESCAPE = b"\x1b"
     CSI_START = ESCAPE + b"["
     CLEAR_LINE = CSI_START + b"2K"
@@ -2262,7 +2266,7 @@ async def update_bar_forever(bar_event_queue):
     CHARACTER_ATTRIBUTES_TEMPLATE = CSI_START + b"%bm"
     DARK_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;40;40;40"
     GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;189;174;147"
-    LIGHT_GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;213;196;161"
+    LIGHT_GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;235;219;178"
     WHITE_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;251;241;199"
     BLACK_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;0;0;0"
     DARK_GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;60;56;54"
@@ -2315,6 +2319,8 @@ async def update_bar_forever(bar_event_queue):
     formatted_datetime_bytes = None
     formatted_datetime_width = None
     writer.write(HIDE_CURSOR)
+    writer.write(BLACK_FOREGROUND)
+    writer.write(WHITE_BACKGROUND)
     await writer.drain()
     while True:
         bar_event = await bar_event_queue.get()
@@ -2333,8 +2339,10 @@ async def update_bar_forever(bar_event_queue):
                 formatted_workspaces_width = (
                     sum(wcwidth.wcswidth(workspace["name"]) for workspace in workspaces)
                     + len(workspaces) * 2
+                    + 2
                 )
                 formatted_workspaces_bytes = bytearray()
+                formatted_workspaces_bytes.extend(RIGHT_SEPARATOR_BYTES)
                 for i, workspace in enumerate(workspaces):
                     focused = workspace["focused"]
                     formatted_workspaces_bytes.extend(BOLD)
@@ -2355,9 +2363,10 @@ async def update_bar_forever(bar_event_queue):
                         formatted_workspaces_bytes.extend(WHITE_BACKGROUND)
                     else:
                         formatted_workspaces_bytes.extend(WHITE_BACKGROUND)
+                formatted_workspaces_bytes.extend(LEFT_SEPARATOR_BYTES)
             case BarEventType.CLOCK_UPDATE:
                 current_datetime = datetime.datetime.fromtimestamp(bar_event.payload)
-                formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S} "
+                formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S}"
                 formatted_datetime_width = wcwidth.wcswidth(formatted_datetime)
                 formatted_datetime_bytes = formatted_datetime.encode("utf-8")
             case BarEventType.RESIZE:
@@ -2409,84 +2418,54 @@ async def update_bar_forever(bar_event_queue):
                 formatted_media_player = f" {formatted_playback_status}  {formatted_current_second} / {formatted_length_seconds}{formatted_loop_status}{formatted_artist}{formatted_title} "
                 formatted_media_player_width = wcwidth.wcswidth(formatted_media_player)
                 formatted_media_player_bytes = formatted_media_player.encode("utf-8")
-        current_column = 1
+        if formatted_datetime_bytes is None or formatted_workspaces_bytes is None:
+            continue
         writer.write(BEGIN_SYNCHRONIZED_UPDATE)
-        writer.write(WHITE_BACKGROUND)
-        jump_to_column(current_column)
         writer.write(CLEAR_LINE)
         try:
-            if (
-                formatted_datetime_bytes is not None
-                and formatted_datetime_width <= terminal_width
-            ):
-                writer.write(formatted_datetime_bytes)
-                current_column += formatted_datetime_width
-                if current_column > terminal_width:
-                    # no room for separator
-                    raise IndexError()
-            if (
-                formatted_workspaces_bytes is not None
-                and (current_column + formatted_workspaces_width + 1)
-                <= terminal_width + 1
-            ):
-                writer.write(SEPARATOR_BYTES)
-                current_column += 1
-                writer.write(formatted_workspaces_bytes)
-                current_column += formatted_workspaces_width
-                if current_column > terminal_width:
-                    # no room for separator
-                    raise IndexError()
-            if formatted_media_player_bytes is not None:
-                current_column += 1  # leave room for either '│', '├' or '╞'
-                media_player_start_column = terminal_width - (
-                    formatted_media_player_width - 1
+            if formatted_datetime_width > terminal_width - 1:
+                raise IndexError()
+            current_column = 1
+            jump_to_column(current_column)
+            writer.write(formatted_datetime_bytes)
+            current_column += formatted_datetime_width
+            if current_column + formatted_workspaces_width > terminal_width + 1:
+                raise IndexError()
+            writer.write(formatted_workspaces_bytes)
+            current_column += formatted_workspaces_width
+            if formatted_media_player_bytes is None:
+                raise IndexError()
+            media_player_start_column = terminal_width - (
+                formatted_media_player_width - 1
+            )
+            if media_player_start_column < current_column:
+                raise IndexError()
+            progress_bar_width = (media_player_start_column - current_column) - 3
+            room_for_progress_bar = progress_bar_width >= 5
+            if room_for_progress_bar:
+                current_second = media_player_to_show["track_current_second"]
+                length_seconds = media_player_to_show["track_length_seconds"]
+                progress = (current_second / length_seconds) if length_seconds else 1
+                progress_width = min(
+                    progress_bar_width, round(progress_bar_width * progress)
                 )
-                if media_player_start_column < current_column:
-                    writer.write(SEPARATOR_BYTES)
-                    raise IndexError()
-                progress_bar_width = (media_player_start_column - current_column) + 1
-                room_for_progress_bar = progress_bar_width > 4
-                if room_for_progress_bar:
-                    current_second = media_player_to_show["track_current_second"]
-                    length_seconds = media_player_to_show["track_length_seconds"]
-                    progress = (
-                        (current_second / length_seconds) if length_seconds else 1
-                    )
-                    progress_width = min(
-                        progress_bar_width, round(progress_bar_width * progress)
-                    )
-                    empty_bar = progress_width == 0
-                    full_bar = progress_width == progress_bar_width
-                    if empty_bar:
-                        writer.write(GRAY_FOREGROUND)
-                    writer.write(
-                        VERTICAL_DOUBLE_RIGHT_BYTES
-                        if progress_width
-                        else VERTICAL_SINGLE_RIGHT_BYTES
-                    )
-                    double_horizontal_width = clamp(
-                        progress_width - 1, 0, progress_bar_width - 2
-                    )
-                    writer.write(DOUBLE_HORIZONTAL_BYTES * double_horizontal_width)
-                    single_horizontal_width = (
-                        progress_bar_width - 2
-                    ) - double_horizontal_width
-                    if not empty_bar and not full_bar:
-                        writer.write(GRAY_FOREGROUND)
-                    writer.write(SINGLE_HORIZONTAL_BYTES * single_horizontal_width)
-                    writer.write(
-                        VERTICAL_DOUBLE_LEFT_BYTES
-                        if progress_width == progress_bar_width
-                        else VERTICAL_SINGLE_LEFT_BYTES
-                    )
-                    if not full_bar:
-                        writer.write(BLACK_FOREGROUND)
-                else:
-                    writer.write(SEPARATOR_BYTES)
-                jump_to_column(media_player_start_column)
-                writer.write(formatted_media_player_bytes)
-            else:
-                writer.write(SEPARATOR_BYTES)
+                empty_bar = progress_width == 0
+                full_bar = progress_width == progress_bar_width
+                writer.write(
+                    VERTICAL_THICK_RIGHT_BYTES
+                    if not empty_bar
+                    else VERTICAL_THIN_RIGHT_BYTES
+                )
+                thick_horizontal_width = progress_width
+                writer.write(THICK_HORIZONTAL_BYTES * thick_horizontal_width)
+                writer.write(PROGRESS_MARKER_BYTES)
+                thin_horizontal_width = progress_bar_width - thick_horizontal_width
+                writer.write(GRAY_FOREGROUND)
+                writer.write(THIN_HORIZONTAL_BYTES * thin_horizontal_width)
+                writer.write(VERTICAL_THIN_LEFT_BYTES)
+                writer.write(BLACK_FOREGROUND)
+            jump_to_column(media_player_start_column)
+            writer.write(formatted_media_player_bytes)
         except IndexError:
             ...
         finally:
