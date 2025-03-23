@@ -2312,12 +2312,9 @@ async def update_bar_forever(bar_event_queue):
     writer = asyncio.StreamWriter(write_transport, write_protocol, None, loop)
     media_players = {}
     media_player_to_show = None
-    formatted_media_player_bytes = None
-    formatted_media_player_width = None
+    formatted_media_player_essential_bytes = None
     formatted_workspaces_bytes = None
-    formatted_workspaces_width = None
     formatted_datetime_bytes = None
-    formatted_datetime_width = None
     writer.write(HIDE_CURSOR)
     writer.write(BLACK_FOREGROUND)
     writer.write(WHITE_BACKGROUND)
@@ -2392,9 +2389,10 @@ async def update_bar_forever(bar_event_queue):
                 # a hidden media player than we don't need to do anything.
                 continue
             if media_player_to_show is None:
-                formatted_media_player = formatted_media_player_width = (
-                    formatted_media_player_bytes
-                ) = None
+                formatted_media_player_essential_width = None
+                formatted_media_player_metadata_width = None
+                formatted_media_player_essential_bytes = None
+                formatted_media_player_metadata_bytes = None
             else:
                 artist = media_player_to_show["track_artist"]
                 if artist:
@@ -2413,11 +2411,24 @@ async def update_bar_forever(bar_event_queue):
                 ]
                 loop_status = media_player_to_show["loop_status"].lower()
                 formatted_loop_status = (
-                    f" {SEPARATOR} 󰑖  {loop_status}" if loop_status != "none" else ""
+                    f"{SEPARATOR} 󰑖  {loop_status}" if loop_status != "none" else ""
                 )
-                formatted_media_player = f" {formatted_playback_status}  {formatted_current_second} / {formatted_length_seconds}{formatted_loop_status}{formatted_artist}{formatted_title} "
-                formatted_media_player_width = wcwidth.wcswidth(formatted_media_player)
-                formatted_media_player_bytes = formatted_media_player.encode("utf-8")
+                formatted_media_player_essential = f" {formatted_playback_status}  {formatted_current_second} / {formatted_length_seconds} "
+                formatted_media_player_metadata = (
+                    f"{formatted_loop_status}{formatted_artist}{formatted_title} "
+                )
+                formatted_media_player_essential_width = wcwidth.wcswidth(
+                    formatted_media_player_essential
+                )
+                formatted_media_player_metadata_width = wcwidth.wcswidth(
+                    formatted_media_player_metadata
+                )
+                formatted_media_player_essential_bytes = (
+                    formatted_media_player_essential.encode("utf-8")
+                )
+                formatted_media_player_metadata_bytes = (
+                    formatted_media_player_metadata.encode("utf-8")
+                )
         if formatted_datetime_bytes is None or formatted_workspaces_bytes is None:
             continue
         writer.write(BEGIN_SYNCHRONIZED_UPDATE)
@@ -2433,13 +2444,21 @@ async def update_bar_forever(bar_event_queue):
                 raise IndexError()
             writer.write(formatted_workspaces_bytes)
             current_column += formatted_workspaces_width
-            if formatted_media_player_bytes is None:
+            if formatted_media_player_essential_bytes is None:
                 raise IndexError()
+            displaying_metadata = True
+            formatted_media_player_width = (
+                formatted_media_player_essential_width
+                + formatted_media_player_metadata_width
+            )
             media_player_start_column = terminal_width - (
                 formatted_media_player_width - 1
             )
             if media_player_start_column < current_column:
-                raise IndexError()
+                media_player_start_column += formatted_media_player_metadata_width
+                displaying_metadata = False
+                if media_player_start_column < current_column:
+                    raise IndexError()
             progress_bar_width = (media_player_start_column - current_column) - 3
             room_for_progress_bar = progress_bar_width >= 5
             if room_for_progress_bar:
@@ -2465,7 +2484,9 @@ async def update_bar_forever(bar_event_queue):
                 writer.write(VERTICAL_THIN_LEFT_BYTES)
                 writer.write(BLACK_FOREGROUND)
             jump_to_column(media_player_start_column)
-            writer.write(formatted_media_player_bytes)
+            writer.write(formatted_media_player_essential_bytes)
+            if displaying_metadata:
+                writer.write(formatted_media_player_metadata_bytes)
         except IndexError:
             ...
         finally:
