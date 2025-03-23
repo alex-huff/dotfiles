@@ -5,7 +5,7 @@
   "ui_font_family": "Victor Mono",
   "buffer_font_family": "Victor Mono",
   "base_keymap": "JetBrains",
-  "theme": "Gruvbox Dark Hard",
+  "theme": "Gruvbox Light Hard",
   "vim_mode": true,
   "telemetry": {
     "diagnostics": false,
@@ -17,9 +17,6 @@
   },
   "ui_font_size": 18,
   "buffer_font_size": 24,
-  "experimental.theme_overrides": {
-    "editor.background": "#000"
-  },
   "vim": {
     "use_smartcase_find": true,
     "toggle_relative_line_numbers": true,

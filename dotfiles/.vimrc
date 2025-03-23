@@ -14,7 +14,7 @@ set shiftwidth=0
 set title
 set laststatus=0
 set incsearch
-set background=dark
+set background=light
 set nofixendofline
 if has("gui_running")
     set guioptions-=T
@@ -29,7 +29,7 @@ if has("gui_running")
 endif
 let g:gruvbox_italic = 1
 let g:gruvbox_contrast_dark = "hard"
-let g:gruvbox_contrast_light = "soft"
+let g:gruvbox_contrast_light = "hard"
 colorscheme gruvbox
 if &termguicolors
     set list

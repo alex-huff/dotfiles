@@ -81,7 +81,7 @@ bindsym $super+g exec totp.sh
 
 # cmus
 bindsym $super+Shift+c exec cmus-play-playlist.zsh
-bindsym $super+c exec song="music/$(tofi --prompt="song: " --font="Victor Mono" --font-size=18 --width=100% --height=100% --text-color=#EBDBB2 --background-color=#000000 --selection-background=#83a598 --selection-color=#000000 --selection-background-padding=2 --outline-width=0 --border-width=0 < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
+bindsym $super+c exec song="music/$(tofi --prompt="song: " --font="Victor Mono" --font-size=18 --width=100% --height=100% --text-color=#282828 --background-color=#fbf1c7 --selection-background=#d5c4a1 --selection-color=#282828 --selection-background-padding=2 --outline-width=0 --border-width=0 < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
 
 # twitch
 bindsym $super+t exec twitch.sh
@@ -274,14 +274,14 @@ bindsym $super+Alt+b border toggle
 bindsym $super+Shift+b exec killall --process-group kitty-panel-2 || kitty-panel-2
 
 # colors                border  bg      text    ind     child_b
-client.focused          #bdae93 #ebdbb2 #000000 #bdae93 #bdae93
-client.unfocused        #504945 #000000 #ebdbb2 #504945 #504945
-client.focused_inactive #7c6f64 #504945 #ebdbb2 #7c6f64 #7c6f64
+client.focused          #282828 #ebdbb2 #282828 #282828 #282828
+client.unfocused        #282828 #7c6f64 #ebdbb2 #282828 #282828
+client.focused_inactive #282828 #a89984 #282828 #282828 #282828
 
 # include device specific configuration and overrides
 include device/*
 # $main_display should be defined in device/*
-# output $main_display bg ~/.assets/noise.png tile #000000
+# output $main_display bg ~/.assets/noise.png tile #d5c4a1
 
 # rules
 for_window [title="Authentication required"] floating enable
@@ -300,13 +300,13 @@ for_window [app_id=".*-overlay"]
 }
 
 # various
-default_border pixel 2
-titlebar_border_thickness 2
+default_border normal 3
+titlebar_border_thickness 3
 hide_edge_borders --i3 smart_no_gaps
-smart_gaps on
 gaps inner 15
+gaps outer 15
 title_align center
-titlebar_padding 15 4
+titlebar_padding 15 6
 focus_follows_mouse no
 tiling_drag off
 focus_on_window_activation none

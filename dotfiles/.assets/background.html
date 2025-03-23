@@ -11,12 +11,14 @@
         margin: 0;
       }
       body {
-        <!--background: url("file://{HOME}/.assets/background.webm");-->
+        background-color: rgb(213, 196, 161);
+        background-image: url("file://{HOME}/.assets/noise.png");
       }
       canvas {
         display: block;
         width: 100%;
         height: 100%;
+        filter: invert();
       }
     </style>
   </head>
@@ -25,7 +27,7 @@
     <script src="file://{HOME}/.assets/webgl-fluid.udm.js"></script>
     <script>
       WebGLFluid(document.querySelector('canvas'), {
-        TRIGGER: 'hover',
+        TRIGGER: "hover",
         IMMEDIATE: true,
         AUTO: false,
         INTERVAL: 3000,
@@ -39,13 +41,13 @@
         CURL: 30,
         SPLAT_RADIUS: 0.45,
         SPLAT_FORCE: 6000,
-        SPLAT_COUNT: Number.parseInt(Math.random() * 20) + 5,
+        SPLAT_COUNT: 0,
         SHADING: true,
         COLORFUL: true,
         COLOR_UPDATE_SPEED: 10,
         PAUSED: false,
         BACK_COLOR: { r: 0, g: 0, b: 0 },
-        TRANSPARENT: false,
+        TRANSPARENT: true,
         BLOOM: false,
         BLOOM_ITERATIONS: 8,
         BLOOM_RESOLUTION: 256,
