@@ -1,0 +1,20 @@
+#!/bin/python3
+
+import os
+from PIL import Image
+
+width = 1920
+height = 1080
+border_width = 3
+tiled_width = width - border_width * 2
+tiled_height = height - border_width * 2
+border_color = (40, 40, 40)
+noise_image = Image.open(os.path.expanduser("~/.assets/noise.png"))
+tiled_noise_image = Image.new("RGBA", size=(tiled_width, tiled_height))
+tile_width, tile_height = noise_image.size
+for x in range(0, tiled_width, tile_width):
+    for y in range(0, tiled_height, tile_height):
+        tiled_noise_image.paste(noise_image, (x, y))
+bg = Image.new("RGBA", size=(width, height), color=border_color)
+bg.paste(tiled_noise_image, (border_width, border_width))
+bg.save(os.path.expanduser("~/.assets/noise_background.png"))
