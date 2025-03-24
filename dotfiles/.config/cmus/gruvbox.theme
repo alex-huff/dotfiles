@@ -1,4 +1,3 @@
-# colors from gruvbox: https://github.com/morhetz/gruvbox
 # default text color
 set color_win_fg=default
 
@@ -10,38 +9,38 @@ set color_cmdline_bg=default
 set color_cmdline_fg=default
 set color_error=124
 set color_info=172
-set color_separator=246
+set color_separator=241
 
 # bottom status line
-set color_statusline_bg=237
-set color_statusline_fg=72
-set color_statusline_progress_bg=234
-set color_statusline_progress_fg=72
+set color_statusline_bg=0
+set color_statusline_fg=default
+set color_statusline_progress_bg=235
+set color_statusline_progress_fg=default
 
 # bottom title line
-set color_titleline_bg=236
-set color_titleline_fg=142
+set color_titleline_bg=0
+set color_titleline_fg=default
 
 # top title area
-set color_win_title_bg=246
-set color_win_title_fg=235
-##### playing file colors ######################################################
-# unselected currently playing track's text
-set color_win_cur=175
+set color_win_title_bg=0
+set color_win_title_fg=66
+set color_win_cur=66
 
 # active selection for currently playing track
-set color_win_cur_sel_bg=237
-set color_win_cur_sel_fg=175
+set color_win_cur_sel_bg=0
+set color_win_cur_sel_fg=24
 
 # inactive selection for currently playing track
-set color_win_inactive_cur_sel_bg=236
-set color_win_inactive_cur_sel_fg=175
+set color_win_inactive_cur_sel_bg=default
+set color_win_inactive_cur_sel_fg=24
 
-##### non-playing file colors ##################################################
 # active selection
-set color_win_sel_bg=237
-set color_win_sel_fg=229
+set color_win_sel_bg=0
+set color_win_sel_fg=24
 
 # inactive selection
-set color_win_inactive_sel_bg=236
-set color_win_inactive_sel_fg=229
+set color_win_inactive_sel_bg=default
+set color_win_inactive_sel_fg=24
+
+# directory listing color
+set color_win_dir=66
