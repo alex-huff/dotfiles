@@ -2244,11 +2244,11 @@ async def update_bar_forever(bar_event_queue):
     SECONDS_IN_MINUTE = 60
     SECONDS_IN_HOUR = 60 * 60
     SEPARATOR = "┃"
-    LEFT_SEPARATOR = "▎"
-    RIGHT_SEPARATOR = "🮇"
+    THIN_LEFT_SEPARATOR = "▏"
+    THIN_RIGHT_SEPARATOR = "▕"
     SEPARATOR_BYTES = SEPARATOR.encode("utf-8")
-    LEFT_SEPARATOR_BYTES = LEFT_SEPARATOR.encode("utf-8")
-    RIGHT_SEPARATOR_BYTES = RIGHT_SEPARATOR.encode("utf-8")
+    THIN_LEFT_SEPARATOR_BYTES = THIN_LEFT_SEPARATOR.encode("utf-8")
+    THIN_RIGHT_SEPARATOR_BYTES = THIN_RIGHT_SEPARATOR.encode("utf-8")
     VERTICAL_THIN_LEFT_BYTES = "┐".encode("utf-8")
     VERTICAL_THIN_RIGHT_BYTES = "┌".encode("utf-8")
     VERTICAL_THICK_RIGHT_BYTES = "┍".encode("utf-8")
@@ -2268,7 +2268,7 @@ async def update_bar_forever(bar_event_queue):
     GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;189;174;147"
     LIGHT_GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;235;219;178"
     WHITE_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;242;229;188"
-    BLACK_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;0;0;0"
+    BLACK_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;40;40;40"
     DARK_GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;60;56;54"
     GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;146;131;116"
     LIGHT_GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;235;219;178"
@@ -2339,28 +2339,28 @@ async def update_bar_forever(bar_event_queue):
                     + 2
                 )
                 formatted_workspaces_bytes = bytearray()
-                formatted_workspaces_bytes.extend(RIGHT_SEPARATOR_BYTES)
+                formatted_workspaces_bytes.extend(BOLD)
+                formatted_workspaces_bytes.extend(THIN_RIGHT_SEPARATOR_BYTES)
                 for i, workspace in enumerate(workspaces):
                     focused = workspace["focused"]
-                    formatted_workspaces_bytes.extend(BOLD)
                     if focused:
-                        formatted_workspaces_bytes.extend(LIGHT_GRAY_FOREGROUND)
                         formatted_workspaces_bytes.extend(DARK_BACKGROUND)
                     elif i % 2 == 1:
                         formatted_workspaces_bytes.extend(GRAY_BACKGROUND)
                     else:
-                        formatted_workspaces_bytes.extend(DARK_GRAY_FOREGROUND)
                         formatted_workspaces_bytes.extend(LIGHT_GRAY_BACKGROUND)
-                    formatted_workspaces_bytes.extend(b" ")
+                    formatted_workspaces_bytes.extend(THIN_LEFT_SEPARATOR_BYTES)
+                    if focused:
+                        formatted_workspaces_bytes.extend(LIGHT_GRAY_FOREGROUND)
+                    elif i % 2 == 0:
+                        formatted_workspaces_bytes.extend(DARK_GRAY_FOREGROUND)
                     formatted_workspaces_bytes.extend(workspace["name"].encode("utf-8"))
-                    formatted_workspaces_bytes.extend(b" ")
-                    formatted_workspaces_bytes.extend(NOT_BOLD)
                     if focused or i % 2 == 0:
                         formatted_workspaces_bytes.extend(BLACK_FOREGROUND)
-                        formatted_workspaces_bytes.extend(WHITE_BACKGROUND)
-                    else:
-                        formatted_workspaces_bytes.extend(WHITE_BACKGROUND)
-                formatted_workspaces_bytes.extend(LEFT_SEPARATOR_BYTES)
+                    formatted_workspaces_bytes.extend(THIN_RIGHT_SEPARATOR_BYTES)
+                formatted_workspaces_bytes.extend(WHITE_BACKGROUND)
+                formatted_workspaces_bytes.extend(THIN_LEFT_SEPARATOR_BYTES)
+                formatted_workspaces_bytes.extend(NOT_BOLD)
             case BarEventType.CLOCK_UPDATE:
                 current_datetime = datetime.datetime.fromtimestamp(bar_event.payload)
                 formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S}"
