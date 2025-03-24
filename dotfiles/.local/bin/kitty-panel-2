@@ -3,6 +3,6 @@
 kitty +kitten panel \
     --edge=bottom \
     --override window_padding_width=2 \
-    --override background=#000000 \
+    --override background=#282828 \
     --override font_size=15 \
     bar.py
