@@ -275,7 +275,7 @@ bindsym $super+Shift+b exec killall --process-group kitty-panel-2 || kitty-panel
 
 # colors                border  bg      text    ind     child_b
 client.focused          #282828 #ebdbb2 #282828 #282828 #282828
-client.unfocused        #282828 #928374 #ebdbb2 #282828 #282828
+client.unfocused        #282828 #928374 #fbf1c7 #282828 #282828
 client.focused_inactive #282828 #a89984 #282828 #282828 #282828
 
 # include device specific configuration and overrides
