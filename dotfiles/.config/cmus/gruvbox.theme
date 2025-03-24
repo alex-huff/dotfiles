@@ -23,12 +23,12 @@ set color_titleline_fg=default
 
 # top title area
 set color_win_title_bg=0
-set color_win_title_fg=66
+set color_win_title_fg=default
 set color_win_cur=66
 
 # active selection for currently playing track
 set color_win_cur_sel_bg=0
-set color_win_cur_sel_fg=24
+set color_win_cur_sel_fg=default
 
 # inactive selection for currently playing track
 set color_win_inactive_cur_sel_bg=default
@@ -36,7 +36,7 @@ set color_win_inactive_cur_sel_fg=24
 
 # active selection
 set color_win_sel_bg=0
-set color_win_sel_fg=24
+set color_win_sel_fg=default
 
 # inactive selection
 set color_win_inactive_sel_bg=default
