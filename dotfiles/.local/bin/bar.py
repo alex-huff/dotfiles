@@ -2397,9 +2397,9 @@ async def update_bar_forever(bar_event_queue):
                 artist = media_player_to_show["track_artist"]
                 if artist:
                     artist = "/".join(artist)
-                formatted_artist = f" {SEPARATOR} {artist}" if artist else ""
+                formatted_artist = f"{SEPARATOR} {artist} " if artist else ""
                 title = media_player_to_show["track_title"]
-                formatted_title = f" {SEPARATOR} {title}" if title else ""
+                formatted_title = f"{SEPARATOR} {title} " if title else ""
                 formatted_current_second = format_second_duration(
                     media_player_to_show["track_current_second"]
                 )
@@ -2411,11 +2411,11 @@ async def update_bar_forever(bar_event_queue):
                 ]
                 loop_status = media_player_to_show["loop_status"].lower()
                 formatted_loop_status = (
-                    f"{SEPARATOR} 󰑖  {loop_status}" if loop_status != "none" else ""
+                    f"{SEPARATOR} 󰑖  {loop_status} " if loop_status != "none" else ""
                 )
                 formatted_media_player_essential = f" {formatted_playback_status}  {formatted_current_second} / {formatted_length_seconds} "
                 formatted_media_player_metadata = (
-                    f"{formatted_loop_status}{formatted_artist}{formatted_title} "
+                    f"{formatted_loop_status}{formatted_artist}{formatted_title}"
                 )
                 formatted_media_player_essential_width = wcwidth.wcswidth(
                     formatted_media_player_essential
