@@ -5,8 +5,8 @@ from PIL import Image
 
 display_width = 1920
 display_height = 1080
-horizontal_margin = 200
-vertical_margin = 100
+horizontal_margin = 400
+vertical_margin = 200
 width, height = display_width - 2 * horizontal_margin, display_height - 2 * vertical_margin
 background_color = (249, 245, 215)
 border_color = (40, 40, 40)
