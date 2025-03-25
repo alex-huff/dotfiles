@@ -93,7 +93,7 @@ bindsym $super+n exec switch-connection.sh
 bindsym $super+d exec rofi -show drun
 
 # app selector
-bindsym $super+Tab exec kitty +kitten panel --layer=overlay --focus-policy=exclusive --edge=center --margin-top=100 --margin-bottom=100 --margin-left=200 --margin-right=200 --override=background_image="~/.assets/app_selector_background.png" sh -c 'con_id=$(swaymsg -t get_tree | jq --raw-output0 '"'"'recurse(.floating_nodes[], .nodes[]) | select(has("pid")) | "\(.app_id // .window_properties.class): \(.name)|\(.id)"'"'"' | fzf --read0 --delimiter="|" --wrap --color="pointer:3" --with-nth="{..-2}" --accept-nth=-1) && swaymsg "[con_id=$con_id]" focus'
+bindsym $super+Backslash exec kitty +kitten panel --layer=overlay --focus-policy=exclusive --edge=center --margin-top=100 --margin-bottom=100 --margin-left=200 --margin-right=200 --override=background_image="~/.assets/app_selector_background.png" sh -c 'con_id=$(swaymsg -t get_tree | jq --raw-output0 '"'"'recurse(.floating_nodes[], .nodes[]) | select(has("pid")) | "\(.app_id // .window_properties.class): \(.name)|\(.id)"'"'"' | fzf --read0 --delimiter="|" --wrap --color="pointer:3" --with-nth="{..-2}" --accept-nth=-1) && swaymsg "[con_id=$con_id]" focus'
 
 # change focus
 bindsym $super+h focus left
