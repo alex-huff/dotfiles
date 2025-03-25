@@ -7,6 +7,7 @@
   "base_keymap": "JetBrains",
   "theme": "Gruvbox Light Hard",
   "vim_mode": true,
+  "relative_line_numbers": true,
   "telemetry": {
     "diagnostics": false,
     "metrics": false
