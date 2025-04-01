@@ -1,7 +1,9 @@
 #!/bin/python3
 
 import asyncio
+import bisect
 import datetime
+import itertools
 import json
 import math
 import os
@@ -9,8 +11,8 @@ import re
 import shutil
 import signal
 import struct
-import sys
 import time
+import tty
 from copy import deepcopy
 from enum import IntEnum, auto
 from xml.etree import ElementTree
@@ -2007,13 +2009,35 @@ def dbus_call_method_with_response_callback(interface, method_name, callback, *a
     interface.bus._call(msg, on_response)
 
 
-async def watch_sway_forever(bar_event_queue):
+async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue):
     class MessageType(IntEnum):
+        RUN_COMMAND = 0
         GET_WORKSPACES = 1
         SUBSCRIBE = 2
         WORKSPACE_EVENT = 0x80000000
 
     """
+    0. RUN_COMMAND                                                                                                                                             
+        MESSAGE                                                                                                                                                
+        Parses and runs the payload as sway commands                                                                                                           
+                                                                                                                                                               
+        REPLY                                                                                                                                                  
+        An  array  of  objects  corresponding to each command that was parsed. Each object has the property success, which is a boolean indicating whether the 
+        command was successful. The object may also contain the properties error and parse_error. The error property is a human readable error  message  while 
+        parse_error is a boolean indicating whether the reason the command failed was because the command was unknown or not able to be parsed.                
+                                                                                                                                                               
+        Example Reply:                                                                                                                                         
+            [                                                                                                                                                  
+                 {                                                                                                                                             
+                      "success": true                                                                                                                          
+                 },                                                                                                                                            
+                 {                                                                                                                                             
+                      "success": false,                                                                                                                        
+                      "parse_error": true,                                                                                                                     
+                      "error": "Invalid/unknown command"                                                                                                       
+                 }                                                                                                                                             
+            ]                                                                                                                                                  
+                                                                                                                                                               
     1. GET_WORKSPACES
        MESSAGE
        Retrieves the list of workspaces.
@@ -2137,16 +2161,26 @@ async def watch_sway_forever(bar_event_queue):
             )
         )
 
+    async def switch_workspaces_forever():
+        while True:
+            workspace_name = await workspace_switch_queue.get()
+            sway_command = f'workspace {workspace_name}'
+            await send_message(writer, MessageType.RUN_COMMAND, sway_command.encode("utf-8"))
+            await writer.drain()
+
     reader, writer = await asyncio.open_unix_connection(path=os.environ["SWAYSOCK"])
     relevant_events = ["workspace"]
     await subscribe(reader, writer, relevant_events)
     await send_get_workspaces_message(writer)
+    task_group.create_task(switch_workspaces_forever())
     workspaces = []
     workspaces_initialized = False
     while True:
         payload_type, response = await read_message(reader)
         should_update = False
         match payload_type:
+            case MessageType.RUN_COMMAND:
+                ...
             case MessageType.GET_WORKSPACES:
                 old_workspaces = workspaces
                 workspaces = [
@@ -2240,7 +2274,7 @@ async def run_clock_forever(bar_event_queue):
         update_time()
 
 
-async def update_bar_forever(bar_event_queue):
+async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue):
     SECONDS_IN_MINUTE = 60
     SECONDS_IN_HOUR = 60 * 60
     SEPARATOR = "┃"
@@ -2260,6 +2294,7 @@ async def update_bar_forever(bar_event_queue):
     CLEAR_LINE = CSI_START + b"2K"
     CURSOR_CHARACTER_ABSOLUTE_TEMPLATE = CSI_START + b"%bG"
     HIDE_CURSOR = CSI_START + b"?25l"
+    TRACK_MOUSE_PRESS = CSI_START + b"?1000h"
     SYNCHRONIZED_UPDATE_TEMPLATE = CSI_START + b"?2026%b"
     BEGIN_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"h"
     END_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"l"
@@ -2303,19 +2338,42 @@ async def update_bar_forever(bar_event_queue):
         assert terminal_width > 0
         bar_event_queue.put_nowait(BarEvent(BarEventType.RESIZE, None))
 
+    async def handle_mouse_updates_forever():
+        while True:
+            mouse_event = await reader.readexactly(6)
+            assert mouse_event[0:3] == b"\x1b[M"
+            if mouse_event[3] != ord(" "):
+                continue
+            if workspaces_start_column is None:
+                continue
+            column = mouse_event[4] - 32
+            column_in_workspace_labels = column - workspaces_start_column
+            if column_in_workspace_labels < 0 or column_in_workspace_labels >= workspace_label_ends[-1]:
+                continue
+            label_index = bisect.bisect_right(workspace_label_ends, column_in_workspace_labels)
+            workspace_switch_queue.put_nowait(workspaces[label_index]["name"])
+
+    tty_file = open("/dev/tty", "r+b", buffering=0)
+    tty.setraw(tty_file)
     terminal_width = shutil.get_terminal_size().columns
     loop = asyncio.get_running_loop()
     loop.add_signal_handler(signal.SIGWINCH, on_resize)
+    reader = asyncio.StreamReader()
+    read_protocol = asyncio.StreamReaderProtocol(reader)
+    await loop.connect_read_pipe(lambda: read_protocol, tty_file)
     write_transport, write_protocol = await loop.connect_write_pipe(
-        asyncio.streams.FlowControlMixin, sys.stdout
+        asyncio.streams.FlowControlMixin, tty_file
     )
     writer = asyncio.StreamWriter(write_transport, write_protocol, None, loop)
+    task_group.create_task(handle_mouse_updates_forever())
     media_players = {}
     media_player_to_show = None
     formatted_media_player_essential_bytes = None
     formatted_workspaces_bytes = None
     formatted_datetime_bytes = None
+    workspaces_start_column = None
     writer.write(HIDE_CURSOR)
+    writer.write(TRACK_MOUSE_PRESS)
     writer.write(BLACK_FOREGROUND)
     writer.write(WHITE_BACKGROUND)
     await writer.drain()
@@ -2333,11 +2391,11 @@ async def update_bar_forever(bar_event_queue):
                 del media_players[event_media_player]
             case BarEventType.WORKSPACES_UPDATE:
                 workspaces = bar_event.payload
-                formatted_workspaces_width = (
-                    sum(wcwidth.wcswidth(workspace["name"]) for workspace in workspaces)
-                    + len(workspaces) * 2
-                    + 2
-                )
+                workspace_label_widths = [
+                    wcwidth.wcswidth(workspace["name"]) + 2 for workspace in workspaces
+                ]
+                workspace_label_ends = list(itertools.accumulate(workspace_label_widths))
+                formatted_workspaces_width = sum(workspace_label_widths) + 2
                 formatted_workspaces_bytes = bytearray()
                 formatted_workspaces_bytes.extend(BOLD)
                 formatted_workspaces_bytes.extend(THIN_RIGHT_SEPARATOR_BYTES)
@@ -2433,6 +2491,7 @@ async def update_bar_forever(bar_event_queue):
             continue
         writer.write(BEGIN_SYNCHRONIZED_UPDATE)
         writer.write(CLEAR_LINE)
+        workspaces_start_column = None
         try:
             if formatted_datetime_width > terminal_width - 1:
                 raise IndexError()
@@ -2442,6 +2501,9 @@ async def update_bar_forever(bar_event_queue):
             current_column += formatted_datetime_width
             if current_column + formatted_workspaces_width > terminal_width + 1:
                 raise IndexError()
+            workspaces_start_column = (
+                current_column + 1
+            )  # add one to account for first right separator
             writer.write(formatted_workspaces_bytes)
             current_column += formatted_workspaces_width
             if formatted_media_player_essential_bytes is None:
@@ -2496,12 +2558,13 @@ async def update_bar_forever(bar_event_queue):
 
 async def main():
     bar_event_queue = asyncio.Queue()
+    workspace_switch_queue = asyncio.Queue()
     async with asyncio.TaskGroup() as task_group:
-        task_group.create_task(update_bar_forever(bar_event_queue))
+        task_group.create_task(update_bar_forever(task_group, bar_event_queue, workspace_switch_queue))
         task_group.create_task(
             watch_all_media_players_forever(task_group, bar_event_queue)
         )
-        task_group.create_task(watch_sway_forever(bar_event_queue))
+        task_group.create_task(watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue))
         task_group.create_task(run_clock_forever(bar_event_queue))
 
 
