@@ -2450,7 +2450,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 current_datetime = datetime.datetime.fromtimestamp(
                     current_second or last_second, tz=timezone
                 )
-                formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S %Z}"
+                formatted_datetime = f" {current_datetime:%a %b %d %H:%M:%S %Z}"
                 formatted_datetime_width = wcwidth.wcswidth(formatted_datetime)
                 formatted_datetime_bytes = formatted_datetime.encode("utf-8")
                 if current_second:
