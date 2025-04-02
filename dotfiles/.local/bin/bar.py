@@ -17,6 +17,7 @@ from copy import deepcopy
 from enum import IntEnum, auto
 from xml.etree import ElementTree
 
+import pytz
 import wcwidth
 from dbus_next._private.util import replace_fds_with_idx, replace_idx_with_fds
 from dbus_next.aio import MessageBus
@@ -2164,8 +2165,10 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
     async def switch_workspaces_forever():
         while True:
             workspace_name = await workspace_switch_queue.get()
-            sway_command = f'workspace {workspace_name}'
-            await send_message(writer, MessageType.RUN_COMMAND, sway_command.encode("utf-8"))
+            sway_command = f"workspace {workspace_name}"
+            await send_message(
+                writer, MessageType.RUN_COMMAND, sway_command.encode("utf-8")
+            )
             await writer.drain()
 
     reader, writer = await asyncio.open_unix_connection(path=os.environ["SWAYSOCK"])
@@ -2311,6 +2314,8 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     NOT_BOLD = CHARACTER_ATTRIBUTES_TEMPLATE % b"22"
     PLAYBACK_STATUS_PRIORITY = {"Playing": 0, "Paused": 1, "Stopped": 2}
     PLAYBACK_STATUS_SPECIFIER = {"Playing": "󰐊", "Paused": "󰏤", "Stopped": "󰓛"}
+    LONDON_TIMEZONE = pytz.timezone("Europe/London")
+    CHICAGO_TIMEZONE = pytz.timezone("America/Chicago")
 
     def jump_to_column(column):
         writer.write(CURSOR_CHARACTER_ABSOLUTE_TEMPLATE % str(column).encode("utf-8"))
@@ -2344,14 +2349,24 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
             assert mouse_event[0:3] == b"\x1b[M"
             if mouse_event[3] != ord(" "):
                 continue
-            if workspaces_start_column is None:
-                continue
             column = mouse_event[4] - 32
-            column_in_workspace_labels = column - workspaces_start_column
-            if column_in_workspace_labels < 0 or column_in_workspace_labels >= workspace_label_ends[-1]:
-                continue
-            label_index = bisect.bisect_right(workspace_label_ends, column_in_workspace_labels)
-            workspace_switch_queue.put_nowait(workspaces[label_index]["name"])
+            if (
+                datetime_start_column is not None
+                and datetime_start_column <= column <= datetime_end_column
+            ):
+                nonlocal show_local_timezone
+                show_local_timezone = not show_local_timezone
+                bar_event_queue.put_nowait(BarEvent(BarEventType.CLOCK_UPDATE, None))
+            elif workspaces_start_column is not None:
+                column_in_workspace_labels = column - workspaces_start_column
+                if (
+                    column_in_workspace_labels >= 0
+                    and column_in_workspace_labels < workspace_label_ends[-1]
+                ):
+                    label_index = bisect.bisect_right(
+                        workspace_label_ends, column_in_workspace_labels
+                    )
+                    workspace_switch_queue.put_nowait(workspaces[label_index]["name"])
 
     tty_file = open("/dev/tty", "r+b", buffering=0)
     tty.setraw(tty_file)
@@ -2371,7 +2386,10 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     formatted_media_player_essential_bytes = None
     formatted_workspaces_bytes = None
     formatted_datetime_bytes = None
+    last_second = None
+    datetime_start_column = None
     workspaces_start_column = None
+    show_local_timezone = True
     writer.write(HIDE_CURSOR)
     writer.write(TRACK_MOUSE_PRESS)
     writer.write(BLACK_FOREGROUND)
@@ -2394,7 +2412,9 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 workspace_label_widths = [
                     wcwidth.wcswidth(workspace["name"]) + 2 for workspace in workspaces
                 ]
-                workspace_label_ends = list(itertools.accumulate(workspace_label_widths))
+                workspace_label_ends = list(
+                    itertools.accumulate(workspace_label_widths)
+                )
                 formatted_workspaces_width = sum(workspace_label_widths) + 2
                 formatted_workspaces_bytes = bytearray()
                 formatted_workspaces_bytes.extend(BOLD)
@@ -2420,10 +2440,21 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 formatted_workspaces_bytes.extend(THIN_LEFT_SEPARATOR_BYTES)
                 formatted_workspaces_bytes.extend(NOT_BOLD)
             case BarEventType.CLOCK_UPDATE:
-                current_datetime = datetime.datetime.fromtimestamp(bar_event.payload)
-                formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S}"
+                current_second = bar_event.payload
+                if current_second is None and last_second is None:
+                    # if the timezone was updated before the first time was
+                    # reported than we wait to update bar until time is
+                    # reported
+                    continue
+                timezone = CHICAGO_TIMEZONE if show_local_timezone else LONDON_TIMEZONE
+                current_datetime = datetime.datetime.fromtimestamp(
+                    current_second or last_second, tz=timezone
+                )
+                formatted_datetime = f" {current_datetime:%A %B %d %H:%M:%S %Z}"
                 formatted_datetime_width = wcwidth.wcswidth(formatted_datetime)
                 formatted_datetime_bytes = formatted_datetime.encode("utf-8")
+                if current_second:
+                    last_second = current_second
             case BarEventType.RESIZE:
                 ...
         if bar_event.event_type.is_media_player_event():
@@ -2491,10 +2522,14 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
             continue
         writer.write(BEGIN_SYNCHRONIZED_UPDATE)
         writer.write(CLEAR_LINE)
+        datetime_start_column = None
+        datetime_end_column = None
         workspaces_start_column = None
         try:
             if formatted_datetime_width > terminal_width - 1:
                 raise IndexError()
+            datetime_start_column = 1
+            datetime_end_column = formatted_datetime_width + 1
             current_column = 1
             jump_to_column(current_column)
             writer.write(formatted_datetime_bytes)
@@ -2560,11 +2595,15 @@ async def main():
     bar_event_queue = asyncio.Queue()
     workspace_switch_queue = asyncio.Queue()
     async with asyncio.TaskGroup() as task_group:
-        task_group.create_task(update_bar_forever(task_group, bar_event_queue, workspace_switch_queue))
+        task_group.create_task(
+            update_bar_forever(task_group, bar_event_queue, workspace_switch_queue)
+        )
         task_group.create_task(
             watch_all_media_players_forever(task_group, bar_event_queue)
         )
-        task_group.create_task(watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue))
+        task_group.create_task(
+            watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue)
+        )
         task_group.create_task(run_clock_forever(bar_event_queue))
 
 
