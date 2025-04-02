@@ -2446,11 +2446,12 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                     # reported than we wait to update bar until time is
                     # reported
                     continue
-                timezone = CHICAGO_TIMEZONE if show_local_timezone else LONDON_TIMEZONE
                 current_datetime = datetime.datetime.fromtimestamp(
-                    current_second or last_second, tz=timezone
+                    current_second or last_second, tz=pytz.utc
                 )
-                formatted_datetime = f" {current_datetime:%a %b %d %H:%M:%S %Z}"
+                timezone = CHICAGO_TIMEZONE if show_local_timezone else LONDON_TIMEZONE
+                localized_datetime = current_datetime.astimezone(timezone)
+                formatted_datetime = f" {localized_datetime:%a %b %d %H:%M:%S %Z}"
                 formatted_datetime_width = wcwidth.wcswidth(formatted_datetime)
                 formatted_datetime_bytes = formatted_datetime.encode("utf-8")
                 if current_second:
