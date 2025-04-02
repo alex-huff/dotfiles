@@ -27,7 +27,7 @@ from dbus_next.proxy_object import BaseProxyInterface
 
 
 class BarEvent:
-    def __init__(self, event_type, payload):
+    def __init__(self, event_type, payload=None):
         self.event_type = event_type
         self.payload = payload
 
@@ -2341,7 +2341,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
         old_terminal_width = terminal_width
         terminal_width = shutil.get_terminal_size().columns
         assert terminal_width > 0
-        bar_event_queue.put_nowait(BarEvent(BarEventType.RESIZE, None))
+        bar_event_queue.put_nowait(BarEvent(BarEventType.RESIZE))
 
     async def handle_mouse_updates_forever():
         while True:
@@ -2356,7 +2356,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
             ):
                 nonlocal show_local_timezone
                 show_local_timezone = not show_local_timezone
-                bar_event_queue.put_nowait(BarEvent(BarEventType.CLOCK_UPDATE, None))
+                bar_event_queue.put_nowait(BarEvent(BarEventType.CLOCK_UPDATE))
             elif workspaces_start_column is not None:
                 column_in_workspace_labels = column - workspaces_start_column
                 if (
