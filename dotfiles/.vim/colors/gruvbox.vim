@@ -482,7 +482,7 @@ if version >= 700
   " Tab pages line filler
   call s:HL('TabLineFill', s:bg4, s:bg1, s:invert_tabline)
   " Active tab page label
-  call s:HL('TabLineSel', s:green, s:bg1, s:invert_tabline)
+  call s:HL('TabLineSel', s:fg1, s:bg1, s:invert_tabline)
   " Not active tab page label
   hi! link TabLine TabLineFill
 
