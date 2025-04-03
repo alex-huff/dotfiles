@@ -14,6 +14,7 @@ import struct
 import time
 import tty
 from copy import deepcopy
+from dataclasses import dataclass
 from enum import IntEnum, auto
 from xml.etree import ElementTree
 
@@ -24,12 +25,6 @@ from dbus_next.aio import MessageBus
 from dbus_next.introspection import Interface, Node
 from dbus_next.message import Message, MessageFlag
 from dbus_next.proxy_object import BaseProxyInterface
-
-
-class BarEvent:
-    def __init__(self, event_type, payload=None):
-        self.event_type = event_type
-        self.payload = payload
 
 
 class BarEventType(IntEnum):
@@ -51,9 +46,25 @@ class BarEventType(IntEnum):
         )
 
 
+@dataclass
+class BarEvent:
+    event_type: BarEventType = None
+    payload: any = None
+
+
 class MediaPlayerState:
-    def __init__(self, media_player_dbus_name, properties, task_group, bar_event_queue):
+    def __init__(
+        self,
+        media_player_dbus_name,
+        properties,
+        set_position_function,
+        play_pause_function,
+        task_group,
+        bar_event_queue,
+    ):
         self.media_player_dbus_name = media_player_dbus_name
+        self.set_position_function = set_position_function
+        self.play_pause_function = play_pause_function
         self.task_group = task_group
         self.bar_event_queue = bar_event_queue
         self.loop = asyncio.get_running_loop()
@@ -172,11 +183,15 @@ class MediaPlayerState:
             "dbus_name": self.media_player_dbus_name,
             "playback_status": self.playback_status,
             "loop_status": self.loop_status,
+            "track_id": self.track_id,
             "track_artist": self.track_artist,
             "track_title": self.track_title,
             "track_current_second": self.track_current_second,
             "track_length_seconds": self.track_length_seconds,
         }
+        if event_type == BarEventType.INITIALIZE_MEDIA_PLAYER:
+            payload["set_position_function"] = self.set_position_function
+            payload["play_pause_function"] = self.play_pause_function
         event = BarEvent(event_type, payload)
         self.bar_event_queue.put_nowait(event)
 
@@ -1883,7 +1898,11 @@ async def watch_media_player_forever(
                         old_track_current_second
                         != media_player_state.track_current_second
                     )
-                    if track_current_second_changed or visible_metadata_changed:
+                    if (
+                        track_current_second_changed
+                        or visible_metadata_changed
+                        or switched_track
+                    ):
                         should_update = True
                 case "LoopStatus":
                     if media_player_state.loop_status != value:
@@ -1904,14 +1923,33 @@ async def watch_media_player_forever(
         player_interface.off_seeked(on_seeked)
         properties_interface.off_properties_changed(on_properties_changed)
 
+    def set_position_function(track_id, new_position):
+        dbus_call_method_with_response_callback(
+            player_interface, "SetPosition", None, track_id, new_position
+        )
+
+    def play_pause_function():
+        dbus_call_method_with_response_callback(player_interface, "PlayPause", None)
+
     def get_all_callback(error, properties):
-        initialized_future.set_result(error)
         if error:
+            initialized_future.set_result(error)
             return
         nonlocal media_player_state
-        media_player_state = MediaPlayerState(
-            media_player_dbus_name, properties, task_group, bar_event_queue
-        )
+        try:
+            media_player_state = MediaPlayerState(
+                media_player_dbus_name,
+                properties,
+                set_position_function,
+                play_pause_function,
+                task_group,
+                bar_event_queue,
+            )
+        except Exception as error:
+            # construction of MediaPlayerState can fail for example when a
+            # required property is missing
+            ...
+        initialized_future.set_result(error)
 
     media_player_state = None
     media_player_object = message_bus.get_proxy_object(
@@ -1940,7 +1978,8 @@ async def watch_media_player_forever(
         return
     if error_initializing:
         # the 'GetAll' method may have failed or the response may have a
-        # different signature
+        # different signature or the state returned from 'GetAll' may have been
+        # invalid
         disable_signals()
     await shutdown_signal.wait()
     if not error_initializing:
@@ -1964,8 +2003,11 @@ def dbus_call_method_with_response_callback(interface, method_name, callback, *a
     # 'dbus-next' code so it may break on different 'dbus-next' versions
 
     def on_response(reply, error):
+        if not callback:
+            return
         if error:
             callback(error, None)
+            return
         BaseProxyInterface._check_method_return(
             reply, method_introspection.out_signature
         )
@@ -1986,12 +2028,13 @@ def dbus_call_method_with_response_callback(interface, method_name, callback, *a
             if method.name == method_name
         )
     except StopIteration:
-        callback(
-            Exception(
-                f"{method_name} method not found on interface {interface.introspection.name}"
-            ),
-            None,
-        )
+        if callback:
+            callback(
+                Exception(
+                    f"{method_name} method not found on interface {interface.introspection.name}"
+                ),
+                None,
+            )
         return
     input_body, unix_fds = replace_fds_with_idx(
         method_introspection.in_signature, list(args)
@@ -2165,6 +2208,11 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
     async def switch_workspaces_forever():
         while True:
             workspace_name = await workspace_switch_queue.get()
+            # TODO: sway's argument parsing is buggy so it would be more robust
+            # to use GET_TREE and manually focus the last focused container on
+            # the corresponding workspace. Even swaybar can't properly switch
+            # to a workspace from just the workspace name. See:
+            # https://github.com/swaywm/sway/issues/8642
             sway_command = f"workspace {workspace_name}"
             await send_message(
                 writer, MessageType.RUN_COMMAND, sway_command.encode("utf-8")
@@ -2344,9 +2392,21 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
         bar_event_queue.put_nowait(BarEvent(BarEventType.RESIZE))
 
     async def handle_mouse_updates_forever():
+        class MouseEventRegion(IntEnum):
+            NONE = auto()
+
+            DATETIME = auto()
+
+            WORKSPACE = auto()
+
+            PROGRESS_BAR = auto()
+            PLAYBACK_STATUS = auto()
+
         MOUSE_EVENT_START = CSI_START + b"M"
         LEFT_CLICK_EVENT = 0
         LEFT_CLICK_DRAG = 32
+
+        last_click_region = None
         while True:
             mouse_event = await reader.readexactly(6)
             assert mouse_event[0:3] == MOUSE_EVENT_START
@@ -2357,23 +2417,64 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
             column = mouse_event[4] - 32
             if (
                 datetime_start_column is not None
-                and not is_motion
                 and datetime_start_column <= column <= datetime_end_column
             ):
-                nonlocal show_local_timezone
-                show_local_timezone = not show_local_timezone
-                bar_event_queue.put_nowait(BarEvent(BarEventType.CLOCK_UPDATE))
-                continue
-            if workspaces_start_column is not None:
-                column_in_workspace_labels = column - workspaces_start_column
-                if (
-                    column_in_workspace_labels >= 0
-                    and column_in_workspace_labels < workspace_label_ends[-1]
-                ):
+                mouse_event_region = MouseEventRegion.DATETIME
+            elif (
+                workspaces_start_column is not None
+                and 0 <= column - workspaces_start_column < workspace_label_ends[-1]
+            ):
+                mouse_event_region = MouseEventRegion.WORKSPACE
+            elif (
+                progress_bar_start_column is not None
+                and progress_bar_start_column <= column <= progress_bar_end_column
+            ):
+                mouse_event_region = MouseEventRegion.PROGRESS_BAR
+            elif (
+                playback_status_start_column is not None
+                and playback_status_start_column <= column <= playback_status_end_column
+            ):
+                mouse_event_region = MouseEventRegion.PLAYBACK_STATUS
+            else:
+                mouse_event_region = MouseEventRegion.NONE
+            if not is_motion:
+                last_click_region = mouse_event_region
+            match mouse_event_region:
+                case MouseEventRegion.DATETIME:
+                    if is_motion:
+                        continue
+                    nonlocal show_local_timezone
+                    show_local_timezone = not show_local_timezone
+                    bar_event_queue.put_nowait(BarEvent(BarEventType.CLOCK_UPDATE))
+                case MouseEventRegion.WORKSPACE:
+                    if is_motion and last_click_region != MouseEventRegion.WORKSPACE:
+                        continue
                     label_index = bisect.bisect_right(
-                        workspace_label_ends, column_in_workspace_labels
+                        workspace_label_ends, column - workspaces_start_column
                     )
                     workspace_switch_queue.put_nowait(workspaces[label_index]["name"])
+                case MouseEventRegion.PROGRESS_BAR:
+                    if is_motion and last_click_region != MouseEventRegion.PROGRESS_BAR:
+                        continue
+                    progress_bar_width = (
+                        progress_bar_end_column - progress_bar_start_column
+                    )
+                    media_player = media_player_to_show
+                    track_id = media_player["track_id"]
+                    if not track_id:
+                        continue
+                    target_marker_position = column - progress_bar_start_column
+                    length_seconds = media_player["track_length_seconds"]
+                    target_position_seconds = (
+                        target_marker_position / progress_bar_width
+                    ) * length_seconds
+                    new_position = round(target_position_seconds * 1_000_000)
+                    media_player["set_position_function"](track_id, new_position)
+                case MouseEventRegion.PLAYBACK_STATUS:
+                    if is_motion:
+                        continue
+                    media_player = media_player_to_show
+                    media_player["play_pause_function"]()
 
     tty_file = open("/dev/tty", "r+b", buffering=0)
     tty.setraw(tty_file)
@@ -2389,13 +2490,15 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     writer = asyncio.StreamWriter(write_transport, write_protocol, None, loop)
     task_group.create_task(handle_mouse_updates_forever())
     media_players = {}
-    media_player_to_show = None
+    media_player_to_show_dbus_name = None
     formatted_media_player_essential_bytes = None
     formatted_workspaces_bytes = None
     formatted_datetime_bytes = None
     last_second = None
     datetime_start_column = None
     workspaces_start_column = None
+    progress_bar_start_column = None
+    playback_status_start_column = None
     show_local_timezone = True
     writer.write(HIDE_CURSOR)
     writer.write(TRACK_MOUSE_MOTION)
@@ -2405,15 +2508,14 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     while True:
         bar_event = await bar_event_queue.get()
         if bar_event.event_type.is_media_player_event():
-            event_media_player = bar_event.payload["dbus_name"]
+            event_media_player_dbus_name = bar_event.payload["dbus_name"]
         match bar_event.event_type:
-            case (
-                BarEventType.INITIALIZE_MEDIA_PLAYER
-                | BarEventType.UPDATE_MEDIA_PLAYER_STATE
-            ):
-                media_players[event_media_player] = bar_event.payload
+            case BarEventType.INITIALIZE_MEDIA_PLAYER:
+                media_players[event_media_player_dbus_name] = bar_event.payload
+            case BarEventType.UPDATE_MEDIA_PLAYER_STATE:
+                media_players[event_media_player_dbus_name].update(bar_event.payload)
             case BarEventType.SHUTDOWN_MEDIA_PLAYER:
-                del media_players[event_media_player]
+                del media_players[event_media_player_dbus_name]
             case BarEventType.WORKSPACES_UPDATE:
                 workspaces = bar_event.payload
                 workspace_label_widths = [
@@ -2466,21 +2568,22 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
             case BarEventType.RESIZE:
                 ...
         if bar_event.event_type.is_media_player_event():
-            last_shown_media_player = media_player_to_show
+            last_shown_media_player_dbus_name = media_player_to_show_dbus_name
             media_player_to_show = (
                 min(
                     media_players.values(),
-                    key=lambda payload: (
-                        PLAYBACK_STATUS_PRIORITY[payload["playback_status"]],
-                        payload["dbus_name"],
+                    key=lambda media_player: (
+                        PLAYBACK_STATUS_PRIORITY[media_player["playback_status"]],
+                        media_player["dbus_name"],
                     ),
                 )
                 if media_players
                 else None
             )
+            media_player_to_show_dbus_name = media_player_to_show["dbus_name"]
             if (
-                last_shown_media_player == media_player_to_show
-                and media_player_to_show != event_media_player
+                last_shown_media_player_dbus_name == media_player_to_show_dbus_name
+                and media_player_to_show_dbus_name != event_media_player_dbus_name
             ):
                 # if the shown media player didn't change and the update is for
                 # a hidden media player than we don't need to do anything.
@@ -2531,8 +2634,9 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
         writer.write(BEGIN_SYNCHRONIZED_UPDATE)
         writer.write(CLEAR_LINE)
         datetime_start_column = None
-        datetime_end_column = None
         workspaces_start_column = None
+        progress_bar_start_column = None
+        playback_status_start_column = None
         try:
             if formatted_datetime_width > terminal_width - 1:
                 raise IndexError()
@@ -2564,9 +2668,17 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 displaying_metadata = False
                 if media_player_start_column < current_column:
                     raise IndexError()
+            playback_status_start_column = (
+                media_player_start_column + 1
+            )  # account for space
+            playback_status_end_column = (
+                playback_status_start_column + 1
+            )  # playback status is two wide
             progress_bar_width = (media_player_start_column - current_column) - 3
             room_for_progress_bar = progress_bar_width >= 5
             if room_for_progress_bar:
+                progress_bar_start_column = current_column + 1
+                progress_bar_end_column = progress_bar_start_column + progress_bar_width
                 current_second = media_player_to_show["track_current_second"]
                 length_seconds = media_player_to_show["track_length_seconds"]
                 progress = (current_second / length_seconds) if length_seconds else 1
