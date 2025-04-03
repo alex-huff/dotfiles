@@ -2297,7 +2297,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     CLEAR_LINE = CSI_START + b"2K"
     CURSOR_CHARACTER_ABSOLUTE_TEMPLATE = CSI_START + b"%bG"
     HIDE_CURSOR = CSI_START + b"?25l"
-    TRACK_MOUSE_PRESS = CSI_START + b"?1000h"
+    TRACK_MOUSE_MOTION = CSI_START + b"?1002h"
     SYNCHRONIZED_UPDATE_TEMPLATE = CSI_START + b"?2026%b"
     BEGIN_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"h"
     END_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"l"
@@ -2344,20 +2344,27 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
         bar_event_queue.put_nowait(BarEvent(BarEventType.RESIZE))
 
     async def handle_mouse_updates_forever():
+        MOUSE_EVENT_START = CSI_START + b"M"
+        LEFT_CLICK_EVENT = 0
+        LEFT_CLICK_DRAG = 32
         while True:
             mouse_event = await reader.readexactly(6)
-            assert mouse_event[0:3] == b"\x1b[M"
-            if mouse_event[3] != ord(" "):
+            assert mouse_event[0:3] == MOUSE_EVENT_START
+            event_type = mouse_event[3] - 32
+            if event_type != LEFT_CLICK_EVENT and event_type != LEFT_CLICK_DRAG:
                 continue
+            is_motion = event_type == LEFT_CLICK_DRAG
             column = mouse_event[4] - 32
             if (
                 datetime_start_column is not None
+                and not is_motion
                 and datetime_start_column <= column <= datetime_end_column
             ):
                 nonlocal show_local_timezone
                 show_local_timezone = not show_local_timezone
                 bar_event_queue.put_nowait(BarEvent(BarEventType.CLOCK_UPDATE))
-            elif workspaces_start_column is not None:
+                continue
+            if workspaces_start_column is not None:
                 column_in_workspace_labels = column - workspaces_start_column
                 if (
                     column_in_workspace_labels >= 0
@@ -2391,7 +2398,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     workspaces_start_column = None
     show_local_timezone = True
     writer.write(HIDE_CURSOR)
-    writer.write(TRACK_MOUSE_PRESS)
+    writer.write(TRACK_MOUSE_MOTION)
     writer.write(BLACK_FOREGROUND)
     writer.write(WHITE_BACKGROUND)
     await writer.drain()
