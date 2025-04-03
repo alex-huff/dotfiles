@@ -2439,6 +2439,8 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 mouse_event_region = MouseEventRegion.NONE
             if not is_motion:
                 last_click_region = mouse_event_region
+            elif last_click_region != mouse_event_region:
+                continue
             match mouse_event_region:
                 case MouseEventRegion.DATETIME:
                     if is_motion:
@@ -2447,15 +2449,11 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                     show_local_timezone = not show_local_timezone
                     bar_event_queue.put_nowait(BarEvent(BarEventType.CLOCK_UPDATE))
                 case MouseEventRegion.WORKSPACE:
-                    if is_motion and last_click_region != MouseEventRegion.WORKSPACE:
-                        continue
                     label_index = bisect.bisect_right(
                         workspace_label_ends, column - workspaces_start_column
                     )
                     workspace_switch_queue.put_nowait(workspaces[label_index]["name"])
                 case MouseEventRegion.PROGRESS_BAR:
-                    if is_motion and last_click_region != MouseEventRegion.PROGRESS_BAR:
-                        continue
                     progress_bar_width = (
                         progress_bar_end_column - progress_bar_start_column
                     )
