@@ -2326,6 +2326,16 @@ async def run_clock_forever(bar_event_queue):
 
 
 async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue):
+    class MouseEventRegion(IntEnum):
+        NONE = auto()
+
+        DATETIME = auto()
+
+        WORKSPACES = auto()
+
+        PROGRESS_BAR = auto()
+        PLAYBACK_STATUS = auto()
+
     SECONDS_IN_MINUTE = 60
     SECONDS_IN_HOUR = 60 * 60
     SEPARATOR = "┃"
@@ -2392,16 +2402,6 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
         bar_event_queue.put_nowait(BarEvent(BarEventType.RESIZE))
 
     async def handle_mouse_updates_forever():
-        class MouseEventRegion(IntEnum):
-            NONE = auto()
-
-            DATETIME = auto()
-
-            WORKSPACE = auto()
-
-            PROGRESS_BAR = auto()
-            PLAYBACK_STATUS = auto()
-
         MOUSE_EVENT_START = CSI_START + b"M"
         LEFT_CLICK_EVENT = 0
         LEFT_CLICK_DRAG = 32
@@ -2415,27 +2415,13 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 continue
             is_motion = event_type == LEFT_CLICK_DRAG
             column = mouse_event[4] - 32
-            if (
-                datetime_start_column is not None
-                and datetime_start_column <= column <= datetime_end_column
-            ):
-                mouse_event_region = MouseEventRegion.DATETIME
-            elif (
-                workspaces_start_column is not None
-                and 0 <= column - workspaces_start_column < workspace_label_ends[-1]
-            ):
-                mouse_event_region = MouseEventRegion.WORKSPACE
-            elif (
-                progress_bar_start_column is not None
-                and progress_bar_start_column <= column <= progress_bar_end_column
-            ):
-                mouse_event_region = MouseEventRegion.PROGRESS_BAR
-            elif (
-                playback_status_start_column is not None
-                and playback_status_start_column <= column <= playback_status_end_column
-            ):
-                mouse_event_region = MouseEventRegion.PLAYBACK_STATUS
-            else:
+            try:
+                mouse_event_region = next(
+                    element_region
+                    for element_region, (start_column, end_column) in mouseable_bar_element_regions.items()
+                    if start_column <= column <= end_column
+                )
+            except StopIteration:
                 mouse_event_region = MouseEventRegion.NONE
             if not is_motion:
                 last_click_region = mouse_event_region
@@ -2448,7 +2434,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                     nonlocal show_local_timezone
                     show_local_timezone = not show_local_timezone
                     bar_event_queue.put_nowait(BarEvent(BarEventType.CLOCK_UPDATE))
-                case MouseEventRegion.WORKSPACE:
+                case MouseEventRegion.WORKSPACES:
                     label_index = bisect.bisect_right(
                         workspace_label_ends, column - workspaces_start_column
                     )
@@ -2487,17 +2473,14 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     )
     writer = asyncio.StreamWriter(write_transport, write_protocol, None, loop)
     task_group.create_task(handle_mouse_updates_forever())
+    mouseable_bar_element_regions = {}
     media_players = {}
     media_player_to_show_dbus_name = None
-    formatted_media_player_essential_bytes = None
-    formatted_workspaces_bytes = None
-    formatted_datetime_bytes = None
-    last_second = None
-    datetime_start_column = None
-    workspaces_start_column = None
-    progress_bar_start_column = None
-    playback_status_start_column = None
+    media_player_present = False
+    workspaces_present = False
+    datetime_present = False
     show_local_timezone = True
+    last_second = None
     writer.write(HIDE_CURSOR)
     writer.write(TRACK_MOUSE_MOTION)
     writer.write(BLACK_FOREGROUND)
@@ -2515,6 +2498,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
             case BarEventType.SHUTDOWN_MEDIA_PLAYER:
                 del media_players[event_media_player_dbus_name]
             case BarEventType.WORKSPACES_UPDATE:
+                workspaces_present = True
                 workspaces = bar_event.payload
                 workspace_label_widths = [
                     wcwidth.wcswidth(workspace["name"]) + 2 for workspace in workspaces
@@ -2553,6 +2537,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                     # reported than we wait to update bar until time is
                     # reported
                     continue
+                datetime_present = True
                 current_datetime = datetime.datetime.fromtimestamp(
                     current_second or last_second, tz=pytz.utc
                 )
@@ -2567,18 +2552,19 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 ...
         if bar_event.event_type.is_media_player_event():
             last_shown_media_player_dbus_name = media_player_to_show_dbus_name
-            media_player_to_show = (
-                min(
+            media_player_present = bool(media_players)
+            if media_player_present:
+                media_player_to_show = min(
                     media_players.values(),
                     key=lambda media_player: (
                         PLAYBACK_STATUS_PRIORITY[media_player["playback_status"]],
                         media_player["dbus_name"],
                     ),
                 )
-                if media_players
-                else None
-            )
-            media_player_to_show_dbus_name = media_player_to_show["dbus_name"]
+                media_player_to_show_dbus_name = media_player_to_show["dbus_name"]
+            else:
+                media_player_to_show = None
+                media_player_to_show_dbus_name = None
             if (
                 last_shown_media_player_dbus_name == media_player_to_show_dbus_name
                 and media_player_to_show_dbus_name != event_media_player_dbus_name
@@ -2586,12 +2572,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 # if the shown media player didn't change and the update is for
                 # a hidden media player than we don't need to do anything.
                 continue
-            if media_player_to_show is None:
-                formatted_media_player_essential_width = None
-                formatted_media_player_metadata_width = None
-                formatted_media_player_essential_bytes = None
-                formatted_media_player_metadata_bytes = None
-            else:
+            if media_player_present:
                 artist = media_player_to_show["track_artist"]
                 if artist:
                     artist = "/".join(artist)
@@ -2627,19 +2608,20 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 formatted_media_player_metadata_bytes = (
                     formatted_media_player_metadata.encode("utf-8")
                 )
-        if formatted_datetime_bytes is None or formatted_workspaces_bytes is None:
+        if not datetime_present or not workspaces_present:
             continue
+        mouseable_bar_element_regions.clear()
         writer.write(BEGIN_SYNCHRONIZED_UPDATE)
         writer.write(CLEAR_LINE)
-        datetime_start_column = None
-        workspaces_start_column = None
-        progress_bar_start_column = None
-        playback_status_start_column = None
         try:
             if formatted_datetime_width > terminal_width - 1:
                 raise IndexError()
             datetime_start_column = 1
             datetime_end_column = formatted_datetime_width + 1
+            mouseable_bar_element_regions[MouseEventRegion.DATETIME] = (
+                datetime_start_column,
+                datetime_end_column,
+            )
             current_column = 1
             jump_to_column(current_column)
             writer.write(formatted_datetime_bytes)
@@ -2649,9 +2631,16 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
             workspaces_start_column = (
                 current_column + 1
             )  # add one to account for first right separator
+            workspaces_end_column = (
+                workspaces_start_column + workspace_label_ends[-1] - 1
+            )
+            mouseable_bar_element_regions[MouseEventRegion.WORKSPACES] = (
+                workspaces_start_column,
+                workspaces_end_column,
+            )
             writer.write(formatted_workspaces_bytes)
             current_column += formatted_workspaces_width
-            if formatted_media_player_essential_bytes is None:
+            if not media_player_present:
                 raise IndexError()
             displaying_metadata = True
             formatted_media_player_width = (
@@ -2672,11 +2661,19 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
             playback_status_end_column = (
                 playback_status_start_column + 1
             )  # playback status is two wide
+            mouseable_bar_element_regions[MouseEventRegion.PLAYBACK_STATUS] = (
+                playback_status_start_column,
+                playback_status_end_column,
+            )
             progress_bar_width = (media_player_start_column - current_column) - 3
             room_for_progress_bar = progress_bar_width >= 5
             if room_for_progress_bar:
                 progress_bar_start_column = current_column + 1
                 progress_bar_end_column = progress_bar_start_column + progress_bar_width
+                mouseable_bar_element_regions[MouseEventRegion.PROGRESS_BAR] = (
+                    progress_bar_start_column,
+                    progress_bar_end_column,
+                )
                 current_second = media_player_to_show["track_current_second"]
                 length_seconds = media_player_to_show["track_length_seconds"]
                 progress = (current_second / length_seconds) if length_seconds else 1
