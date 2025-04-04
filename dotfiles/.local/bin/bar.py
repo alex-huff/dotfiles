@@ -2058,6 +2058,7 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
         RUN_COMMAND = 0
         GET_WORKSPACES = 1
         SUBSCRIBE = 2
+        GET_TREE = 4
         WORKSPACE_EVENT = 0x80000000
 
     """
@@ -2083,82 +2084,203 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
             ]                                                                                                                                                  
                                                                                                                                                                
     1. GET_WORKSPACES
-       MESSAGE
-       Retrieves the list of workspaces.
-       REPLY
-       The reply is an array of objects corresponding to each workspace. Each
-       object has the following properties:
-       ┌──────────┬───────────┬─────────────────────────────────────────┐
-       │ PROPERTY │ DATA TYPE │               DESCRIPTION               │
-       ├──────────┼───────────┼─────────────────────────────────────────┤
-       │   num    │  integer  │ The  workspace  number  or -1 for work- │
-       │          │           │ spaces that do not start with a number  │
-       ├──────────┼───────────┼─────────────────────────────────────────┤
-       │   name   │  string   │ The name of the workspace               │
-       ├──────────┼───────────┼─────────────────────────────────────────┤
-       │ visible  │  boolean  │ Whether the workspace is currently vis- │
-       │          │           │ ible on any output                      │
-       ├──────────┼───────────┼─────────────────────────────────────────┤
-       │ focused  │  boolean  │ Whether the workspace is currently  fo- │
-       │          │           │ cused by the default seat (seat0)       │
-       ├──────────┼───────────┼─────────────────────────────────────────┤
-       │  urgent  │  boolean  │ Whether a view on the workspace has the │
-       │          │           │ urgent flag set                         │
-       ├──────────┼───────────┼─────────────────────────────────────────┤
-       │   rect   │  object   │ The  bounds  of  the workspace. It con- │
-       │          │           │ sists of x, y, width, and height        │
-       ├──────────┼───────────┼─────────────────────────────────────────┤
-       │  output  │  string   │ The name of the output that  the  work- │
-       │          │           │ space is on                             │
-       └──────────┴───────────┴─────────────────────────────────────────┘
+        MESSAGE
+        Retrieves the list of workspaces.
+        REPLY
+        The reply is an array of objects corresponding to each workspace. Each
+        object has the following properties:
+        ┌──────────┬───────────┬─────────────────────────────────────────┐
+        │ PROPERTY │ DATA TYPE │               DESCRIPTION               │
+        ├──────────┼───────────┼─────────────────────────────────────────┤
+        │   num    │  integer  │ The  workspace  number  or -1 for work- │
+        │          │           │ spaces that do not start with a number  │
+        ├──────────┼───────────┼─────────────────────────────────────────┤
+        │   name   │  string   │ The name of the workspace               │
+        ├──────────┼───────────┼─────────────────────────────────────────┤
+        │ visible  │  boolean  │ Whether the workspace is currently vis- │
+        │          │           │ ible on any output                      │
+        ├──────────┼───────────┼─────────────────────────────────────────┤
+        │ focused  │  boolean  │ Whether the workspace is currently  fo- │
+        │          │           │ cused by the default seat (seat0)       │
+        ├──────────┼───────────┼─────────────────────────────────────────┤
+        │  urgent  │  boolean  │ Whether a view on the workspace has the │
+        │          │           │ urgent flag set                         │
+        ├──────────┼───────────┼─────────────────────────────────────────┤
+        │   rect   │  object   │ The  bounds  of  the workspace. It con- │
+        │          │           │ sists of x, y, width, and height        │
+        ├──────────┼───────────┼─────────────────────────────────────────┤
+        │  output  │  string   │ The name of the output that  the  work- │
+        │          │           │ space is on                             │
+        └──────────┴───────────┴─────────────────────────────────────────┘
 
     2. SUBSCRIBE
-       MESSAGE
-       Subscribe this IPC connection to the event types specified in the
-       message payload. The payload should be a valid JSON array of events. See
-       the EVENTS section for the list of supported events.
-       REPLY
-       A single object that contains the property success, which is a boolean
-       value indicating whether the subscription was successful or not.
+        MESSAGE
+        Subscribe this IPC connection to the event types specified in the
+        message payload. The payload should be a valid JSON array of events. See
+        the EVENTS section for the list of supported events.
+        REPLY
+        A single object that contains the property success, which is a boolean
+        value indicating whether the subscription was successful or not.
 
     0x80000000. WORKSPACE
-       Sent whenever a change involving a workspace occurs. The event consists
-       of a single object with the following properties:
-       ┌──────────┬───────────┬─────────────────────────────────────────┐
-       │ PROPERTY │ DATA TYPE │               DESCRIPTION               │
-       ├──────────┼───────────┼─────────────────────────────────────────┤
-       │  change  │  string   │ The  type  of change that occurred. See │
-       │          │           │ below for more information              │
-       ├──────────┼───────────┼─────────────────────────────────────────┤
-       │ current  │  object   │ An object  representing  the  workspace │
-       │          │           │ effected or null for reload changes     │
-       ├──────────┼───────────┼─────────────────────────────────────────┤
-       │   old    │  object   │ For  a focus change, this is will be an │
-       │          │           │ object representing the workspace being │
-       │          │           │ switched from. Otherwise, it is null    │
-       └──────────┴───────────┴─────────────────────────────────────────┘
-       The following change types are currently available:
-       ┌────────┬──────────────────────────────────────────────────────┐
-       │  TYPE  │                     DESCRIPTION                      │
-       ├────────┼──────────────────────────────────────────────────────┤
-       │  init  │ The workspace was created                            │
-       ├────────┼──────────────────────────────────────────────────────┤
-       │ empty  │ The workspace is empty and is being destroyed  since │
-       │        │ it is not visible                                    │
-       ├────────┼──────────────────────────────────────────────────────┤
-       │ focus  │ The  workspace was focused. See the old property for │
-       │        │ the previous focus                                   │
-       ├────────┼──────────────────────────────────────────────────────┤
-       │  move  │ The workspace was moved to a different output        │
-       ├────────┼──────────────────────────────────────────────────────┤
-       │ rename │ The workspace was renamed                            │
-       ├────────┼──────────────────────────────────────────────────────┤
-       │ urgent │ A view on the workspace has had their  urgency  hint │
-       │        │ set  or all urgency hints for views on the workspace │
-       │        │ have been cleared                                    │
-       ├────────┼──────────────────────────────────────────────────────┤
-       │ reload │ The configuration file has been reloaded             │
-       └────────┴──────────────────────────────────────────────────────┘
+        Sent whenever a change involving a workspace occurs. The event consists
+        of a single object with the following properties:
+        ┌──────────┬───────────┬─────────────────────────────────────────┐
+        │ PROPERTY │ DATA TYPE │               DESCRIPTION               │
+        ├──────────┼───────────┼─────────────────────────────────────────┤
+        │  change  │  string   │ The  type  of change that occurred. See │
+        │          │           │ below for more information              │
+        ├──────────┼───────────┼─────────────────────────────────────────┤
+        │ current  │  object   │ An object  representing  the  workspace │
+        │          │           │ effected or null for reload changes     │
+        ├──────────┼───────────┼─────────────────────────────────────────┤
+        │   old    │  object   │ For  a focus change, this is will be an │
+        │          │           │ object representing the workspace being │
+        │          │           │ switched from. Otherwise, it is null    │
+        └──────────┴───────────┴─────────────────────────────────────────┘
+        The following change types are currently available:
+        ┌────────┬──────────────────────────────────────────────────────┐
+        │  TYPE  │                     DESCRIPTION                      │
+        ├────────┼──────────────────────────────────────────────────────┤
+        │  init  │ The workspace was created                            │
+        ├────────┼──────────────────────────────────────────────────────┤
+        │ empty  │ The workspace is empty and is being destroyed  since │
+        │        │ it is not visible                                    │
+        ├────────┼──────────────────────────────────────────────────────┤
+        │ focus  │ The  workspace was focused. See the old property for │
+        │        │ the previous focus                                   │
+        ├────────┼──────────────────────────────────────────────────────┤
+        │  move  │ The workspace was moved to a different output        │
+        ├────────┼──────────────────────────────────────────────────────┤
+        │ rename │ The workspace was renamed                            │
+        ├────────┼──────────────────────────────────────────────────────┤
+        │ urgent │ A view on the workspace has had their  urgency  hint │
+        │        │ set  or all urgency hints for views on the workspace │
+        │        │ have been cleared                                    │
+        ├────────┼──────────────────────────────────────────────────────┤
+        │ reload │ The configuration file has been reloaded             │
+        └────────┴──────────────────────────────────────────────────────┘
+
+    4. GET_TREE
+        MESSAGE
+        Retrieve a JSON representation of the tree
+
+        REPLY
+        An array of objects that represent the current tree. Each object represents one node and will have the following properties:
+
+        ┌──────────────────────┬───────────┬─────────────────────────────────────────┐
+        │       PROPERTY       │ DATA TYPE │               DESCRIPTION               │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │          id          │  integer  │ The internal unique ID for this node    │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │         name         │  string   │ The name of the node such as the output │
+        │                      │           │ name or window title. For the  scratch‐ │
+        │                      │           │ pad, this will be __i3_scratch for com‐ │
+        │                      │           │ patibility with i3.                     │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │         type         │  string   │ The  node type. It can be root, output, │
+        │                      │           │ workspace, con, or floating_con         │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │        border        │  string   │ The border style for the node.  It  can │
+        │                      │           │ be normal, none, pixel, or csd          │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │ current_border_width │  integer  │ Number  of  pixels  used for the border │
+        │                      │           │ width                                   │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │        layout        │  string   │ The node's layout.  It  can  either  be │
+        │                      │           │ splith,  splitv,  stacked,  tabbed,  or │
+        │                      │           │ output                                  │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │     orientation      │  string   │ The node's orientation. It can be  ver‐ │
+        │                      │           │ tical, horizontal, or none              │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │       percent        │   float   │ The  percentage  of  the  node's parent │
+        │                      │           │ that it takes up or null for  the  root │
+        │                      │           │ and  other  special  nodes  such as the │
+        │                      │           │ scratchpad                              │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │         rect         │  object   │ The absolute geometry of the node.  The │
+        │                      │           │ window  decorations  are  excluded from │
+        │                      │           │ this, but borders are included.         │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │     window_rect      │  object   │ The geometry of the content inside  the │
+        │                      │           │ node. These coordinates are relative to │
+        │                      │           │ the node itself. Window decorations and │
+        │                      │           │ borders are outside the window_rect     │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │      deco_rect       │  object   │ The geometry of the decorations for the │
+        │                      │           │ node relative to the parent node        │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │       geometry       │  object   │ The natural geometry of the contents if │
+        │                      │           │ it were to size itself                  │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │        urgent        │  boolean  │ Whether  the node or any of its descen‐ │
+        │                      │           │ dants has the urgent  hint  set.  Note: │
+        │                      │           │ This  may not exist when compiled with‐ │
+        │                      │           │ out xwayland support                    │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │        sticky        │  boolean  │ Whether the node is  sticky  (shows  on │
+        │                      │           │ all workspaces)                         │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │        marks         │   array   │ List of marks assigned to the node      │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │       focused        │  boolean  │ Whether  the  node is currently focused │
+        │                      │           │ by the default seat (seat0)             │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │        focus         │   array   │ Array of child node IDs in the  current │
+        │                      │           │ focus order                             │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │        nodes         │   array   │ The tiling children nodes for the node  │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │    floating_nodes    │   array   │ The  floating  children  nodes  for the │
+        │                      │           │ node                                    │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │    representation    │  string   │ (Only workspaces) A string  representa‐ │
+        │                      │           │ tion  of  the  layout  of the workspace │
+        │                      │           │ that can be used as an aid  in  submit‐ │
+        │                      │           │ ting reproduction steps for bug reports │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │   fullscreen_mode    │  integer  │ (Only   containers   and   views)   The │
+        │                      │           │ fullscreen mode of the  node.  0  means │
+        │                      │           │ none,  1  means  full  workspace, and 2 │
+        │                      │           │ means global fullscreen                 │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │       floating       │  string   │ Floating state of container. Can be ei‐ │
+        │                      │           │ ther "auto_off" or "user_on"            │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │   scratchpad_state   │  string   │ Whether the window is in  the  scratch‐ │
+        │                      │           │ pad. Can be either "none" or "fresh"    │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │        app_id        │  string   │ (Only views) For an xdg-shell view, the │
+        │                      │           │ name of the application, if set. Other‐ │
+        │                      │           │ wise, null                              │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │         pid          │  integer  │ (Only views) The PID of the application │
+        │                      │           │ that owns the view                      │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │       visible        │  boolean  │ (Only  views) Whether the node is visi‐ │
+        │                      │           │ ble                                     │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │        shell         │  string   │ (Only views) The  shell  of  the  view, │
+        │                      │           │ such as xdg_shell or xwayland           │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │     inhibit_idle     │  boolean  │ (Only  views)  Whether  the view is in‐ │
+        │                      │           │ hibiting the idle state                 │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │   idle_inhibitors    │  object   │ (Only views) An object  containing  the │
+        │                      │           │ state  of the application and user idle │
+        │                      │           │ inhibitors.  application can be enabled │
+        │                      │           │ or   none.    user   can   be    focus, │
+        │                      │           │ fullscreen, open, visible or none.      │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │        window        │  integer  │ (Only xwayland views) The X11 window ID │
+        │                      │           │ for the xwayland view                   │
+        ├──────────────────────┼───────────┼─────────────────────────────────────────┤
+        │  window_properties   │  object   │ (Only  xwayland  views)  An object con‐ │
+        │                      │           │ taining  the  title,  class,  instance, │
+        │                      │           │ window_role,   window_type,  and  tran‐ │
+        │                      │           │ sient_for for the view                  │
+        └──────────────────────┴───────────┴─────────────────────────────────────────┘
     """
 
     MAGIC_BYTES = b"i3-ipc"
@@ -2173,7 +2295,7 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
         payload_bytes = await reader.readexactly(payload_length)
         return payload_type, json.loads(payload_bytes.decode("utf-8"))
 
-    async def send_message(writer, payload_type, payload):
+    async def send_message(writer, payload_type, payload=b""):
         writer.write(
             MESSAGE_HEADER_STRUCT.pack(MAGIC_BYTES, len(payload), payload_type)
         )
@@ -2205,21 +2327,53 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
             )
         )
 
+    def get_workspace_nodes(tree):
+        for node in tree["nodes"]:
+            if node["type"] == "workspace":
+                yield node
+                continue
+            yield from get_workspace_nodes(node)
+
     async def switch_workspaces_forever():
+        # sway's argument parsing is buggy so it is more robust to use GET_TREE
+        # and manually focus the last focused container on the corresponding
+        # workspace. Even swaybar can't properly switch to a workspace from
+        # just the workspace name. See:
+        # https://github.com/swaywm/sway/issues/8642
+        nonlocal get_tree_future
         while True:
-            workspace_name = await workspace_switch_queue.get()
-            # TODO: sway's argument parsing is buggy so it would be more robust
-            # to use GET_TREE and manually focus the last focused container on
-            # the corresponding workspace. Even swaybar can't properly switch
-            # to a workspace from just the workspace name. See:
-            # https://github.com/swaywm/sway/issues/8642
-            sway_command = f"workspace {workspace_name}"
+            workspace_id = await workspace_switch_queue.get()
+            try:
+                while True:
+                    workspace_id = workspace_switch_queue.get_nowait()
+            except asyncio.QueueEmpty:
+                ...
+            get_tree_future = asyncio.get_running_loop().create_future()
+            await send_message(writer, MessageType.GET_TREE)
+            node = await get_tree_future
+            try:
+                node = next(
+                    workspace
+                    for workspace in get_workspace_nodes(node)
+                    if workspace["id"] == workspace_id
+                )
+            except StopIteration:
+                continue
+            while node["focus"]:
+                last_focused_child_id = node["focus"][0]
+                node = next(
+                    node
+                    for node in itertools.chain(node["nodes"], node["floating_nodes"])
+                    if node["id"] == last_focused_child_id
+                )
+            sway_command = f"[con_id={node['id']}] focus"
             await send_message(
                 writer, MessageType.RUN_COMMAND, sway_command.encode("utf-8")
             )
             await writer.drain()
 
     reader, writer = await asyncio.open_unix_connection(path=os.environ["SWAYSOCK"])
+    get_tree_future = None
     relevant_events = ["workspace"]
     await subscribe(reader, writer, relevant_events)
     await send_get_workspaces_message(writer)
@@ -2241,6 +2395,8 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
                 if old_workspaces != workspaces:
                     should_update = True
                 workspaces_initialized = True
+            case MessageType.GET_TREE:
+                get_tree_future.set_result(response)
             case MessageType.WORKSPACE_EVENT:
                 if not workspaces_initialized:
                     continue
@@ -2418,7 +2574,10 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
             try:
                 mouse_event_region = next(
                     element_region
-                    for element_region, (start_column, end_column) in mouseable_bar_element_regions.items()
+                    for element_region, (
+                        start_column,
+                        end_column,
+                    ) in mouseable_bar_element_regions.items()
                     if start_column <= column <= end_column
                 )
             except StopIteration:
@@ -2438,7 +2597,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                     label_index = bisect.bisect_right(
                         workspace_label_ends, column - workspaces_start_column
                     )
-                    workspace_switch_queue.put_nowait(workspaces[label_index]["name"])
+                    workspace_switch_queue.put_nowait(workspaces[label_index]["id"])
                 case MouseEventRegion.PROGRESS_BAR:
                     progress_bar_width = (
                         progress_bar_end_column - progress_bar_start_column
