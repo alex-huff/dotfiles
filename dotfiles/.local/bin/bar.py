@@ -2327,12 +2327,12 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
             )
         )
 
-    def get_workspace_nodes(tree):
-        for node in tree["nodes"]:
-            if node["type"] == "workspace":
-                yield node
+    def get_workspace_nodes(node):
+        for child_node in node["nodes"]:
+            if child_node["type"] == "workspace":
+                yield child_node
                 continue
-            yield from get_workspace_nodes(node)
+            yield from get_workspace_nodes(child_node)
 
     async def switch_workspaces_forever():
         # sway's argument parsing is buggy so it is more robust to use GET_TREE
