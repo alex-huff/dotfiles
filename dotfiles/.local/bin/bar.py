@@ -57,14 +57,14 @@ class MediaPlayerState:
         self,
         media_player_dbus_name,
         properties,
-        set_position_function,
-        play_pause_function,
+        set_position_queue,
+        play_pause_signal,
         task_group,
         bar_event_queue,
     ):
         self.media_player_dbus_name = media_player_dbus_name
-        self.set_position_function = set_position_function
-        self.play_pause_function = play_pause_function
+        self.set_position_queue = set_position_queue
+        self.play_pause_signal = play_pause_signal
         self.task_group = task_group
         self.bar_event_queue = bar_event_queue
         self.loop = asyncio.get_running_loop()
@@ -190,8 +190,8 @@ class MediaPlayerState:
             "track_length_seconds": self.track_length_seconds,
         }
         if event_type == BarEventType.INITIALIZE_MEDIA_PLAYER:
-            payload["set_position_function"] = self.set_position_function
-            payload["play_pause_function"] = self.play_pause_function
+            payload["set_position_queue"] = self.set_position_queue
+            payload["play_pause_signal"] = self.play_pause_signal
         event = BarEvent(event_type, payload)
         self.bar_event_queue.put_nowait(event)
 
@@ -1825,10 +1825,10 @@ async def watch_media_player_forever(
                     was_paused = media_player_state.is_paused()
                     was_stopped = media_player_state.is_stopped()
                     is_playing = value == "Playing"
-                    if was_playing and is_playing:
-                        # hack: cmus doesn't send seek signal when triggering
+                    if was_playing and is_playing and media_player_dbus_name == "cmus":
+                        # hack: cmus doesn't send a seek signal when triggering
                         # 'player-prev' seeks to the beginning of the track
-                        # (happens when the position in track is less than
+                        # (happens when the position in track is greater than
                         # 'rewind_offset'). However, cmus does for some reason
                         # set 'PlaybackStatus' to 'Playing', so we detect this
                         # here and manually seek.
@@ -1923,27 +1923,72 @@ async def watch_media_player_forever(
         player_interface.off_seeked(on_seeked)
         properties_interface.off_properties_changed(on_properties_changed)
 
-    def set_position_function(track_id, new_position):
+    async def set_position(track_id, new_position):
+        method_completed = asyncio.Event()
         dbus_call_method_with_response_callback(
-            player_interface, "SetPosition", None, track_id, new_position
+            player_interface,
+            "SetPosition",
+            lambda _0, _1: method_completed.set(),
+            track_id,
+            new_position,
         )
+        await method_completed.wait()
 
-    def play_pause_function():
-        dbus_call_method_with_response_callback(player_interface, "PlayPause", None)
+    async def play_pause():
+        method_completed = asyncio.Event()
+        dbus_call_method_with_response_callback(
+            player_interface,
+            "PlayPause",
+            lambda _0, _1: method_completed.set(),
+        )
+        await method_completed.wait()
+
+    async def set_position_forever(set_position_queue):
+        while True:
+            track_id, new_position = await set_position_queue.get()
+            try:
+                while True:
+                    track_id, new_position = set_position_queue.get_nowait()
+            except asyncio.QueueEmpty:
+                ...
+            await set_position(track_id, new_position)
+            if media_player_dbus_name == "spotify":
+                # hack: spotify is very slow at seeking, signifies
+                # 'SetPosition' as done before it actually is, AND doesn't
+                # debounce internally. Because of this, emitting 'SetPosition'
+                # method calls quickly (happens when dragging on the progress
+                # bar) results in spotify's track position lagging behind the
+                # position requested by the user. Sleeping in-between
+                # 'SetPosition' calls allows for spotify to keep up.
+                await asyncio.sleep(0.2)
+
+    async def play_pause_forever(play_pause_signal):
+        while True:
+            await play_pause_signal.wait()
+            await play_pause()
+            play_pause_signal.clear()
 
     def get_all_callback(error, properties):
         if error:
             initialized_future.set_result(error)
             return
-        nonlocal media_player_state
+        nonlocal media_player_state, set_position_task, play_pause_task
         try:
+            set_position_queue = asyncio.Queue()
+            play_pause_signal = asyncio.Event()
             media_player_state = MediaPlayerState(
                 media_player_dbus_name,
                 properties,
-                set_position_function,
-                play_pause_function,
+                set_position_queue,
+                play_pause_signal,
                 task_group,
                 bar_event_queue,
+            )
+            set_position_task = task_group.create_task(
+                set_position_forever(set_position_queue)
+            )
+            play_pause_task = task_group.create_task(
+                play_pause_forever(play_pause_signal)
             )
         except Exception as error:
             # construction of MediaPlayerState can fail for example when a
@@ -1952,6 +1997,8 @@ async def watch_media_player_forever(
         initialized_future.set_result(error)
 
     media_player_state = None
+    set_position_task = None
+    play_pause_task = None
     media_player_object = message_bus.get_proxy_object(
         MEDIA_PLAYER_BUS_NAME,
         MEDIA_PLAYER_OBJECT_PATH,
@@ -1985,6 +2032,8 @@ async def watch_media_player_forever(
     if not error_initializing:
         disable_signals()
         media_player_state.shutdown()
+        set_position_task.cancel()
+        play_pause_task.cancel()
 
 
 def dbus_call_method_with_response_callback(interface, method_name, callback, *args):
@@ -2617,12 +2666,16 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                         target_marker_position / progress_bar_width
                     ) * length_seconds
                     new_position = round(target_position_seconds * 1_000_000)
-                    media_player["set_position_function"](track_id, new_position)
+                    media_player["set_position_queue"].put_nowait(
+                        (track_id, new_position)
+                    )
                 case MouseEventRegion.PLAYBACK_STATUS:
                     if is_motion:
                         continue
                     media_player = media_player_to_show
-                    media_player["play_pause_function"]()
+                    play_pause_signal = media_player["play_pause_signal"]
+                    if not play_pause_signal.is_set():
+                        play_pause_signal.set()
 
     tty_file = open("/dev/tty", "r+b", buffering=0)
     tty.setraw(tty_file)
