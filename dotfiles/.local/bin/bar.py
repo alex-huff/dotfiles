@@ -2576,9 +2576,9 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     END_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"l"
     CHARACTER_ATTRIBUTES_TEMPLATE = CSI_START + b"%bm"
     DARK_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;40;40;40"
-    GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;189;174;147"
-    LIGHT_GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;235;219;178"
-    WHITE_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;242;229;188"
+    GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;213;196;161"
+    LIGHT_GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;242;229;188"
+    WHITE_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;251;241;199"
     BLACK_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;40;40;40"
     DARK_GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;60;56;54"
     GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;146;131;116"
@@ -2737,16 +2737,16 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                     if focused:
                         formatted_workspaces_bytes.extend(DARK_BACKGROUND)
                     elif i % 2 == 1:
-                        formatted_workspaces_bytes.extend(GRAY_BACKGROUND)
-                    else:
                         formatted_workspaces_bytes.extend(LIGHT_GRAY_BACKGROUND)
+                    else:
+                        formatted_workspaces_bytes.extend(GRAY_BACKGROUND)
                     formatted_workspaces_bytes.extend(THIN_LEFT_SEPARATOR_BYTES)
                     if focused:
                         formatted_workspaces_bytes.extend(LIGHT_GRAY_FOREGROUND)
-                    elif i % 2 == 0:
+                    elif i % 2 == 1:
                         formatted_workspaces_bytes.extend(DARK_GRAY_FOREGROUND)
                     formatted_workspaces_bytes.extend(workspace["name"].encode("utf-8"))
-                    if focused or i % 2 == 0:
+                    if focused or i % 2 == 1:
                         formatted_workspaces_bytes.extend(BLACK_FOREGROUND)
                     formatted_workspaces_bytes.extend(THIN_RIGHT_SEPARATOR_BYTES)
                 formatted_workspaces_bytes.extend(WHITE_BACKGROUND)
