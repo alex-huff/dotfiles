@@ -2102,7 +2102,7 @@ def dbus_call_method_with_response_callback(interface, method_name, callback, *a
     interface.bus._call(msg, on_response)
 
 
-async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue):
+async def watch_i3_forever(task_group, bar_event_queue, workspace_switch_queue):
     class MessageType(IntEnum):
         RUN_COMMAND = 0
         GET_WORKSPACES = 1
@@ -2425,9 +2425,9 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
                     for node in itertools.chain(node["nodes"], node["floating_nodes"])
                     if node["id"] == last_focused_child_id
                 )
-            sway_command = f"[con_id={node['id']}] focus"
+            i3_command = f"[con_id={node['id']}] focus"
             await send_message(
-                writer, MessageType.RUN_COMMAND, sway_command.encode("utf-8")
+                writer, MessageType.RUN_COMMAND, i3_command.encode("utf-8")
             )
             await writer.drain()
 
@@ -2939,7 +2939,7 @@ async def main():
             watch_all_media_players_forever(task_group, bar_event_queue)
         )
         task_group.create_task(
-            watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue)
+            watch_i3_forever(task_group, bar_event_queue, workspace_switch_queue)
         )
         task_group.create_task(run_clock_forever(bar_event_queue))
 
