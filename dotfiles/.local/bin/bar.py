@@ -2116,9 +2116,13 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
         Parses and runs the payload as sway commands                                                                                                           
                                                                                                                                                                
         REPLY                                                                                                                                                  
-        An  array  of  objects  corresponding to each command that was parsed. Each object has the property success, which is a boolean indicating whether the 
-        command was successful. The object may also contain the properties error and parse_error. The error property is a human readable error  message  while 
-        parse_error is a boolean indicating whether the reason the command failed was because the command was unknown or not able to be parsed.                
+        An  array  of  objects  corresponding to each command that was parsed.
+        Each object has the property success, which is a boolean indicating
+        whether the command was successful. The object may also contain the
+        properties error and parse_error. The error property is a human
+        readable error  message  while parse_error is a boolean indicating
+        whether the reason the command failed was because the command was
+        unknown or not able to be parsed.
                                                                                                                                                                
         Example Reply:                                                                                                                                         
             [                                                                                                                                                  
@@ -2215,7 +2219,8 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
         Retrieve a JSON representation of the tree
 
         REPLY
-        An array of objects that represent the current tree. Each object represents one node and will have the following properties:
+        An array of objects that represent the current tree. Each object
+        represents one node and will have the following properties:
 
         ┌──────────────────────┬───────────┬─────────────────────────────────────────┐
         │       PROPERTY       │ DATA TYPE │               DESCRIPTION               │
