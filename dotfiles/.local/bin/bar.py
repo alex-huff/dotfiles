@@ -2340,6 +2340,11 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
         # workspace. Even swaybar can't properly switch to a workspace from
         # just the workspace name. See:
         # https://github.com/swaywm/sway/issues/8642
+        # Doing this results in slightly different behavior than sway's
+        # 'workspace' command. When a workspace is refocused that had a
+        # non-leaf container as the last focused container, the 'workspace'
+        # command restores focus properly while this code always focuses leaf
+        # containers by following the 'focus' list in each node of the tree.
         nonlocal get_tree_future
         while True:
             workspace_id = await workspace_switch_queue.get()
