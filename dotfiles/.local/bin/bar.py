@@ -2431,7 +2431,7 @@ async def watch_sway_forever(task_group, bar_event_queue, workspace_switch_queue
             )
             await writer.drain()
 
-    reader, writer = await asyncio.open_unix_connection(path=os.environ["SWAYSOCK"])
+    reader, writer = await asyncio.open_unix_connection(path=os.environ["I3SOCK"])
     get_tree_future = None
     relevant_events = ["workspace"]
     await subscribe(reader, writer, relevant_events)
