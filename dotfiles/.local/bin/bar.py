@@ -166,8 +166,7 @@ class MediaPlayerState:
             time_till_next_second_to_display_seconds = (
                 next_second_to_display_micros - estimated_track_current_position_micros
             ) / (1_000_000 * self.rate)
-            if time_till_next_second_to_display_seconds > 0:
-                await asyncio.sleep(time_till_next_second_to_display_seconds)
+            await asyncio.sleep(time_till_next_second_to_display_seconds)
             self.track_current_second += 1
             self.send_update()
         time_till_track_end_seconds = (
@@ -2518,24 +2517,20 @@ async def run_clock_forever(bar_event_queue):
     while True:
         current_time = time.time_ns()
         current_second = current_time // 1_000_000_000
-        next_second_to_display = max(
-            displayed_second + 1,
-            current_second + 1,
+        next_second_to_display = displayed_second + 1
+        out_of_sync = (
+            next_second_to_display <= current_second
+            or next_second_to_display > current_second + 2
         )
-        displayed_second_is_more_than_one_second_behind = (
-            displayed_second < next_second_to_display - 1
-        )
-        if displayed_second_is_more_than_one_second_behind:
-            # this could theoretically happen if the event loop was blocked for
-            # a long time
-            displayed_second = next_second_to_display - 1
+        if out_of_sync:
+            displayed_second = current_second
             update_time()
+            next_second_to_display = displayed_second + 1
         next_second_to_display_nanos = next_second_to_display * 1_000_000_000
         time_till_next_second_to_display_seconds = (
             next_second_to_display_nanos - current_time
         ) / 1_000_000_000
-        if time_till_next_second_to_display_seconds > 0:
-            await asyncio.sleep(time_till_next_second_to_display_seconds)
+        await asyncio.sleep(time_till_next_second_to_display_seconds)
         displayed_second += 1
         update_time()
 
