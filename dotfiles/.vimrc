@@ -122,7 +122,7 @@ nnoremap <silent> <Leader>T :vertical botright terminal<CR><C-\><C-N>:set nonumb
 nnoremap <silent> <Leader><Leader>t :tab terminal<CR><C-\><C-N>:set nonumber norelativenumber<CR>a
 nnoremap <silent> <Leader>c :call <SID>jump_to_clipboard_location("tabedit")<CR>
 nnoremap <silent> <Leader>C :call <SID>jump_to_clipboard_location("edit")<CR>
-nnoremap <silent> <C-L> :call <SID>save_location_to_clipboard()<CR>
+nnoremap <silent> <C-Space> :call <SID>save_location_to_clipboard()<CR>
 nnoremap <silent> <Leader>h :nohlsearch<CR>
 nnoremap <silent> <Leader>gb :call <SID>do_ruff_format(getcursorcharpos())<CR>
 nnoremap <silent> <expr> gb <SID>setup_ruff_format_operatorfunc()
