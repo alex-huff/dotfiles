@@ -45,7 +45,7 @@ bindsym Shift+Control+Alt+Page_Up workspace next
 bindsym $super+Control+l exec swaylock --color=000000 --font="Victor Mono" --font-size=20
 
 # start a terminal
-bindsym $super+Return exec kitty
+bindsym $super+Return exec kitty --single-instance
 
 # search with qutebrowser
 bindsym $super+Alt+s exec query=$(rofi -dmenu -l 0 -p search) && qutebrowser --target=tab "$query"
@@ -95,7 +95,7 @@ bindsym $super+n exec switch-connection.sh
 bindsym $super+d exec rofi -show drun
 
 # app selector
-bindsym $super+Backslash exec kitty +kitten panel --layer=overlay --focus-policy=exclusive --edge=center --margin-top=200 --margin-bottom=200 --margin-left=400 --margin-right=400 --override=background_image="~/.assets/app_selector_background.png" sh -c 'con_id=$(swaymsg -t get_tree | jq --raw-output0 '"'"'recurse(.floating_nodes[], .nodes[]) | select(has("pid")) | "\(.app_id // .window_properties.class): \(.name)|\(.id)"'"'"' | fzf --read0 --delimiter="|" --wrap --color="pointer:3" --with-nth="{..-2}" --accept-nth=-1) && swaymsg "[con_id=$con_id]" focus'
+bindsym $super+Backslash exec kitty --class=kitty-dialogue --single-instance sh -c 'con_id=$(swaymsg -t get_tree | jq --raw-output0 '"'"'recurse(.floating_nodes[], .nodes[]) | select(has("pid")) | "\(.app_id // .window_properties.class): \(.name)|\(.id)"'"'"' | fzf --read0 --delimiter="|" --wrap --color="pointer:3" --with-nth="{..-2}" --accept-nth=-1) && swaymsg "[con_id=$con_id]" focus'
 
 # change focus
 bindsym $super+h focus left
@@ -290,6 +290,7 @@ for_window [title="Authentication required"] floating enable
 for_window [app_id="blueman-applet"] kill
 for_window [app_id=".*-dialogue"]
 {
+    border pixel 3
     move container to scratchpad
     scratchpad show
 }
