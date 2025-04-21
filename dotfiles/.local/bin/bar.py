@@ -2110,31 +2110,31 @@ async def watch_i3_forever(task_group, bar_event_queue, workspace_switch_queue):
         WORKSPACE_EVENT = 0x80000000
 
     """
-    0. RUN_COMMAND                                                                                                                                             
-        MESSAGE                                                                                                                                                
-        Parses and runs the payload as sway commands                                                                                                           
-                                                                                                                                                               
-        REPLY                                                                                                                                                  
-        An  array  of  objects  corresponding to each command that was parsed.
+    0. RUN_COMMAND
+        MESSAGE
+        Parses and runs the payload as sway commands
+
+        REPLY
+        An array of objects corresponding to each command that was parsed.
         Each object has the property success, which is a boolean indicating
         whether the command was successful. The object may also contain the
         properties error and parse_error. The error property is a human
-        readable error  message  while parse_error is a boolean indicating
+        readable error message while parse_error is a boolean indicating
         whether the reason the command failed was because the command was
         unknown or not able to be parsed.
-                                                                                                                                                               
-        Example Reply:                                                                                                                                         
-            [                                                                                                                                                  
-                 {                                                                                                                                             
-                      "success": true                                                                                                                          
-                 },                                                                                                                                            
-                 {                                                                                                                                             
-                      "success": false,                                                                                                                        
-                      "parse_error": true,                                                                                                                     
-                      "error": "Invalid/unknown command"                                                                                                       
-                 }                                                                                                                                             
-            ]                                                                                                                                                  
-                                                                                                                                                               
+
+        Example Reply:
+            [
+                 {
+                      "success": true
+                 },
+                 {
+                      "success": false,
+                      "parse_error": true,
+                      "error": "Invalid/unknown command"
+                 }
+            ]
+
     1. GET_WORKSPACES
         MESSAGE
         Retrieves the list of workspaces.
