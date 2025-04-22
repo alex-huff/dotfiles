@@ -6,4 +6,4 @@ then
 else
     instance="$1"
 fi
-cd ~/.local/share/FjordLauncher/instances/"$instance"/.minecraft/schematics && fzf | choose
+cd ~/.local/share/FjordLauncher/instances/"$instance"/.minecraft/schematics && fzf --multi | choose
