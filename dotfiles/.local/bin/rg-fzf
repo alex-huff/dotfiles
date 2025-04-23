@@ -48,6 +48,7 @@ fzf --height=${FZF_HEIGHT:-0} \
     --wrap \
     --ansi \
     --tabstop=4 \
+    --highlight-line \
     --with-nth="7.." \
     --query="$(generate_query "$@")" \
     --preview="$preview_command" \
