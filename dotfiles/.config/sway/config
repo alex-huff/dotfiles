@@ -95,8 +95,9 @@ bindsym $super+n exec switch-connection.sh
 bindsym $super+d exec rofi -show drun
 
 # app switcher
+exec app-switcher
 bindsym $super+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-next" }'
-bindsym $super+Shift+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "previous" }'
+bindsym $super+Shift+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-previous" }'
 
 # persistant terminal
 bindsym $super+u exec kitty +kitten panel --single-instance --instance-group=persistant-terminal --toggle-visibility --layer=overlay --focus-policy=exclusive --edge=center --margin-top=200 --margin-bottom=200 --margin-left=400 --margin-right=400 --override=background_image="~/.assets/persistant_terminal_background.png"

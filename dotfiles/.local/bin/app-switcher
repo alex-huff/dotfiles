@@ -42,8 +42,8 @@ async def run_server(task_group, focus_queue, server_initialized_signal, http_se
                     f"{action} action requires a payload",
                 )
                 continue
-            if action == "panel-show-or-next":
-                action = "next" if panel_shown else "panel-show"
+            if action in {"panel-show-or-next", "panel-show-or-previous"}:
+                action = action[14:] if panel_shown else "panel-show"
             match action.split("-"):
                 case ["initialize"]:
                     os.environ["KITTY_PUBLIC_KEY"] = message["payload"]
