@@ -299,6 +299,8 @@ async def main():
         f"--listen=localhost:{FZF_PORT}",
         "--read0",
         "--delimiter=|",
+        "--gap",
+        "--gap-line=─",
         "--wrap",
         "--with-nth={..-2}",
         "--bind=start:reload-sync(:)",
