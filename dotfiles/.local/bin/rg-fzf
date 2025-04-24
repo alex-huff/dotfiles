@@ -48,13 +48,12 @@ fzf --height=${FZF_HEIGHT:-0} \
     --wrap \
     --ansi \
     --tabstop=4 \
-    --highlight-line \
     --with-nth="7.." \
     --query="$(generate_query "$@")" \
     --preview="$preview_command" \
-    --preview-window="top,~1,+{5}+1/2" \
-    --bind="start:reload::" \
-    --bind="enter:reload:rg-fzf-rg-wrapper.py {q}" \
+    --preview-window="right,~1,+{5}+1/2" \
+    --bind="start:reload-sync(:)" \
+    --bind="enter:reload(rg-fzf-rg-wrapper.py {q})" \
     --bind="resize:refresh-preview" \
     --bind="ctrl-space:execute([ {1} = 'match' ] && $decode_field2 | xargs -0 nvim -c 'goto '{3}'|normal zz')" \
     --bind="ctrl-q:execute-silent([ {1} = 'match' ] && $decode_field2 | xargs -0 printf %q | kitty +kitten clipboard)" \
