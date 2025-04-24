@@ -297,6 +297,7 @@ async def main():
     fzf_args = [
         "fzf",
         f"--listen=localhost:{FZF_PORT}",
+        "--scheme=history",
         "--read0",
         "--delimiter=|",
         "--gap",
