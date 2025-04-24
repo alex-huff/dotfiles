@@ -1,0 +1,342 @@
+#!/bin/python3
+
+import asyncio
+import base64
+import itertools
+import json
+import os
+import struct
+from enum import IntEnum
+
+import aiohttp
+
+FZF_PORT = 47426
+SOCKET_DIR = os.environb.get(b"XDG_RUNTIME_DIR", b"/tmp")
+PANEL_SOCKET_PATH = SOCKET_DIR + b"/kitty-app-switcher-panel"
+CONTROL_SOCKET_PATH = SOCKET_DIR + b"/kitty-app-switcher-control"
+
+
+async def run_server(task_group, focus_queue, server_initialized_signal, http_session):
+    async def send_message_to_fzf(message):
+        async with http_session.post(
+            f"http://localhost:{FZF_PORT}", data=message
+        ) as response:
+            assert response.ok
+
+    async def handle_messages_forever():
+        global panel_shown
+
+        def reply(succeeded, payload):
+            reply_future.set_result((succeeded, payload))
+
+        initialized = False
+        while True:
+            reply_future, message = await message_queue.get()
+            action = message["action"]
+            if action != "initialize" and not initialized:
+                reply(False, f"panel is not initialized try again later")
+                continue
+            if action in {"initialize", "focus"} and "payload" not in message:
+                reply(
+                    False,
+                    f"{action} action requires a payload",
+                )
+                continue
+            if action == "panel-show-or-next":
+                action = "next" if panel_shown else "panel-show"
+            match action.split("-"):
+                case ["initialize"]:
+                    os.environ["KITTY_PUBLIC_KEY"] = message["payload"]
+                    initialized = True
+                    reply(False, "initialized")
+                case ["focus"]:
+                    con_id = message["payload"]
+                    if type(con_id) != int:
+                        reply(False, f"payload must be an integer")
+                        continue
+                    focus_future = asyncio.get_running_loop().create_future()
+                    focus_queue.put_nowait((focus_future, con_id))
+                    succeeded = await focus_future
+                    reply(
+                        succeeded,
+                        f"focus container {'succeeded' if succeeded else 'failed'}",
+                    )
+                case ["next" | "previous"]:
+                    await send_message_to_fzf("up" if action == "next" else "down")
+                    reply(True, f"switched to {action} window")
+                case ["panel", sub_action]:
+                    if sub_action not in {"show", "hide"}:
+                        reply(False, f"invalid panel action: {sub_action}")
+                        continue
+                    if (panel_shown and sub_action == "show") or (
+                        not panel_shown and sub_action == "hide"
+                    ):
+                        reply(
+                            True,
+                            f"panel is already {'shown' if panel_shown else 'hidden'}",
+                        )
+                        continue
+                    panel_shown = not panel_shown
+                    if panel_shown:
+                        windows_string = "\0".join(
+                            f"{window['con_class']} - {window['con_title']}|{con_id}"
+                            for con_id, window in sorted(
+                                windows.items(),
+                                key=lambda item: item[1]["last_focus"],
+                                reverse=True,
+                            )
+                        )
+                        windows_bytes = windows_string.encode("utf-8")
+                        windows_base64 = base64.b64encode(windows_bytes).decode("ascii")
+                        await send_message_to_fzf(
+                            f'unbind(focus)+clear-query+first+reload-sync:base64 --decode <<< "{windows_base64}"'
+                        )
+                    kitten_args = [
+                        "kitten",
+                        "@",
+                        b"--to=unix:" + PANEL_SOCKET_PATH,
+                        "resize-os-window",
+                        f"--action={sub_action}",
+                    ]
+                    kitten_process = await asyncio.create_subprocess_exec(*kitten_args)
+                    await kitten_process.wait()
+                    if not panel_shown:
+                        # focused container is 'focused_inactive' if it was
+                        # focused while panel was open so refocus it
+                        focus_future = asyncio.get_running_loop().create_future()
+                        focus_queue.put_nowait((focus_future, None))
+                        _ = await focus_future
+                    reply(True, f"panel {'shown' if panel_shown else 'hidden'}")
+                case sub_actions:
+                    reply(False, f"unknown action: {'-'.join(sub_actions)}")
+
+    async def on_client_connected(reader, writer):
+        message_bytes = await reader.read()
+        succeeded, payload = False, ""
+        try:
+            message = json.loads(message_bytes)
+            if "action" not in message:
+                payload = "message does not contain an action"
+                return
+            reply_future = asyncio.get_running_loop().create_future()
+            message_queue.put_nowait((reply_future, message))
+            succeeded, payload = await reply_future
+        except json.JSONDecodeError:
+            payload = "invalid json"
+        finally:
+            writer.write(
+                json.dumps({"success": succeeded, "payload": payload}).encode("utf-8")
+            )
+            writer.close()
+            await writer.wait_closed()
+
+    try:
+        os.unlink(CONTROL_SOCKET_PATH)
+    except FileNotFoundError:
+        pass
+    message_queue = asyncio.Queue()
+    server = await asyncio.start_unix_server(
+        on_client_connected, path=CONTROL_SOCKET_PATH
+    )
+    server_initialized_signal.set()
+    task_group.create_task(handle_messages_forever())
+    async with server:
+        await server.serve_forever()
+
+
+async def watch_i3_forever(task_group, focus_queue, tree_initialized_signal):
+    class MessageType(IntEnum):
+        RUN_COMMAND = 0
+        SUBSCRIBE = 2
+        GET_TREE = 4
+        WINDOW_EVENT = 0x80000003
+
+    MAGIC_BYTES = b"i3-ipc"
+    MESSAGE_HEADER_STRUCT = struct.Struct(f"={len(MAGIC_BYTES)}sII")
+    CLASS_REPLACEMENTS = {"org.qutebrowser.qutebrowser": "qutebrowser"}
+
+    async def read_message(reader):
+        message_header_bytes = await reader.readexactly(MESSAGE_HEADER_STRUCT.size)
+        magic_bytes, payload_length, payload_type = MESSAGE_HEADER_STRUCT.unpack(
+            message_header_bytes
+        )
+        assert magic_bytes == MAGIC_BYTES
+        payload_bytes = await reader.readexactly(payload_length)
+        return payload_type, json.loads(payload_bytes.decode("utf-8"))
+
+    async def send_message(writer, payload_type, payload=b""):
+        writer.write(
+            MESSAGE_HEADER_STRUCT.pack(MAGIC_BYTES, len(payload), payload_type)
+        )
+        writer.write(payload)
+        await writer.drain()
+
+    async def subscribe(reader, writer, event_types):
+        event_types_json = json.dumps(event_types)
+        await send_message(
+            writer, MessageType.SUBSCRIBE, event_types_json.encode("utf-8")
+        )
+        payload_type, response = await read_message(reader)
+        assert payload_type == MessageType.SUBSCRIBE
+        assert response["success"]
+
+    def recurse_tree(node):
+        if "pid" in node:
+            con_id = node["id"]
+            con_data = get_con_data_from_node(node)
+            yield con_id, con_data
+            return
+        for child in itertools.chain(node["nodes"], node["floating_nodes"]):
+            yield from recurse_tree(child)
+
+    def get_con_data_from_node(node):
+        con_title = node["name"]
+        con_class = (
+            node["app_id"] if "app_id" in node else node["window_properties"]["class"]
+        )
+        return {
+            "con_title": con_title,
+            "con_class": process_class(con_class),
+            "last_focus": 0,
+        }
+
+    def process_class(con_class):
+        return CLASS_REPLACEMENTS.get(con_class, con_class)
+
+    async def focus_containers_forever():
+        nonlocal command_future
+        while True:
+            focus_future, con_id = await focus_queue.get()
+            command_future = asyncio.get_running_loop().create_future()
+            if con_id == None:
+                con_id = "__focused__"
+            i3_command = f"[con_id={con_id}] focus"
+            await send_message(
+                writer, MessageType.RUN_COMMAND, i3_command.encode("utf-8")
+            )
+            succeeded = await command_future
+            focus_future.set_result(succeeded)
+
+    reader, writer = await asyncio.open_unix_connection(path=os.environ["I3SOCK"])
+    command_future = None
+    relevant_events = ["window"]
+    await subscribe(reader, writer, relevant_events)
+    await send_message(writer, MessageType.GET_TREE)
+    task_group.create_task(focus_containers_forever())
+    tree_initialized = False
+    focus_counter = 0
+    while True:
+        payload_type, response = await read_message(reader)
+        match payload_type:
+            case MessageType.RUN_COMMAND:
+                command_future.set_result(response[0]["success"])
+            case MessageType.GET_TREE:
+                global windows
+                windows = {
+                    con_id: con_data for con_id, con_data in recurse_tree(response)
+                }
+                tree_initialized = True
+                tree_initialized_signal.set()
+            case MessageType.WINDOW_EVENT:
+                if not tree_initialized:
+                    continue
+                container = response["container"]
+                if "pid" not in container:
+                    continue
+                con_id = container["id"]
+                con_data = get_con_data_from_node(container)
+                change = response["change"]
+                if change == "new":
+                    windows[con_id] = con_data
+                    continue
+                if con_id not in windows:
+                    continue
+                match response["change"]:
+                    case "close":
+                        del windows[con_id]
+                    case "focus":
+                        if panel_shown:
+                            # don't track focus changes caused by app-switcher
+                            continue
+                        windows[con_id]["last_focus"] = focus_counter
+                        focus_counter += 1
+                    case "title":
+                        windows[con_id]["con_title"] = con_data["con_title"]
+
+
+async def main():
+    panel_args = [
+        "kitty",
+        "+kitten",
+        "panel",
+        "--single-instance",
+        "--instance-group=app-switcher",
+        "--start-as-hidden",
+        "--layer=overlay",
+        "--focus-policy=exclusive",
+        "--edge=center",
+        "--margin-top=200",
+        "--margin-bottom=200",
+        "--margin-left=1400",
+        "--margin-right=15",
+        f"--override=background_image={os.path.expanduser('~/.assets/app_switcher_background.png')}",
+        b"--listen-on=unix:" + PANEL_SOCKET_PATH,
+    ]
+    # base64 encode 'CONTROL_SOCKET_PATH' so that it is safe for fzf to read
+    control_message_cmd_template = f'socat - UNIX-CONNECT:"$(base64 --decode <<< "{base64.b64encode(CONTROL_SOCKET_PATH).decode("ascii")}")" <<< %s'
+    quoted_initialized_message = (
+        """'{ "action": "initialize", "payload": "'"$KITTY_PUBLIC_KEY"'" }'"""
+    )
+    initialize_message_cmd = control_message_cmd_template % quoted_initialized_message
+    quoted_hide_app_switcher_message = """'{ "action": "panel-hide" }'"""
+    hide_app_switcher_message_cmd = (
+        control_message_cmd_template % quoted_hide_app_switcher_message
+    )
+    quoted_focus_message = """'{ "action": "focus", "payload": {-1} }'"""
+    focus_message_cmd = control_message_cmd_template % quoted_focus_message
+    fzf_args = [
+        "fzf",
+        f"--listen=localhost:{FZF_PORT}",
+        "--read0",
+        "--delimiter=|",
+        "--wrap",
+        "--with-nth={..-2}",
+        "--bind=start:reload-sync(:)",
+        f"--bind=start:+execute-silent:{initialize_message_cmd}",
+        f"--bind=focus:execute-silent:{focus_message_cmd}",
+        f"--bind=load:execute-silent:{focus_message_cmd}",
+        f"--bind=load:+rebind(focus)",
+        "--bind=ctrl-d:delete-char",
+        "--bind=ctrl-c,ctrl-g,ctrl-q:",
+        f"--bind=esc,enter:execute-silent:{hide_app_switcher_message_cmd}",
+    ]
+    async with (
+        aiohttp.ClientSession() as http_session,
+        asyncio.TaskGroup() as task_group,
+    ):
+        tree_initialized_signal = asyncio.Event()
+        server_initialized_signal = asyncio.Event()
+        focus_queue = asyncio.Queue()
+        task_group.create_task(
+            watch_i3_forever(task_group, focus_queue, tree_initialized_signal)
+        )
+        # wait till we receive i3 tree so that we can provide data to fzf
+        await tree_initialized_signal.wait()
+
+        task_group.create_task(
+            run_server(task_group, focus_queue, server_initialized_signal, http_session)
+        )
+        # wait till server starts listening so fzf can send 'initialize'
+        # message on start
+        await server_initialized_signal.wait()
+
+        await asyncio.create_subprocess_exec(*panel_args, *fzf_args)
+
+
+panel_shown = False
+windows = None
+
+try:
+    asyncio.run(main())
+except KeyboardInterrupt:
+    ...

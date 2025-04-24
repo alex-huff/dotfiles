@@ -3,21 +3,43 @@
 import os
 from PIL import Image
 
+
+def generate_background(background_name, background_width, background_height):
+    bg = Image.new(
+        "RGB",
+        size=(background_width, background_height),
+        color=background_color,
+    )
+    for start_y in (0, background_height - border_width):
+        for y in range(start_y, start_y + border_width):
+            for x in range(0, background_width):
+                bg.putpixel((x, y), border_color)
+    for start_x in (0, background_width - border_width):
+        for x in range(start_x, start_x + border_width):
+            for y in range(1, background_height - 1):
+                bg.putpixel((x, y), border_color)
+    bg.save(os.path.expanduser(f"~/.assets/{background_name}_background.png"))
+
+
 display_width = 1920
 display_height = 1080
-horizontal_margin = 400
-vertical_margin = 200
-width, height = display_width - 2 * horizontal_margin, display_height - 2 * vertical_margin
+app_switcher_left_margin = 1400
+app_switcher_right_margin = 15
+app_switcher_vertical_margin = 200
+app_switcher_width, app_switcher_height = (
+    display_width - (app_switcher_left_margin + app_switcher_right_margin),
+    display_height - 2 * app_switcher_vertical_margin,
+)
+persistant_terminal_horizontal_margin = 400
+persistant_terminal_vertical_margin = 200
+persistant_terminal_width, persistant_terminal_height = (
+    display_width - 2 * persistant_terminal_horizontal_margin,
+    display_height - 2 * persistant_terminal_vertical_margin,
+)
 background_color = (249, 245, 215)
 border_color = (40, 40, 40)
 border_width = 3
-bg = Image.new("RGB", size=(width, height), color=background_color)
-for start_y in (0, height - border_width):
-    for y in range(start_y, start_y + border_width):
-        for x in range(0, width):
-            bg.putpixel((x, y), border_color)
-for start_x in (0, width - border_width):
-    for x in range(start_x, start_x + border_width):
-        for y in range(1, height - 1):
-            bg.putpixel((x, y), border_color)
-bg.save(os.path.expanduser("~/.assets/app_selector_background.png"))
+generate_background("app_switcher", app_switcher_width, app_switcher_height)
+generate_background(
+    "persistant_terminal", persistant_terminal_width, persistant_terminal_height
+)
