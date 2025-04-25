@@ -98,6 +98,9 @@ async def run_server(task_group, focus_queue, server_initialized_signal, http_se
                             f"panel is already {'shown' if panel_shown else 'hidden'}",
                         )
                         continue
+                    if sub_action == "show" and not windows:
+                        reply(False, f"no windows open try again later")
+                        continue
                     panel_shown = not panel_shown
                     if panel_shown:
                         windows_string = "\0".join(
