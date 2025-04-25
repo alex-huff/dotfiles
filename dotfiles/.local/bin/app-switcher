@@ -17,6 +17,13 @@ CONTROL_SOCKET_PATH = SOCKET_DIR + b"/kitty-app-switcher-control"
 
 
 async def run_server(task_group, focus_queue, server_initialized_signal, http_session):
+    kitten_args = [
+        "kitten",
+        "@",
+        b"--to=unix:" + PANEL_SOCKET_PATH,
+        "resize-os-window",
+    ]
+
     async def send_message_to_fzf(message):
         async with http_session.post(
             f"http://localhost:{FZF_PORT}", data=message
@@ -29,7 +36,14 @@ async def run_server(task_group, focus_queue, server_initialized_signal, http_se
         def reply(succeeded, payload):
             reply_future.set_result((succeeded, payload))
 
+        async def resize_panel(resize_action):
+            kitten_process = await asyncio.create_subprocess_exec(
+                *kitten_args, f"--action={resize_action}"
+            )
+            await kitten_process.wait()
+
         initialized = False
+        panel_show_in_progress = False
         while True:
             reply_future, message = await message_queue.get()
             action = message["action"]
@@ -48,7 +62,12 @@ async def run_server(task_group, focus_queue, server_initialized_signal, http_se
                 case ["initialize"]:
                     os.environ["KITTY_PUBLIC_KEY"] = message["payload"]
                     initialized = True
-                    reply(False, "initialized")
+                    reply(True, None)
+                case ["fzf", "loaded"]:
+                    if panel_show_in_progress:
+                        await resize_panel("show")
+                        panel_show_in_progress = False
+                    reply(True, None)
                 case ["focus"]:
                     con_id = message["payload"]
                     if type(con_id) != int:
@@ -67,6 +86,9 @@ async def run_server(task_group, focus_queue, server_initialized_signal, http_se
                 case ["panel", sub_action]:
                     if sub_action not in {"show", "hide"}:
                         reply(False, f"invalid panel action: {sub_action}")
+                        continue
+                    if panel_show_in_progress:
+                        reply(False, f"panel show in progress try again later")
                         continue
                     if (panel_shown and sub_action == "show") or (
                         not panel_shown and sub_action == "hide"
@@ -91,42 +113,50 @@ async def run_server(task_group, focus_queue, server_initialized_signal, http_se
                         await send_message_to_fzf(
                             f'unbind(focus)+clear-query+first+reload-sync:base64 --decode <<< "{windows_base64}"'
                         )
-                    kitten_args = [
-                        "kitten",
-                        "@",
-                        b"--to=unix:" + PANEL_SOCKET_PATH,
-                        "resize-os-window",
-                        f"--action={sub_action}",
-                    ]
-                    kitten_process = await asyncio.create_subprocess_exec(*kitten_args)
-                    await kitten_process.wait()
-                    if not panel_shown:
+                        panel_show_in_progress = True
+                    else:
+                        await resize_panel(sub_action)
                         # focused container is 'focused_inactive' if it was
                         # focused while panel was open so refocus it
                         focus_future = asyncio.get_running_loop().create_future()
                         focus_queue.put_nowait((focus_future, None))
                         _ = await focus_future
-                    reply(True, f"panel {'shown' if panel_shown else 'hidden'}")
-                case sub_actions:
-                    reply(False, f"unknown action: {'-'.join(sub_actions)}")
+                    reply(True, "showing panel" if panel_shown else "panel hidden")
+                case _:
+                    reply(False, f"unknown action: {action}")
 
     async def on_client_connected(reader, writer):
         message_bytes = await reader.read()
-        succeeded, payload = False, ""
+        responses = []
         try:
-            message = json.loads(message_bytes)
-            if "action" not in message:
-                payload = "message does not contain an action"
-                return
-            reply_future = asyncio.get_running_loop().create_future()
-            message_queue.put_nowait((reply_future, message))
-            succeeded, payload = await reply_future
+            messages = json.loads(message_bytes)
+            if type(messages) is not list:
+                messages = [messages]
+            futures = []
+            for message in messages:
+                reply_future = asyncio.get_running_loop().create_future()
+                futures.append(reply_future)
+                if type(message) is not dict:
+                    reply_future.set_result((False, "message must be a JSON object"))
+                    continue
+                if "action" not in message:
+                    reply_future.set_result((False, "message must contain an action"))
+                    continue
+                message_queue.put_nowait((reply_future, message))
+            for future in futures:
+                responses.append(await future)
         except json.JSONDecodeError:
-            payload = "invalid json"
+            responses.append((False, "invalid json"))
         finally:
-            writer.write(
-                json.dumps({"success": succeeded, "payload": payload}).encode("utf-8")
-            )
+            response_object = [
+                {"success": succeeded, "payload": payload}
+                for succeeded, payload in responses
+            ]
+            if not response_object:
+                response_object = None
+            elif len(response_object) == 1:
+                response_object = response_object[0]
+            writer.write(json.dumps(response_object).encode("utf-8"))
             writer.close()
             await writer.wait_closed()
 
@@ -285,15 +315,20 @@ async def main():
     # base64 encode 'CONTROL_SOCKET_PATH' so that it is safe for fzf to read
     control_message_cmd_template = f'socat - UNIX-CONNECT:"$(base64 --decode <<< "{base64.b64encode(CONTROL_SOCKET_PATH).decode("ascii")}")" <<< %s'
     quoted_initialized_message = (
-        """'{ "action": "initialize", "payload": "'"$KITTY_PUBLIC_KEY"'" }'"""
+        """'{"action":"initialize","payload":"'"$KITTY_PUBLIC_KEY"'"}'"""
     )
     initialize_message_cmd = control_message_cmd_template % quoted_initialized_message
-    quoted_hide_app_switcher_message = """'{ "action": "panel-hide" }'"""
+    quoted_hide_app_switcher_message = """'{"action":"panel-hide"}'"""
     hide_app_switcher_message_cmd = (
         control_message_cmd_template % quoted_hide_app_switcher_message
     )
-    quoted_focus_message = """'{ "action": "focus", "payload": {-1} }'"""
+    quoted_focus_message = """'{"action":"focus","payload":{-1}}'"""
     focus_message_cmd = control_message_cmd_template % quoted_focus_message
+    quoted_fzf_loaded_message = """'{"action":"fzf-loaded"}'"""
+    quoted_fzf_on_load_message = (
+        f"'['{quoted_focus_message},{quoted_fzf_loaded_message}']'"
+    )
+    fzf_on_load_message_cmd = control_message_cmd_template % quoted_fzf_on_load_message
     fzf_args = [
         "fzf",
         f"--listen=localhost:{FZF_PORT}",
@@ -307,7 +342,7 @@ async def main():
         "--bind=start:reload-sync(:)",
         f"--bind=start:+execute-silent:{initialize_message_cmd}",
         f"--bind=focus:execute-silent:{focus_message_cmd}",
-        f"--bind=load:execute-silent:{focus_message_cmd}",
+        f"--bind=load:execute-silent:{fzf_on_load_message_cmd}",
         f"--bind=load:+rebind(focus)",
         "--bind=ctrl-d:delete-char",
         "--bind=ctrl-c,ctrl-g,ctrl-q:",
