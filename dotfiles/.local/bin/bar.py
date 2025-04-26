@@ -2320,7 +2320,6 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     SEPARATOR = "┃"
     THIN_LEFT_SEPARATOR = "▏"
     THIN_RIGHT_SEPARATOR = "▕"
-    SEPARATOR_BYTES = SEPARATOR.encode("utf-8")
     THIN_LEFT_SEPARATOR_BYTES = THIN_LEFT_SEPARATOR.encode("utf-8")
     THIN_RIGHT_SEPARATOR_BYTES = THIN_RIGHT_SEPARATOR.encode("utf-8")
     VERTICAL_THIN_LEFT_BYTES = "┐".encode("utf-8")
