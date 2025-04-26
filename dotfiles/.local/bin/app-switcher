@@ -114,7 +114,7 @@ async def run_server(task_group, focus_queue, server_initialized_signal, http_se
                         windows_bytes = windows_string.encode("utf-8")
                         windows_base64 = base64.b64encode(windows_bytes).decode("ascii")
                         await send_message_to_fzf(
-                            f'unbind(focus)+clear-query+first+reload-sync:base64 --decode <<< "{windows_base64}"'
+                            f'disable-search+unbind(focus)+clear-query+first+reload-sync:base64 --decode <<< "{windows_base64}"'
                         )
                         panel_show_in_progress = True
                     else:
@@ -346,7 +346,8 @@ async def main():
         f"--bind=start:+execute-silent:{initialize_message_cmd}",
         f"--bind=focus:execute-silent:{focus_message_cmd}",
         f"--bind=load:execute-silent:{fzf_on_load_message_cmd}",
-        f"--bind=load:+rebind(focus)",
+        "--bind=load:+enable-search",
+        "--bind=load:+rebind(focus)",
         "--bind=ctrl-d:delete-char",
         "--bind=ctrl-c,ctrl-g,ctrl-q:",
         f"--bind=esc,enter:execute-silent:{hide_app_switcher_message_cmd}",
