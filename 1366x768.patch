@@ -1,0 +1,69 @@
+diff --git a/dotfiles/.config/sway/config b/dotfiles/.config/sway/config
+index f10d60a..3f01556 100644
+--- a/dotfiles/.config/sway/config
++++ b/dotfiles/.config/sway/config
+@@ -100,7 +100,7 @@ bindsym $super+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app
+ bindsym $super+Shift+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-previous" }'
+ 
+ # persistant terminal
+-bindsym $super+u exec kitty +kitten panel --single-instance --instance-group=persistant-terminal --toggle-visibility --layer=overlay --focus-policy=exclusive --edge=center --margin-top=200 --margin-bottom=200 --margin-left=400 --margin-right=400 --override=background_image="~/.assets/persistant_terminal_background.png"
++bindsym $super+u exec kitty +kitten panel --single-instance --instance-group=persistant-terminal --toggle-visibility --layer=overlay --focus-policy=exclusive --edge=center --margin-top=150 --margin-bottom=150 --margin-left=250 --margin-right=250 --override=background_image="~/.assets/persistant_terminal_background.png"
+ 
+ # change focus
+ bindsym $super+h focus left
+diff --git a/dotfiles/.local/bin/app-switcher b/dotfiles/.local/bin/app-switcher
+index 6e46827..c436009 100755
+--- a/dotfiles/.local/bin/app-switcher
++++ b/dotfiles/.local/bin/app-switcher
+@@ -308,9 +308,9 @@ async def main():
+         "--layer=overlay",
+         "--focus-policy=exclusive",
+         "--edge=center",
+-        "--margin-top=200",
+-        "--margin-bottom=200",
+-        "--margin-left=1400",
++        "--margin-top=100",
++        "--margin-bottom=100",
++        "--margin-left=900",
+         "--margin-right=15",
+         f"--override=background_image={os.path.expanduser('~/.assets/app_switcher_background.png')}",
+         b"--listen-on=unix:" + PANEL_SOCKET_PATH,
+diff --git a/dotfiles/.local/bin/generate-kitty-panel-background b/dotfiles/.local/bin/generate-kitty-panel-background
+index f631188..3d65db2 100755
+--- a/dotfiles/.local/bin/generate-kitty-panel-background
++++ b/dotfiles/.local/bin/generate-kitty-panel-background
+@@ -21,17 +21,17 @@ def generate_background(background_name, background_width, background_height):
+     bg.save(os.path.expanduser(f"~/.assets/{background_name}_background.png"))
+ 
+ 
+-display_width = 1920
+-display_height = 1080
+-app_switcher_left_margin = 1400
++display_width = 1366
++display_height = 768
++app_switcher_left_margin = 900
+ app_switcher_right_margin = 15
+-app_switcher_vertical_margin = 200
++app_switcher_vertical_margin = 100
+ app_switcher_width, app_switcher_height = (
+     display_width - (app_switcher_left_margin + app_switcher_right_margin),
+     display_height - 2 * app_switcher_vertical_margin,
+ )
+-persistant_terminal_horizontal_margin = 400
+-persistant_terminal_vertical_margin = 200
++persistant_terminal_horizontal_margin = 250
++persistant_terminal_vertical_margin = 150
+ persistant_terminal_width, persistant_terminal_height = (
+     display_width - 2 * persistant_terminal_horizontal_margin,
+     display_height - 2 * persistant_terminal_vertical_margin,
+diff --git a/dotfiles/.local/bin/kitty-panel-2 b/dotfiles/.local/bin/kitty-panel-2
+index b9669e7..d164e34 100755
+--- a/dotfiles/.local/bin/kitty-panel-2
++++ b/dotfiles/.local/bin/kitty-panel-2
+@@ -4,5 +4,5 @@ kitty +kitten panel \
+     --edge=bottom \
+     --override=window_padding_width=2 \
+     --override=background=#282828 \
+-    --override=font_size=15 \
++    --override=font_size=14 \
+     bar.py
