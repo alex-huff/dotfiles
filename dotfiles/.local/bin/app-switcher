@@ -24,17 +24,17 @@ async def run_server(task_group, focus_queue, server_initialized_signal, http_se
         "resize-os-window",
     ]
 
-    async def send_message_to_fzf(message):
-        async with http_session.post(
-            f"http://localhost:{FZF_PORT}", data=message
-        ) as response:
-            assert response.ok
-
     async def handle_messages_forever():
         global panel_shown
 
         def reply(succeeded, payload):
             reply_future.set_result((succeeded, payload))
+
+        async def send_message_to_fzf(message):
+            async with http_session.post(
+                f"http://localhost:{FZF_PORT}", data=message
+            ) as response:
+                assert response.ok
 
         async def resize_panel(resize_action):
             kitten_process = await asyncio.create_subprocess_exec(
