@@ -288,7 +288,7 @@ client.focused_inactive #282828 #bdae93 #282828 #282828 #282828
 # include device specific configuration and overrides
 include device/*
 # $main_display should be defined in device/*
-# output $main_display bg ~/.assets/noise_background.png tile #bdae93
+# output $main_display bg ~/.assets/noise.png tile #bdae93
 
 # rules
 for_window [title="Authentication required"] floating enable
