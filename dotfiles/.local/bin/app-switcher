@@ -8,21 +8,20 @@ import os
 import struct
 from enum import IntEnum
 
-import aiohttp
-
 FZF_PORT = 47426
 SOCKET_DIR = os.environb.get(b"XDG_RUNTIME_DIR", b"/tmp")
 PANEL_SOCKET_PATH = SOCKET_DIR + b"/kitty-app-switcher-panel"
 CONTROL_SOCKET_PATH = SOCKET_DIR + b"/kitty-app-switcher-control"
 
 
-async def run_server(task_group, focus_queue, server_initialized_signal, http_session):
+async def run_server(task_group, focus_queue, server_initialized_signal):
     kitten_args = [
         "kitten",
         "@",
         b"--to=unix:" + PANEL_SOCKET_PATH,
         "resize-os-window",
     ]
+    curl_args = ["curl", f"localhost:{FZF_PORT}", "--data"]
 
     async def handle_messages_forever():
         global panel_shown
@@ -31,10 +30,9 @@ async def run_server(task_group, focus_queue, server_initialized_signal, http_se
             reply_future.set_result((succeeded, payload))
 
         async def send_message_to_fzf(message):
-            async with http_session.post(
-                f"http://localhost:{FZF_PORT}", data=message
-            ) as response:
-                assert response.ok
+            curl_process = await asyncio.create_subprocess_exec(*curl_args, message)
+            return_code = await curl_process.wait()
+            assert return_code == 0
 
         async def resize_panel(resize_action):
             kitten_process = await asyncio.create_subprocess_exec(
@@ -150,31 +148,26 @@ async def run_server(task_group, focus_queue, server_initialized_signal, http_se
                 responses.append(await future)
         except json.JSONDecodeError:
             responses.append((False, "invalid json"))
-        finally:
-            response_object = [
-                {"success": succeeded, "payload": payload}
-                for succeeded, payload in responses
-            ]
-            if not response_object:
-                response_object = None
-            elif len(response_object) == 1:
-                response_object = response_object[0]
-            writer.write(json.dumps(response_object).encode("utf-8"))
-            writer.close()
-            await writer.wait_closed()
+        response_object = [
+            {"success": succeeded, "payload": payload}
+            for succeeded, payload in responses
+        ]
+        if not response_object:
+            response_object = None
+        elif len(response_object) == 1:
+            response_object = response_object[0]
+        writer.write(json.dumps(response_object).encode("utf-8"))
+        writer.close()
+        await writer.wait_closed()
 
     try:
         os.unlink(CONTROL_SOCKET_PATH)
     except FileNotFoundError:
         pass
     message_queue = asyncio.Queue()
-    server = await asyncio.start_unix_server(
-        on_client_connected, path=CONTROL_SOCKET_PATH
-    )
+    await asyncio.start_unix_server(on_client_connected, path=CONTROL_SOCKET_PATH)
     server_initialized_signal.set()
     task_group.create_task(handle_messages_forever())
-    async with server:
-        await server.serve_forever()
 
 
 async def watch_i3_forever(task_group, focus_queue, tree_initialized_signal):
@@ -352,10 +345,7 @@ async def main():
         "--bind=ctrl-c,ctrl-g,ctrl-q:",
         f"--bind=esc,enter:execute-silent:{hide_app_switcher_message_cmd}",
     ]
-    async with (
-        aiohttp.ClientSession() as http_session,
-        asyncio.TaskGroup() as task_group,
-    ):
+    async with asyncio.TaskGroup() as task_group:
         tree_initialized_signal = asyncio.Event()
         server_initialized_signal = asyncio.Event()
         focus_queue = asyncio.Queue()
@@ -366,7 +356,7 @@ async def main():
         await tree_initialized_signal.wait()
 
         task_group.create_task(
-            run_server(task_group, focus_queue, server_initialized_signal, http_session)
+            run_server(task_group, focus_queue, server_initialized_signal)
         )
         # wait till server starts listening so fzf can send 'initialize'
         # message on start
