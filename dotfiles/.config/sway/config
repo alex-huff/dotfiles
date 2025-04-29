@@ -100,7 +100,7 @@ bindsym $super+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app
 bindsym $super+Shift+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-previous" }'
 
 # persistant terminal
-bindsym $super+u exec kitty +kitten panel --single-instance --instance-group=persistant-terminal --toggle-visibility --layer=overlay --focus-policy=exclusive --edge=center --margin-top=200 --margin-bottom=200 --margin-left=400 --margin-right=400 --override=background_image="~/.assets/persistant_terminal_background.png"
+bindsym $super+u exec kitten panel --single-instance --instance-group=persistant-terminal --toggle-visibility --layer=overlay --focus-policy=exclusive --edge=center --margin-top=200 --margin-bottom=200 --margin-left=400 --margin-right=400 --override=background_image="~/.assets/persistant_terminal_background.png"
 
 # change focus
 bindsym $super+h focus left

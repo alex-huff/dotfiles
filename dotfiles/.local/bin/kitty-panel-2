@@ -1,6 +1,6 @@
 #!/bin/sh
 
-kitty +kitten panel \
+kitten panel \
     --edge=bottom \
     --override=window_padding_width=2 \
     --override=background=#282828 \

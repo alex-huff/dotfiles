@@ -292,8 +292,7 @@ async def watch_i3_forever(task_group, focus_queue, tree_initialized_signal):
 
 async def main():
     panel_args = [
-        "kitty",
-        "+kitten",
+        "kitten",
         "panel",
         "--single-instance",
         "--instance-group=app-switcher",
