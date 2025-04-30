@@ -1,5 +1,5 @@
 diff --git a/dotfiles/.config/sway/config b/dotfiles/.config/sway/config
-index f10d60a..3f01556 100644
+index 4ebd1e0..f5e7da3 100644
 --- a/dotfiles/.config/sway/config
 +++ b/dotfiles/.config/sway/config
 @@ -100,7 +100,7 @@ bindsym $super+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app
@@ -12,10 +12,10 @@ index f10d60a..3f01556 100644
  # change focus
  bindsym $super+h focus left
 diff --git a/dotfiles/.local/bin/app-switcher b/dotfiles/.local/bin/app-switcher
-index 6e46827..c436009 100755
+index 66a86c7..f9062f2 100755
 --- a/dotfiles/.local/bin/app-switcher
 +++ b/dotfiles/.local/bin/app-switcher
-@@ -308,9 +308,9 @@ async def main():
+@@ -300,9 +300,9 @@ async def main():
          "--layer=overlay",
          "--focus-policy=exclusive",
          "--edge=center",
@@ -56,11 +56,26 @@ index f631188..3d65db2 100755
  persistant_terminal_width, persistant_terminal_height = (
      display_width - 2 * persistant_terminal_horizontal_margin,
      display_height - 2 * persistant_terminal_vertical_margin,
+diff --git a/dotfiles/.local/bin/generate-noise-background b/dotfiles/.local/bin/generate-noise-background
+index 3b66509..3fdd945 100755
+--- a/dotfiles/.local/bin/generate-noise-background
++++ b/dotfiles/.local/bin/generate-noise-background
+@@ -3,8 +3,8 @@
+ import os
+ from PIL import Image
+ 
+-width = 1920
+-height = 1080
++width = 1366
++height = 768
+ border_width = 3
+ tiled_width = width - border_width * 2
+ tiled_height = height - border_width * 2
 diff --git a/dotfiles/.local/bin/kitty-panel-2 b/dotfiles/.local/bin/kitty-panel-2
-index b9669e7..d164e34 100755
+index bb1786d..926dd78 100755
 --- a/dotfiles/.local/bin/kitty-panel-2
 +++ b/dotfiles/.local/bin/kitty-panel-2
-@@ -4,5 +4,5 @@ kitty +kitten panel \
+@@ -4,5 +4,5 @@ kitten panel \
      --edge=bottom \
      --override=window_padding_width=2 \
      --override=background=#282828 \
