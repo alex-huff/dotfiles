@@ -4,7 +4,9 @@ import os
 from PIL import Image
 
 
-def generate_background(background_name, background_width, background_height):
+def generate_background(
+    background_name, background_width, background_height, background_color
+):
     bg = Image.new(
         "RGB",
         size=(background_width, background_height),
@@ -30,16 +32,25 @@ app_switcher_width, app_switcher_height = (
     display_width - (app_switcher_left_margin + app_switcher_right_margin),
     display_height - 2 * app_switcher_vertical_margin,
 )
+app_switcher_background_color = (251, 241, 199)
 persistant_terminal_horizontal_margin = 400
 persistant_terminal_vertical_margin = 200
 persistant_terminal_width, persistant_terminal_height = (
     display_width - 2 * persistant_terminal_horizontal_margin,
     display_height - 2 * persistant_terminal_vertical_margin,
 )
-background_color = (249, 245, 215)
+persistant_terminal_background_color = (249, 245, 215)
 border_color = (40, 40, 40)
 border_width = 3
-generate_background("app_switcher", app_switcher_width, app_switcher_height)
 generate_background(
-    "persistant_terminal", persistant_terminal_width, persistant_terminal_height
+    "app_switcher",
+    app_switcher_width,
+    app_switcher_height,
+    app_switcher_background_color,
+)
+generate_background(
+    "persistant_terminal",
+    persistant_terminal_width,
+    persistant_terminal_height,
+    persistant_terminal_background_color,
 )
