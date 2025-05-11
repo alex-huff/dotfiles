@@ -5,20 +5,31 @@ from PIL import Image
 
 
 def generate_background(
-    background_name, background_width, background_height, background_color
+    background_name, background_width, background_height, background_color, border_width
 ):
     bg = Image.new(
         "RGB",
         size=(background_width, background_height),
         color=background_color,
     )
-    for start_y in (0, background_height - border_width):
-        for y in range(start_y, start_y + border_width):
-            for x in range(0, background_width):
-                bg.putpixel((x, y), border_color)
-    for start_x in (0, background_width - border_width):
-        for x in range(start_x, start_x + border_width):
-            for y in range(1, background_height - 1):
+    match border_width:
+        case tuple():
+            top_border, bottom_border, left_border, right_border = border_width
+        case int():
+            top_border = bottom_border = left_border = right_border = border_width
+        case _:
+            assert False
+    rects = {
+        (0, background_width, 0, top_border),
+        (0, background_width, background_height - bottom_border, background_height),
+        (0, left_border, 0, background_height),
+        (background_width - right_border, background_width, 0, background_height),
+    }
+    for start_x, end_x, start_y, end_y in rects:
+        if start_x == end_x or start_y == end_y:
+            continue
+        for x in range(start_x, end_x):
+            for y in range(start_y, end_y):
                 bg.putpixel((x, y), border_color)
     bg.save(os.path.expanduser(f"~/.assets/{background_name}_background.png"))
 
@@ -40,17 +51,28 @@ persistant_terminal_width, persistant_terminal_height = (
     display_height - 2 * persistant_terminal_vertical_margin,
 )
 persistant_terminal_background_color = (249, 245, 215)
+bar_width = display_width
+bar_height = 25
+bar_background_color = app_switcher_background_color
 border_color = (40, 40, 40)
-border_width = 3
 generate_background(
     "app_switcher",
     app_switcher_width,
     app_switcher_height,
     app_switcher_background_color,
+    3,
 )
 generate_background(
     "persistant_terminal",
     persistant_terminal_width,
     persistant_terminal_height,
     persistant_terminal_background_color,
+    3,
+)
+generate_background(
+    "bar",
+    bar_width,
+    bar_height,
+    bar_background_color,
+    (2, 0, 0, 0),
 )

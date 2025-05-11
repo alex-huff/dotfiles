@@ -2317,7 +2317,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
 
     SECONDS_IN_MINUTE = 60
     SECONDS_IN_HOUR = 60 * 60
-    SEPARATOR = "┃"
+    SEPARATOR = "│"
     THIN_LEFT_SEPARATOR = "▏"
     THIN_RIGHT_SEPARATOR = "▕"
     THIN_LEFT_SEPARATOR_BYTES = THIN_LEFT_SEPARATOR.encode("utf-8")
