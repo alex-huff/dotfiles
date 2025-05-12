@@ -128,6 +128,7 @@ with config.pattern("*://discord.com") as discord_c:
 # theme
 full_white = "#ffffff"
 full_black = "#000000"
+alt_white = "#f2e5bc"
 base00 = "#fbf1c7"
 base01 = "#ebdbb2"
 base02 = "#d5c4a1"
@@ -145,7 +146,7 @@ base0D = "#458588"
 base0E = "#8f3f71"
 base0F = "#d65d0e"
 c.colors.completion.fg = base05
-c.colors.completion.odd.bg = base01
+c.colors.completion.odd.bg = alt_white
 c.colors.completion.even.bg = base00
 c.colors.completion.category.fg = base0A
 c.colors.completion.category.bg = base00
@@ -219,7 +220,7 @@ c.colors.tabs.indicator.start = base0D
 c.colors.tabs.indicator.stop = base0C
 c.colors.tabs.indicator.error = base08
 c.colors.tabs.odd.fg = base05
-c.colors.tabs.odd.bg = base01
+c.colors.tabs.odd.bg = alt_white
 c.colors.tabs.even.fg = base05
 c.colors.tabs.even.bg = base00
 c.colors.tabs.pinned.even.bg = base0C

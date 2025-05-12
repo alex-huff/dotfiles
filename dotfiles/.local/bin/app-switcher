@@ -306,6 +306,7 @@ async def main():
         "--margin-right=15",
         "--override=font_size=14",
         f"--override=background_image={os.path.expanduser('~/.assets/app_switcher_background.png')}",
+        "--override=window_padding_width=8",
         b"--listen-on=unix:" + PANEL_SOCKET_PATH,
     ]
     # base64 encode 'CONTROL_SOCKET_PATH' so that it is safe for fzf to read

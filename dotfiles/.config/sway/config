@@ -100,7 +100,7 @@ bindsym $super+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app
 bindsym $super+Shift+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-previous" }'
 
 # persistant terminal
-bindsym $super+u exec kitten panel --single-instance --instance-group=persistant-terminal --toggle-visibility --layer=overlay --focus-policy=exclusive --edge=center --margin-top=200 --margin-bottom=200 --margin-left=400 --margin-right=400 --override=background_image="~/.assets/persistant_terminal_background.png"
+bindsym $super+u exec kitten panel --single-instance --instance-group=persistant-terminal --toggle-visibility --layer=overlay --focus-policy=exclusive --edge=center --margin-top=200 --margin-bottom=200 --margin-left=400 --margin-right=400 --override=window_padding_width=8 --override=background_image="~/.assets/persistant_terminal_background.png"
 
 # change focus
 bindsym $super+h focus left
@@ -288,14 +288,14 @@ client.focused_inactive #282828 #bdae93 #282828 #282828 #282828
 # include device specific configuration and overrides
 include device/*
 # $main_display should be defined in device/*
-# output $main_display bg ~/.assets/noise.png tile #bdae93
+# output $main_display bg ~/.assets/noise.png tile #83a598
 
 # rules
 for_window [title="Authentication required"] floating enable
 for_window [app_id="blueman-applet"] kill
 for_window [app_id=".*-dialogue"]
 {
-    border pixel 3
+    border pixel 2
     move container to scratchpad
     scratchpad show
 }
@@ -308,14 +308,11 @@ for_window [app_id=".*-overlay"]
 }
 
 # various
-default_border normal 3
-titlebar_border_thickness 3
+default_border normal 2
+titlebar_border_thickness 2
 hide_edge_borders --i3 smart_no_gaps
-gaps inner 15
-gaps outer 15
-smart_gaps on
-title_align center
-titlebar_padding 15 6
+gaps inner 12
+titlebar_padding 15 5
 focus_follows_mouse no
 tiling_drag off
 focus_on_window_activation none
