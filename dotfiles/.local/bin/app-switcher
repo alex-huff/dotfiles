@@ -112,7 +112,7 @@ async def run_server(task_group, focus_queue, server_initialized_signal):
                         windows_bytes = windows_string.encode("utf-8")
                         windows_base64 = base64.b64encode(windows_bytes).decode("ascii")
                         await send_message_to_fzf(
-                            f'disable-search+unbind(focus)+clear-query+first+reload-sync:base64 --decode <<< "{windows_base64}"'
+                            f'disable-search+unbind(focus)+clear-query+reload-sync:base64 --decode <<< "{windows_base64}"'
                         )
                         panel_show_in_progress = True
                     else:
@@ -303,7 +303,7 @@ async def main():
         "--margin-top=200",
         "--margin-bottom=200",
         "--margin-left=1400",
-        "--margin-right=15",
+        "--margin-right=26",
         "--override=font_size=14",
         f"--override=background_image={os.path.expanduser('~/.assets/app_switcher_background.png')}",
         "--override=window_padding_width=8",
@@ -338,12 +338,13 @@ async def main():
         "--bind=start:reload-sync(:)",
         f"--bind=start:+execute-silent:{initialize_message_cmd}",
         f"--bind=focus:execute-silent:{focus_message_cmd}",
-        f"--bind=load:execute-silent:{fzf_on_load_message_cmd}",
+        "--bind=load:pos(2)",
+        f"--bind=load:+execute-silent:{fzf_on_load_message_cmd}",
         "--bind=load:+enable-search",
         "--bind=load:+rebind(focus)",
         "--bind=ctrl-d:delete-char",
         "--bind=ctrl-c,ctrl-g,ctrl-q:",
-        f"--bind=esc,enter:execute-silent:{hide_app_switcher_message_cmd}",
+        f"--bind=esc,enter,tab,\\:execute-silent:{hide_app_switcher_message_cmd}",
     ]
     async with asyncio.TaskGroup() as task_group:
         tree_initialized_signal = asyncio.Event()

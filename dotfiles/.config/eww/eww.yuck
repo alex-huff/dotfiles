@@ -163,8 +163,8 @@
 (defwindow knobs-window
     :monitor 0
     :geometry (geometry
-        :x "15px"
-        :y "15px"
+        :x "26px"
+        :y "26px"
         :anchor "bottom right")
     :stacking "overlay"
     (knobs))

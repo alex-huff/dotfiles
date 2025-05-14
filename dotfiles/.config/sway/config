@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Victor Mono 12
+font pango:Fira Code 12
 
 # export environment
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -42,7 +42,7 @@ bindsym Shift+Control+Alt+Page_Down workspace prev
 bindsym Shift+Control+Alt+Page_Up workspace next
 
 # lock the system
-bindsym $super+Control+l exec swaylock --color=000000 --font="Victor Mono" --font-size=20
+bindsym $super+Control+l exec swaylock --color=000000 --font="Fira Code" --font-size=20
 
 # start a terminal
 bindsym $super+Return exec kitty --single-instance
@@ -83,7 +83,7 @@ bindsym $super+g exec totp.sh
 
 # cmus
 bindsym $super+Shift+c exec cmus-play-playlist.zsh
-bindsym $super+c exec song="music/$(tofi --prompt="song: " --font="Victor Mono" --font-size=18 --width=100% --height=100% --text-color=#282828 --background-color=#fbf1c7 --selection-background=#d5c4a1 --selection-color=#282828 --selection-background-padding=2 --outline-width=0 --border-width=0 < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
+bindsym $super+c exec song="music/$(fuzzel --dmenu --delayed-filter-limit=-1 --width=100 --lines=25 --border-width=2 --border-radius=0 --horizontal-pad=12 --vertical-pad=12 --prompt="song: " --font="Fira Code:size=18" --background=fbf1c7ff --border-color=282828ff --text-color=282828ff --prompt-color=282828ff --input-color=282828ff --selection-color=d5c4a1ff --selection-text-color=282828ff --match-color=005f5fff --selection-match-color=005f5fff < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
 
 # twitch
 bindsym $super+t exec twitch.sh
@@ -96,8 +96,12 @@ bindsym $super+d exec rofi -show drun
 
 # app switcher
 exec app-switcher
-bindsym $super+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-next" }'
-bindsym $super+Shift+Backslash exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-previous" }'
+set $panel_show_or_next exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-next" }'
+set $panel_show_or_previous exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-previous" }'
+bindsym $super+Backslash $panel_show_or_next
+bindsym $super+Shift+Backslash $panel_show_or_previous
+bindsym Alt+Tab $panel_show_or_next
+bindsym Alt+Shift+Tab $panel_show_or_previous
 
 # persistant terminal
 bindsym $super+u exec kitten panel --single-instance --instance-group=persistant-terminal --toggle-visibility --layer=overlay --focus-policy=exclusive --edge=center --margin-top=200 --margin-bottom=200 --margin-left=400 --margin-right=400 --override=window_padding_width=8 --override=background_image="~/.assets/persistant_terminal_background.png"
@@ -230,7 +234,7 @@ bindsym $super+Alt+c reload
 bindsym $super+Shift+r restart
 
 # exit sway
-bindsym $super+Shift+e exec swaynag --background=fabd2f --button-background=fabd2f --border=000000 --button-text=000000 --text=000000 --message-padding=5 --border-bottom-size=0 --button-border-size=1 --font="Victor Mono 15" --type=warning --message="Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
+bindsym $super+Shift+e exec swaynag --background=fabd2f --button-background=fabd2f --border=000000 --button-text=000000 --text=000000 --message-padding=5 --border-bottom-size=0 --button-border-size=1 --font="Fira Code 15" --type=warning --message="Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
 
 # resize window
 mode resize

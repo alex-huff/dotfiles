@@ -37,7 +37,7 @@ def generate_background(
 display_width = 1920
 display_height = 1080
 app_switcher_left_margin = 1400
-app_switcher_right_margin = 15
+app_switcher_right_margin = 26
 app_switcher_vertical_margin = 200
 app_switcher_width, app_switcher_height = (
     display_width - (app_switcher_left_margin + app_switcher_right_margin),
@@ -52,7 +52,7 @@ persistant_terminal_width, persistant_terminal_height = (
 )
 persistant_terminal_background_color = (249, 245, 215)
 bar_width = display_width
-bar_height = 29
+bar_height = 25
 bar_background_color = app_switcher_background_color
 border_color = (40, 40, 40)
 generate_background(

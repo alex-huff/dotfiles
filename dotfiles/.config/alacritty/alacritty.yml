@@ -5,16 +5,16 @@ window:
 
 font:
   normal:
-    family: Victor Mono
+    family: Fira Code
     style: Regular
   bold:
-    family: Victor Mono
+    family: Fira Code
     style: Bold
   italic:
-    family: Victor Mono
+    family: Fira Code
     style: Italic
   bold_italic:
-    family: Victor Mono
+    family: Fira Code
     style: Bold Italic
   size: 18.0
 

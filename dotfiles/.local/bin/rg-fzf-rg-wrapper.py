@@ -157,7 +157,7 @@ def process_region(region, first_match_byte, submatches):
                 increment_current_and_next()
             if not current_submatch:
                 break
-            yield current_submatch["start"], BLACK_FOREGROUND_YELLOW_BACKGROUND_BYTES
+            yield current_submatch["start"], WHITE_FOREGROUND_BLACK_BACKGROUND_BYTES
             while next_submatch and current_submatch["end"] == next_submatch["start"]:
                 increment_current_and_next()
             yield current_submatch["end"], RESET_FOREGROUND_BACKGROUND_BYTES
@@ -299,7 +299,7 @@ def write_match_item(rg_message):
     try:
         _ = file_basename_bytes.decode(ENCODING)
         file_basename_bytes = b"%b%b" % (
-            BLUE_FOREGROUND_BYTES, file_basename_bytes)
+            BOLD_UNDERLINE_BYTES, file_basename_bytes)
     except UnicodeError:
         file_basename_bytes = PLACEHOLDER_FILENAME_BYTES
     out.write(RESET_BYTES)
@@ -399,10 +399,11 @@ MAX_DISPLAYED_CODEPOINTS = 2 ** 10 - 1
 MAX_DISPLAYED_LINES = 2 ** 4 - 1
 ENCODING = "utf-8"
 CSI_CHARACTER_ATTRIBUTES_TEMPLATE = b"\033[%bm"
-BLACK_FOREGROUND_YELLOW_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"38;5;15;48;5;3"
+WHITE_FOREGROUND_BLACK_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;249;245;215;48;5;7"
 BLUE_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"34"
 RED_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"31"
 UNDERLINE_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"4"
+BOLD_UNDERLINE_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"1;4"
 RESET_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"0"
 RESET_FOREGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"39"
 RESET_FOREGROUND_BACKGROUND_BYTES = CSI_CHARACTER_ATTRIBUTES_TEMPLATE % b"39;49"

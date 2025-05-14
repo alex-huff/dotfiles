@@ -2,9 +2,10 @@
 
 kitten panel \
     --edge=bottom \
-    --lines=28px \
+    --lines=24px \
     --override=placement_strategy=bottom \
     --override=window_padding_width=0 \
     --override=font_size=14 \
     --override=background_image=~/.assets/bar_background.png \
+    --override=modify_font="baseline 1" \
     bar.py

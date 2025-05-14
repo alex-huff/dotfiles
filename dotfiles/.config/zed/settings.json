@@ -2,8 +2,8 @@
 {
   "autosave": "off",
   "format_on_save": "off",
-  "ui_font_family": "Victor Mono",
-  "buffer_font_family": "Victor Mono",
+  "ui_font_family": "Fira Code",
+  "buffer_font_family": "Fira Code",
   "base_keymap": "JetBrains",
   "theme": "Gruvbox Light Hard",
   "vim_mode": true,
