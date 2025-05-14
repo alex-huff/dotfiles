@@ -2322,11 +2322,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     THIN_RIGHT_SEPARATOR = "▕"
     THIN_LEFT_SEPARATOR_BYTES = THIN_LEFT_SEPARATOR.encode("utf-8")
     THIN_RIGHT_SEPARATOR_BYTES = THIN_RIGHT_SEPARATOR.encode("utf-8")
-    VERTICAL_THIN_LEFT_BYTES = "┐".encode("utf-8")
-    VERTICAL_THIN_RIGHT_BYTES = "┌".encode("utf-8")
-    VERTICAL_THICK_RIGHT_BYTES = "┍".encode("utf-8")
     THICK_HORIZONTAL_BYTES = "━".encode("utf-8")
-    THIN_HORIZONTAL_BYTES = "─".encode("utf-8")
     PROGRESS_MARKER_BYTES = "○".encode("utf-8")
     ESCAPE = b"\x1b"
     CSI_START = ESCAPE + b"["
@@ -2650,10 +2646,10 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 playback_status_start_column,
                 playback_status_end_column,
             )
-            progress_bar_width = (media_player_start_column - current_column) - 3
+            progress_bar_width = (media_player_start_column - current_column) - 1
             room_for_progress_bar = progress_bar_width >= 5
             if room_for_progress_bar:
-                progress_bar_start_column = current_column + 1
+                progress_bar_start_column = current_column
                 progress_bar_end_column = progress_bar_start_column + progress_bar_width
                 mouseable_bar_element_regions[MouseEventRegion.PROGRESS_BAR] = (
                     progress_bar_start_column,
@@ -2665,20 +2661,11 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 progress_width = min(
                     progress_bar_width, round(progress_bar_width * progress)
                 )
-                empty_bar = progress_width == 0
-                full_bar = progress_width == progress_bar_width
-                writer.write(
-                    VERTICAL_THICK_RIGHT_BYTES
-                    if not empty_bar
-                    else VERTICAL_THIN_RIGHT_BYTES
-                )
-                thick_horizontal_width = progress_width
-                writer.write(THICK_HORIZONTAL_BYTES * thick_horizontal_width)
+                writer.write(THICK_HORIZONTAL_BYTES * progress_width)
                 writer.write(PROGRESS_MARKER_BYTES)
-                thin_horizontal_width = progress_bar_width - thick_horizontal_width
+                empty_width = progress_bar_width - progress_width
                 writer.write(GRAY_FOREGROUND)
-                writer.write(THIN_HORIZONTAL_BYTES * thin_horizontal_width)
-                writer.write(VERTICAL_THIN_LEFT_BYTES)
+                writer.write(THICK_HORIZONTAL_BYTES * empty_width)
                 writer.write(BLACK_FOREGROUND)
             jump_to_column(media_player_start_column)
             writer.write(formatted_media_player_essential_bytes)
