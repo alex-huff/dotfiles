@@ -2323,6 +2323,8 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     THIN_LEFT_SEPARATOR_BYTES = THIN_LEFT_SEPARATOR.encode("utf-8")
     THIN_RIGHT_SEPARATOR_BYTES = THIN_RIGHT_SEPARATOR.encode("utf-8")
     THICK_HORIZONTAL_BYTES = "━".encode("utf-8")
+    LEFT_HALF_THICK_HORIZONTAL_BYTES = "╸".encode("utf-8")
+    RIGHT_HALF_THICK_HORIZONTAL_BYTES = "╺".encode("utf-8")
     PROGRESS_MARKER_BYTES = "○".encode("utf-8")
     ESCAPE = b"\x1b"
     CSI_START = ESCAPE + b"["
@@ -2658,14 +2660,18 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 current_second = media_player_to_show["track_current_second"]
                 length_seconds = media_player_to_show["track_length_seconds"]
                 progress = (current_second / length_seconds) if length_seconds else 1
-                progress_width = min(
+                full_width = min(
                     progress_bar_width, round(progress_bar_width * progress)
                 )
-                writer.write(THICK_HORIZONTAL_BYTES * progress_width)
+                empty_width = progress_bar_width - full_width
+                if full_width:
+                    writer.write(RIGHT_HALF_THICK_HORIZONTAL_BYTES)
+                    writer.write(THICK_HORIZONTAL_BYTES * (full_width - 1))
                 writer.write(PROGRESS_MARKER_BYTES)
-                empty_width = progress_bar_width - progress_width
-                writer.write(GRAY_FOREGROUND)
-                writer.write(THICK_HORIZONTAL_BYTES * empty_width)
+                if empty_width:
+                    writer.write(GRAY_FOREGROUND)
+                    writer.write(THICK_HORIZONTAL_BYTES * (empty_width - 1))
+                    writer.write(LEFT_HALF_THICK_HORIZONTAL_BYTES)
                 writer.write(BLACK_FOREGROUND)
             jump_to_column(media_player_start_column)
             writer.write(formatted_media_player_essential_bytes)
