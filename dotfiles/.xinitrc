@@ -47,4 +47,4 @@ fi
 
 nitrogen --restore &
 picom --unredir-if-possible &
-exec lxqt-session
+exec i3
