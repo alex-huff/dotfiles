@@ -34,7 +34,7 @@ then
     unset f
 fi
 
-setxkbmap -layout "us,us" -variant ",dvorak" -option "grp:alt_space_toggle" -option "caps:super"
+setxkbmap -option "caps:super"
 
 if [ -d $HOME/.screenlayout ]
 then
@@ -46,5 +46,4 @@ then
 fi
 
 nitrogen --restore &
-picom --unredir-if-possible &
 exec i3

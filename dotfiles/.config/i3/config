@@ -1,90 +1,148 @@
-exec_always --no-startup-id $HOME/.config/polybar/launch.sh
-exec --no-startup-id dex --autostart --environment i3
+set $super Mod4
+font pango:Fira Code 12
 
-set $mod Mod4
-font pango:Fira Code Nerd Font 12
+# eww
+exec eww daemon
 
-# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
-# screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock --i3lock --nofork -c 1e1e2e
+# start XDG autostart .desktop files
+exec --no-startup-id dex --autostart --environment=i3
 
-exec --no-startup-id nm-applet
+# use pactl to adjust volume in PulseAudio
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +1%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -1%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
-# use pactl to adjust volume in PulseAudio.
-set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +1% && $refresh_i3status
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -1% && $refresh_i3status
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
-bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+# use playerctl to control media playback
+# bindsym XF86AudioPlay exec playerctl play
+# bindsym XF86AudioPause exec playerctl pause
+bindsym XF86AudioPlay nop
+bindsym XF86AudioPause nop
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
 
-# use playerctl to control media playback.
-bindsym XF86AudioPlay exec playerctl play && $refresh_i3status
-bindsym XF86AudioPause exec playerctl pause && $refresh_i3status
-bindsym XF86AudioNext exec playerctl next && $refresh_i3status
-bindsym XF86AudioPrev exec playerctl previous && $refresh_i3status
+# scratchpad control
+bindsym $super+semicolon scratchpad show
+bindsym $super+Shift+semicolon move container to scratchpad
 
-# use Mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
+# use mouse+$super to drag floating windows to their wanted position
+floating_modifier $super
 
 # lock the system
-bindsym $mod+Control+l exec i3lock -c 1e1e2e
-
-# toggle bar
-bindsym $mod+Control+b exec $HOME/.config/polybar/toggle.sh
+bindsym $super+Control+l exec i3lock --color=000000 --font="Fira Code" --font-size=20
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $super+Return exec kitty --single-instance
+
+# start a qutebrowser
+bindsym $super+i exec qutebrowser
+
+# search with qutebrowser
+bindsym $super+mod1+s exec query=$(rofi -dmenu -l 0 -p search) && qutebrowser --target=tab "$query"
+
+# decode qrcode
+bindsym $super+q exec decode-qrcode-on-screen.sh | copy
+bindsym $super+mod1+q exec add-totp-method-from-current-screen.sh
 
 # kill focused window
-bindsym $mod+Shift+q kill
+bindsym $super+Shift+q kill
+
+# SIGKILL focused window
+bindsym $super+Shift+t exec wkill.sh
+
+# take a rectangular screenshot
+bindsym $super+s exec grimshot-imgur.sh area
+
+# take a fullscreen screenshot
+bindsym $super+o exec grimshot-imgur.sh
+
+# take a rectangular screengrab
+bindsym $super+Shift+s exec wf-recorder-imgur.sh area
+
+# take a fullscreen screengrab
+bindsym $super+Shift+o exec wf-recorder-imgur.sh
+
+# mc
+bindsym $super+Shift+m exec open-mc-mod-configuration.sh
+
+# totp
+bindsym $super+g exec totp.sh
+
+# cmus
+bindsym $super+Shift+c exec cmus-play-playlist.zsh
+bindsym $super+c exec song="music/$(fuzzel --dmenu --delayed-filter-limit=-1 --width=100 --lines=25 --border-width=2 --border-radius=0 --horizontal-pad=12 --vertical-pad=12 --prompt="song: " --font="Fira Code:size=18" --background=fbf1c7ff --border-color=282828ff --text-color=282828ff --prompt-color=282828ff --input-color=282828ff --selection-color=d5c4a1ff --selection-text-color=282828ff --match-color=005f5fff --selection-match-color=005f5fff < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
+
+# twitch
+bindsym $super+t exec twitch.sh
+
+# nmcli
+bindsym $super+n exec switch-connection.sh
 
 # rofi
-bindsym $mod+d exec rofi -show run
+bindsym $super+d exec rofi -show drun
+
+# app switcher
+exec app-switcher
+set $panel_show_or_next exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-next" }'
+set $panel_show_or_previous exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-previous" }'
+bindsym $super+Backslash $panel_show_or_next
+bindsym $super+Shift+Backslash $panel_show_or_previous
+bindsym mod1+Tab $panel_show_or_next
+bindsym mod1+Shift+Tab $panel_show_or_previous
+
+# persistant terminal
+bindsym $super+u exec kitten panel --single-instance --instance-group=persistant-terminal --toggle-visibility --layer=overlay --focus-policy=exclusive --edge=center --margin-top=200 --margin-bottom=200 --margin-left=400 --margin-right=400 --override=window_padding_width=8 --override=background_image="~/.assets/persistant_terminal_background.png"
 
 # change focus
-bindsym $mod+h focus left
-bindsym $mod+j focus down
-bindsym $mod+k focus up
-bindsym $mod+l focus right
-bindsym $mod+Left focus left
-bindsym $mod+Down focus down
-bindsym $mod+Up focus up
-bindsym $mod+Right focus right
+bindsym $super+h focus left
+bindsym $super+j focus down
+bindsym $super+k focus up
+bindsym $super+l focus right
+bindsym $super+Left focus left
+bindsym $super+Down focus down
+bindsym $super+Up focus up
+bindsym $super+Right focus right
 
 # move focused window
-bindsym $mod+Shift+h move left
-bindsym $mod+Shift+j move down
-bindsym $mod+Shift+k move up
-bindsym $mod+Shift+l move right
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Right move right
+bindsym $super+Shift+h move left
+bindsym $super+Shift+j move down
+bindsym $super+Shift+k move up
+bindsym $super+Shift+l move right
+bindsym $super+Shift+Left move left
+bindsym $super+Shift+Down move down
+bindsym $super+Shift+Up move up
+bindsym $super+Shift+Right move right
+
+# toggle sticky
+bindsym $super+y sticky toggle
 
 # split in horizontal orientation
-bindsym $mod+b split h
+bindsym $super+b split h
 
 # split in vertical orientation
-bindsym $mod+v split v
+bindsym $super+v split v
 
 # enter fullscreen mode for the focused container
-bindsym $mod+f fullscreen toggle
+bindsym $super+f fullscreen toggle
 
-# change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+# change container layout
+bindsym $super+w layout tabbed
+bindsym $super+e layout toggle split
 
 # toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
+bindsym $super+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
+bindsym $super+space focus mode_toggle
 
 # focus the parent container
-bindsym $mod+a focus parent
+bindsym $super+a focus parent
+
+# focus the child container
+bindsym $super+Shift+a focus child
 
 # workspace names
+set $ws0 "0"
 set $ws1 "1"
 set $ws2 "2"
 set $ws3 "3"
@@ -97,61 +155,110 @@ set $ws9 "9"
 set $ws10 "10"
 
 # switch to workspace
-bindsym $mod+1 workspace number $ws1
-bindsym $mod+2 workspace number $ws2
-bindsym $mod+3 workspace number $ws3
-bindsym $mod+4 workspace number $ws4
-bindsym $mod+5 workspace number $ws5
-bindsym $mod+6 workspace number $ws6
-bindsym $mod+7 workspace number $ws7
-bindsym $mod+8 workspace number $ws8
-bindsym $mod+9 workspace number $ws9
-bindsym $mod+0 workspace number $ws10
+bindsym $super+grave workspace number $ws0
+bindsym $super+1 workspace number $ws1
+bindsym $super+2 workspace number $ws2
+bindsym $super+3 workspace number $ws3
+bindsym $super+4 workspace number $ws4
+bindsym $super+5 workspace number $ws5
+bindsym $super+6 workspace number $ws6
+bindsym $super+7 workspace number $ws7
+bindsym $super+8 workspace number $ws8
+bindsym $super+9 workspace number $ws9
+bindsym $super+0 workspace number $ws10
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace number $ws1
-bindsym $mod+Shift+2 move container to workspace number $ws2
-bindsym $mod+Shift+3 move container to workspace number $ws3
-bindsym $mod+Shift+4 move container to workspace number $ws4
-bindsym $mod+Shift+5 move container to workspace number $ws5
-bindsym $mod+Shift+6 move container to workspace number $ws6
-bindsym $mod+Shift+7 move container to workspace number $ws7
-bindsym $mod+Shift+8 move container to workspace number $ws8
-bindsym $mod+Shift+9 move container to workspace number $ws9
-bindsym $mod+Shift+0 move container to workspace number $ws10
+bindsym $super+mod1+grave move container to workspace number $ws0
+bindsym $super+mod1+1 move container to workspace number $ws1
+bindsym $super+mod1+2 move container to workspace number $ws2
+bindsym $super+mod1+3 move container to workspace number $ws3
+bindsym $super+mod1+4 move container to workspace number $ws4
+bindsym $super+mod1+5 move container to workspace number $ws5
+bindsym $super+mod1+6 move container to workspace number $ws6
+bindsym $super+mod1+7 move container to workspace number $ws7
+bindsym $super+mod1+8 move container to workspace number $ws8
+bindsym $super+mod1+9 move container to workspace number $ws9
+bindsym $super+mod1+0 move container to workspace number $ws10
+
+# focus last focused leaf container in nth child of farthest tabbed ancestor
+bindsym $super+Shift+1 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 0 false
+bindsym $super+Shift+2 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 1 false
+bindsym $super+Shift+3 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 2 false
+bindsym $super+Shift+4 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 3 false
+bindsym $super+Shift+5 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 4 false
+bindsym $super+Shift+6 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 5 false
+bindsym $super+Shift+7 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 6 false
+bindsym $super+Shift+8 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 7 false
+bindsym $super+Shift+9 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 8 false
+bindsym $super+Shift+0 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 9 false
+
+# focus last focused leaf container in nth child of closest tabbed ancestor
+bindsym $super+Control+1 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 0 true
+bindsym $super+Control+2 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 1 true
+bindsym $super+Control+3 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 2 true
+bindsym $super+Control+4 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 3 true
+bindsym $super+Control+5 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 4 true
+bindsym $super+Control+6 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 5 true
+bindsym $super+Control+7 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 6 true
+bindsym $super+Control+8 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 7 true
+bindsym $super+Control+9 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 8 true
+bindsym $super+Control+0 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 9 true
+
+# mark
+bindsym $super+Shift+apostrophe exec (mark_name="$(rofi -dmenu -l 0 -p 'mark name')" && i3-msg mark "$mark_name") || i3-msg '[con_id="__focused__"]' unmark
+bindsym $super+apostrophe exec to_focus="$(i3-msg --type=get_marks | jq -r '.[]' | rofi -dmenu -p 'jump to')" && i3-msg '[con_mark="'$to_focus'"]' focus
 
 # reload the configuration file
-bindsym $mod+Shift+c reload
+bindsym $super+mod1+c reload
 
 # restart i3 inplace
-bindsym $mod+Shift+r restart
+bindsym $super+Shift+r restart
 
 # exit i3
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $super+Shift+e exec i3-nag --background=fabd2f --button-background=fabd2f --border=000000 --button-text=000000 --text=000000 --message-padding=5 --border-bottom-size=0 --button-border-size=1 --font="Fira Code 15" --type=warning --message="Do you really want to exit?" --button-no-terminal "Yes, exit" "i3-msg exit"
 
 # resize window
-mode "resize"
+mode resize
 {
     bindsym h resize shrink width 10 px or 10 ppt
     bindsym j resize shrink height 10 px or 10 ppt
     bindsym k resize grow height 10 px or 10 ppt
     bindsym l resize grow width 10 px or 10 ppt
-    bindsym Left resize shrink width 10 px or 10 ppt
-    bindsym Up resize grow height 10 px or 10 ppt
-    bindsym Down resize shrink height 10 px or 10 ppt
-    bindsym Right resize grow width 10 px or 10 ppt
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-    bindsym $mod+r mode "default"
+    bindsym Escape mode default
+    bindsym Control+bracketleft mode default
+    bindsym $super+r mode default
 }
-bindsym $mod+r mode "resize"
+bindsym $super+r mode resize
 
+# toggle border style
+bindsym $super+mod1+b border toggle
+
+# toggle top panel
+bindsym $super+Shift+b exec killall --process-group kitty-panel-2 || kitty-panel-2
+
+# colors                border  bg      text    ind     child_b
+client.focused          #282828 #ebdbb2 #282828 #282828 #282828
+client.unfocused        #282828 #7c6f64 #fbf1c7 #282828 #282828
+client.focused_inactive #282828 #bdae93 #282828 #282828 #282828
+
+# include device specific configuration and overrides
+include device/*
+# $main_display should be defined in device/*
+# output $main_display bg ~/.assets/noise.png tile #83a598
+
+# rules
+for_window [title="Authentication required"] floating enable
+for_window [class="blueman-applet"] kill
+for_window [class=".*-dialogue"] border pixel 2, move scratchpad, scratchpad show
+for_window [class=".*-overlay"] border none, floating enable, resize set width 1920 height 1080, move absolute position 0px 0px
+
+# various
+default_border normal 2
+hide_edge_borders smart_no_gaps
+smart_gaps on
+gaps inner 12
+for_window [all] title_window_icon padding 4px
 focus_follows_mouse no
-for_window [class="^.*"] border pixel 5
-# gaps inner 18
-# gaps outer 0
-
-# colors
-client.focused          #1e1e2e #4c4f69 #f5e0dc #4c4f69 #4c4f69
-client.unfocused        #4c4f69 #1e1e2e #f5e0dc #24273a #24273a
-client.focused_inactive #4c4f69 #1e1e2e #f5e0dc #24273a #24273a
+tiling_drag off
+focus_on_window_activation none
+focus_wrapping no
