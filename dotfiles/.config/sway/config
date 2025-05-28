@@ -86,7 +86,7 @@ bindsym $super+g exec totp.sh
 
 # cmus
 bindsym $super+Shift+c exec cmus-play-playlist.zsh
-bindsym $super+c exec song="music/$(fuzzel --dmenu --delayed-filter-limit=-1 --width=100 --lines=25 --border-width=2 --border-radius=0 --horizontal-pad=12 --vertical-pad=12 --prompt="song: " --font="Fira Code:size=18" --background=fbf1c7ff --border-color=282828ff --text-color=282828ff --prompt-color=282828ff --input-color=282828ff --selection-color=d5c4a1ff --selection-text-color=282828ff --match-color=005f5fff --selection-match-color=005f5fff < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
+bindsym $super+c exec song="music/$(fuzzel --dmenu --delayed-filter-limit=-1 --dpi-aware=no --width=100 --lines=25 --border-width=2 --border-radius=0 --horizontal-pad=12 --vertical-pad=12 --prompt="song: " --font="Fira Code:size=18" --background=fbf1c7ff --border-color=282828ff --text-color=282828ff --prompt-color=282828ff --input-color=282828ff --selection-color=d5c4a1ff --selection-text-color=282828ff --match-color=005f5fff --selection-match-color=005f5fff < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
 
 # twitch
 bindsym $super+t exec twitch.sh
