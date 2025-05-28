@@ -33,10 +33,10 @@ then
     alias ssh="kitty +kitten ssh"
 fi
 
-if (( $+commands[nvim] ))
-then
-    EDITOR=nvim
-elif (( $+commands[vim] ))
+# if (( $+commands[nvim] ))
+# then
+#     EDITOR=nvim
+if (( $+commands[vim] ))
 then
     EDITOR=vim
 else

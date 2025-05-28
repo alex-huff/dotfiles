@@ -47,12 +47,12 @@ if os.name == "posix":
 
 # editor
 if os.name == "nt":
-    editor_script = 'kitty --start-as=maximized nvim -c "normal {line}G{column}|zz" "$(wslpath -ua "$1")"'
+    editor_script = 'kitty --start-as=maximized vim -c "normal {line}G{column}|zz" "$(wslpath -ua "$1")"'
     editor_command = ["wsl", "--exec", "sh",
                       "-c", editor_script, "_", "{file}"]
 else:
     editor_command = ["kitty", "--app-id=kitty-dialogue",
-                      "nvim", "-c", "normal {line}G{column}|zz", "{file}"]
+                      "vim", "-c", "normal {line}G{column}|zz", "{file}"]
 c.editor.command = editor_command
 
 # file selection
