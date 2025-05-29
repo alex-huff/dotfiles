@@ -14,7 +14,7 @@ set title
 set laststatus=0
 set incsearch
 set nofixendofline
-if &term != "linux"
+if &term != "linux" || has("gui_running")
     set background=light
     set termguicolors
     set list
@@ -24,6 +24,7 @@ if &term != "linux"
     let g:gruvbox_contrast_dark = "hard"
     let g:gruvbox_contrast_light = "hard"
     colorscheme gruvbox
+    highlight Terminal guibg=#f9f5d7 guifg=#3c3836
 endif
 if has("gui_running")
     set guioptions-=T
