@@ -1,7 +1,6 @@
-syntax on
+syntax off
 filetype plugin on
 set lazyredraw
-set termguicolors
 set nowrap
 set number
 set relativenumber
@@ -14,8 +13,18 @@ set shiftwidth=0
 set title
 set laststatus=0
 set incsearch
-set background=light
 set nofixendofline
+if &term != "linux"
+    set background=light
+    set termguicolors
+    set list
+    set listchars=tab:<->,lead:·,trail:·,multispace:·
+    let g:terminal_ansi_colors = ["#ebdbb2", "#cc241d", "#98971a", "#d79921", "#458588", "#b16286", "#689d6a", "#7c6f64", "#928374", "#9d0006", "#79740e", "#b57614", "#076678", "#8f3f71", "#427b58", "#282828"]
+    let g:gruvbox_italic = 1
+    let g:gruvbox_contrast_dark = "hard"
+    let g:gruvbox_contrast_light = "hard"
+    colorscheme gruvbox
+endif
 if has("gui_running")
     set guioptions-=T
     set guioptions-=m
@@ -26,14 +35,6 @@ if has("gui_running")
     elseif has("gui_win32")
         set guifont=Victor_Mono:h18
     endif
-endif
-let g:gruvbox_italic = 1
-let g:gruvbox_contrast_dark = "hard"
-let g:gruvbox_contrast_light = "hard"
-colorscheme gruvbox
-if &termguicolors
-    set list
-    set listchars=tab:<->,lead:·,trail:·,multispace:·
 endif
 try
     packadd comment
