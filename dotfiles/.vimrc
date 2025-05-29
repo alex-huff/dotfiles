@@ -14,16 +14,16 @@ set title
 set laststatus=0
 set incsearch
 set nofixendofline
-if &term != "linux" || has("gui_running")
+if (&term != "linux" && &term != "tmux-256color") || has("gui_running")
     set background=light
     set termguicolors
     set list
     set listchars=tab:<->,lead:·,trail:·,multispace:·
-    let g:terminal_ansi_colors = ["#ebdbb2", "#cc241d", "#98971a", "#d79921", "#458588", "#b16286", "#689d6a", "#7c6f64", "#928374", "#9d0006", "#79740e", "#b57614", "#076678", "#8f3f71", "#427b58", "#282828"]
     let g:gruvbox_italic = 1
     let g:gruvbox_contrast_dark = "hard"
     let g:gruvbox_contrast_light = "hard"
     colorscheme gruvbox
+    let g:terminal_ansi_colors = ["#ebdbb2", "#cc241d", "#98971a", "#d79921", "#458588", "#b16286", "#689d6a", "#7c6f64", "#928374", "#9d0006", "#79740e", "#b57614", "#076678", "#8f3f71", "#427b58", "#282828"]
     highlight Terminal guibg=#f9f5d7 guifg=#3c3836
 endif
 if has("gui_running")
