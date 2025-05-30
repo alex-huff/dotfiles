@@ -1,5 +1,11 @@
 [[ $- != *i* ]] && return
 
+if [ "$TERM" = linux ]
+then
+    setvtrgb ~/.config/vt/colors
+    clear
+fi
+
 setopt INTERACTIVE_COMMENTS
 setopt VI
 autoload edit-command-line
