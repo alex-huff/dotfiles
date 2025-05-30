@@ -12,6 +12,7 @@ shell-integration-features = no-cursor
 
 keybind = ctrl+shift+plus=increase_font_size:1
 keybind = ctrl+shift+minus=decrease_font_size:1
+keybind = ctrl+u=toggle_quick_terminal
 
 palette = 0=#f8f4d6
 palette = 1=#9d0006
