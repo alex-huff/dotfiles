@@ -44,19 +44,19 @@ preview_command=$(
 fzf --height=${FZF_HEIGHT:-0} \
     --disabled \
     --read0 \
-    --delimiter=":" \
+    --delimiter=: \
     --wrap \
     --ansi \
     --tabstop=4 \
-    --with-nth="7.." \
+    --with-nth=7.. \
     --query="$(generate_query "$@")" \
     --preview="$preview_command" \
-    --preview-window="right,~1,+{5}+1/2" \
+    --preview-window="top,~1,+{5}+1/2" \
     --bind="start:reload-sync(:)" \
     --bind="enter:reload(rg-fzf-rg-wrapper.py {q})" \
     --bind="resize:refresh-preview" \
     --bind="ctrl-space:execute([ {1} = 'match' ] && $decode_field2 | xargs -0 nvim -c 'goto '{3}'|normal zz')" \
     --bind="ctrl-q:execute-silent([ {1} = 'match' ] && $decode_field2 | xargs -0 printf %q | kitty +kitten clipboard)" \
     --bind="ctrl-l:execute-silent([ {1} = 'match' ] && $decode_field2 | xargs -0I {} printf %s:%s {} {3} | kitty +kitten clipboard)" \
-    --bind="home:first" \
-    --bind="end:last" > /dev/null
+    --bind=home:first \
+    --bind=end:last > /dev/null

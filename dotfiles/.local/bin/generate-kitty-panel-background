@@ -34,9 +34,9 @@ def generate_background(
     bg.save(os.path.expanduser(f"~/.assets/{background_name}_background.png"))
 
 
-display_width = 1920
+display_width = 2560
 display_height = 1080
-app_switcher_left_margin = 1400
+app_switcher_left_margin = 2000
 app_switcher_right_margin = 26
 app_switcher_vertical_margin = 200
 app_switcher_width, app_switcher_height = (
@@ -44,7 +44,7 @@ app_switcher_width, app_switcher_height = (
     display_height - 2 * app_switcher_vertical_margin,
 )
 app_switcher_background_color = (251, 241, 199)
-persistant_terminal_horizontal_margin = 400
+persistant_terminal_horizontal_margin = 600
 persistant_terminal_vertical_margin = 200
 persistant_terminal_width, persistant_terminal_height = (
     display_width - 2 * persistant_terminal_horizontal_margin,

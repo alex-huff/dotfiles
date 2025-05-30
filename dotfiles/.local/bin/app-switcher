@@ -302,7 +302,7 @@ async def main():
         "--edge=center",
         "--margin-top=200",
         "--margin-bottom=200",
-        "--margin-left=1400",
+        "--margin-left=2000",
         "--margin-right=26",
         "--override=font_size=14",
         f"--override=background_image={os.path.expanduser('~/.assets/app_switcher_background.png')}",

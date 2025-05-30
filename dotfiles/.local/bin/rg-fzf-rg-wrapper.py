@@ -395,7 +395,7 @@ Some useful ripgrep options:
     --engine=ENGINE
     --no-config\
 """
-MAX_DISPLAYED_CODEPOINTS = 2 ** 10 - 1
+MAX_DISPLAYED_CODEPOINTS = 2 ** 11 - 1
 MAX_DISPLAYED_LINES = 2 ** 4 - 1
 ENCODING = "utf-8"
 CSI_CHARACTER_ATTRIBUTES_TEMPLATE = b"\033[%bm"
