@@ -2350,6 +2350,13 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     PLAYBACK_STATUS_SPECIFIER = {"Playing": "󰐊", "Paused": "󰏤", "Stopped": "󰓛"}
     LONDON_TIMEZONE = pytz.timezone("Europe/London")
     CHICAGO_TIMEZONE = pytz.timezone("America/Chicago")
+    UTC_TIMEZONE = pytz.utc
+    TIMEZONES = [CHICAGO_TIMEZONE, LONDON_TIMEZONE, UTC_TIMEZONE]
+
+    def cycle_timezone():
+        nonlocal current_timezone, current_timezone_index
+        current_timezone_index = (current_timezone_index + 1) % len(TIMEZONES)
+        current_timezone = TIMEZONES[current_timezone_index]
 
     def jump_to_column(column):
         writer.write(CURSOR_CHARACTER_ABSOLUTE_TEMPLATE % str(column).encode("utf-8"))
@@ -2410,8 +2417,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 case MouseEventRegion.DATETIME:
                     if is_motion:
                         continue
-                    nonlocal show_local_timezone
-                    show_local_timezone = not show_local_timezone
+                    cycle_timezone()
                     bar_event_queue.put_nowait(BarEvent(BarEventType.CLOCK_UPDATE))
                 case MouseEventRegion.WORKSPACES:
                     label_index = bisect.bisect_right(
@@ -2462,8 +2468,9 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     media_player_present = False
     workspaces_present = False
     datetime_present = False
-    show_local_timezone = True
     last_second = None
+    current_timezone_index = 0
+    current_timezone = TIMEZONES[current_timezone_index]
     writer.write(HIDE_CURSOR)
     writer.write(TRACK_MOUSE_MOTION)
     writer.write(BLACK_FOREGROUND)
@@ -2524,8 +2531,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                 current_datetime = datetime.datetime.fromtimestamp(
                     current_second or last_second, tz=pytz.utc
                 )
-                timezone = CHICAGO_TIMEZONE if show_local_timezone else LONDON_TIMEZONE
-                localized_datetime = current_datetime.astimezone(timezone)
+                localized_datetime = current_datetime.astimezone(current_timezone)
                 formatted_datetime = f" {localized_datetime:%a %b %d %H:%M:%S %Z}"
                 formatted_datetime_width = wcwidth.wcswidth(formatted_datetime)
                 formatted_datetime_bytes = formatted_datetime.encode("utf-8")
