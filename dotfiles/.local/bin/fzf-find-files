@@ -20,7 +20,7 @@ fzf --height=${FZF_HEIGHT:-0} \
     --preview="fzf-preview.sh $icat_transfer_mode {}" \
     --preview-window=top \
     --bind=resize:refresh-preview \
-    --bind="ctrl-space:execute(nvim {})" \
+    --bind="ctrl-space:execute(vim {})" \
     --bind='ctrl-q:execute-silent(printf %q "$(realpath {})" | kitty +kitten clipboard)' \
     --bind='ctrl-l:execute-silent(printf %s:1 "$(realpath {})" | kitty +kitten clipboard)'
 kitty +kitten icat --clear --transfer-mode=$icat_transfer_mode --stdin=no &>/dev/null
