@@ -20,11 +20,11 @@ from xml.etree import ElementTree
 
 import pytz
 import wcwidth
-from dbus_next._private.util import replace_fds_with_idx, replace_idx_with_fds
-from dbus_next.aio import MessageBus
-from dbus_next.introspection import Interface, Node
-from dbus_next.message import Message, MessageFlag
-from dbus_next.proxy_object import BaseProxyInterface
+from dbus_fast._private.util import replace_fds_with_idx, replace_idx_with_fds
+from dbus_fast.aio import MessageBus
+from dbus_fast.introspection import Interface, Node
+from dbus_fast.message import Message, MessageFlag
+from dbus_fast.proxy_object import BaseProxyInterface
 
 
 class BarEventType(IntEnum):
