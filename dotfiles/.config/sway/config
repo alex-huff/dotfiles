@@ -99,8 +99,8 @@ bindsym $super+d exec rofi -show drun
 
 # app switcher
 exec app-switcher
-set $panel_show_or_next exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-next" }'
-set $panel_show_or_previous exec socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control" <<< '{ "action": "panel-show-or-previous" }'
+set $panel_show_or_next exec echo '{ "action": "panel-show-or-next" }' | socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control"
+set $panel_show_or_previous exec echo '{ "action": "panel-show-or-previous" }' | socat - UNIX-CONNECT:"${XDG_RUNTIME_DIR}/kitty-app-switcher-control"
 bindsym $super+Backslash $panel_show_or_next
 bindsym $super+Shift+Backslash $panel_show_or_previous
 bindsym Alt+Tab $panel_show_or_next
