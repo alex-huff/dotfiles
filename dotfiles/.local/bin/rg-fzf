@@ -28,7 +28,7 @@ generate_query()
 }
 
 bat_command=$(command -v bat || command -v batcat || echo ":")
-decode_field2="base32 --decode <<< {2}"
+decode_field2="echo {2} | base32 --decode"
 preview_command=$(
 	cat <<-EOF
 		if [ {1} = "match" ]
