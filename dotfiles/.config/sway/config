@@ -48,7 +48,7 @@ bindsym $super+Control+l exec swaylock --color=000000 --font="Fira Code" --font-
 bindsym $super+Return exec kitty --single-instance
 
 # start a qutebrowser
-bindsym $super+i exec qutebrowser
+bindsym $super+i exec qutebrowser --qt-flag disable-http2
 
 # search with qutebrowser
 bindsym $super+Alt+s exec query=$(rofi -dmenu -l 0 -p search) && qutebrowser --target=tab "$query"
@@ -310,12 +310,13 @@ for_window [app_id=".*-overlay"]
 {
     border none
     floating enable
-    resize set width 1920 height 1080
+    resize set width 2560 height 1080
     move absolute position 0px 0px
 }
 
 # various
 default_border normal 2
+default_floating_border normal 2
 titlebar_border_thickness 2
 hide_edge_borders --i3 smart_no_gaps
 smart_gaps on

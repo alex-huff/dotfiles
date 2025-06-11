@@ -35,10 +35,11 @@ def start_streamlinks(streams, stream_fifos):
         subprocess.Popen(
             (
                 "streamlink",
-                f"https://www.twitch.tv/{stream}",
-                "best",
+                "--twitch-disable-ads",
                 "--output",
                 stream_fifo,
+                f"https://www.twitch.tv/{stream}",
+                "best"
             )
         )
         for stream, stream_fifo in zip(streams, stream_fifos)
