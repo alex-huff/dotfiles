@@ -107,7 +107,7 @@ bindsym Alt+Tab $panel_show_or_next
 bindsym Alt+Shift+Tab $panel_show_or_previous
 
 # persistant terminal
-bindsym $super+u exec kitten panel --single-instance --instance-group=persistant-terminal --toggle-visibility --layer=overlay --focus-policy=exclusive --edge=center --margin-top=200 --margin-bottom=200 --margin-left=600 --margin-right=600 --override=window_padding_width=8 --override=background_image="~/.assets/persistant_terminal_background.png"
+bindsym $super+u exec persistant-terminal
 
 # change focus
 bindsym $super+h focus left

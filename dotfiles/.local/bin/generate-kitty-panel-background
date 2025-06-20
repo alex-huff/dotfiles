@@ -1,6 +1,9 @@
 #!/bin/python3
 
+import json
 import os
+import subprocess
+
 from PIL import Image
 
 
@@ -34,22 +37,27 @@ def generate_background(
     bg.save(os.path.expanduser(f"~/.assets/{background_name}_background.png"))
 
 
-display_width = 2560
-display_height = 1080
-app_switcher_left_margin = 2000
+current_display_information = json.loads(
+    subprocess.check_output(
+        "swaymsg -t get_outputs | jq '.[] | first(select(.active == true)) | .current_mode'",
+        shell=True,
+    )
+)
+display_width = current_display_information["width"]
+display_height = current_display_information["height"]
+app_switcher_vertical_margin = display_height // 6
+app_switcher_height = display_height - app_switcher_vertical_margin * 2
+app_switcher_width = round(app_switcher_height * 0.8)
 app_switcher_right_margin = 26
-app_switcher_vertical_margin = 200
-app_switcher_width, app_switcher_height = (
-    display_width - (app_switcher_left_margin + app_switcher_right_margin),
-    display_height - 2 * app_switcher_vertical_margin,
-)
+app_switcher_left_margin = display_width - (app_switcher_width + app_switcher_right_margin)
 app_switcher_background_color = (251, 241, 199)
-persistant_terminal_horizontal_margin = 600
-persistant_terminal_vertical_margin = 200
-persistant_terminal_width, persistant_terminal_height = (
-    display_width - 2 * persistant_terminal_horizontal_margin,
-    display_height - 2 * persistant_terminal_vertical_margin,
-)
+persistant_terminal_vertical_margin = app_switcher_vertical_margin
+persistant_terminal_height = app_switcher_height
+persistant_terminal_approximate_width = persistant_terminal_height * 2
+persistant_terminal_horizontal_margin = (
+    display_width - persistant_terminal_approximate_width
+) // 2
+persistant_terminal_width = display_width - persistant_terminal_horizontal_margin * 2
 persistant_terminal_background_color = (249, 245, 215)
 bar_width = display_width
 bar_height = 25

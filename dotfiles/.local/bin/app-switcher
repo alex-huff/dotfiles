@@ -5,6 +5,7 @@ import base64
 import itertools
 import json
 import os
+import subprocess
 import struct
 from enum import IntEnum
 
@@ -291,23 +292,38 @@ async def watch_i3_forever(task_group, focus_queue, tree_initialized_signal):
 
 
 async def main():
+    swaymsg_process = await asyncio.create_subprocess_shell(
+        "swaymsg -t get_outputs | jq '.[] | first(select(.active == true)) | .current_mode'",
+        stdout=subprocess.PIPE,
+    )
+    out, _ = await swaymsg_process.communicate()
+    current_display_information = json.loads(out)
+    display_width = current_display_information["width"]
+    display_height = current_display_information["height"]
+    app_switcher_vertical_margin = display_height // 6
+    app_switcher_height = display_height - app_switcher_vertical_margin * 2
+    app_switcher_width = round(app_switcher_height * 0.8)
+    app_switcher_right_margin = 26
+    app_switcher_left_margin = display_width - (
+        app_switcher_width + app_switcher_right_margin
+    )
     panel_args = [
         "kitten",
         "panel",
         "--single-instance",
         "--instance-group=app-switcher",
+        b"--listen-on=unix:" + PANEL_SOCKET_PATH,
         "--start-as-hidden",
         "--layer=overlay",
         "--focus-policy=exclusive",
         "--edge=center",
-        "--margin-top=200",
-        "--margin-bottom=200",
-        "--margin-left=2000",
-        "--margin-right=26",
+        f"--margin-top={app_switcher_vertical_margin}",
+        f"--margin-bottom={app_switcher_vertical_margin}",
+        f"--margin-left={app_switcher_left_margin}",
+        f"--margin-right={app_switcher_right_margin}",
         "--override=font_size=14",
-        f"--override=background_image={os.path.expanduser('~/.assets/app_switcher_background.png')}",
         "--override=window_padding_width=8",
-        b"--listen-on=unix:" + PANEL_SOCKET_PATH,
+        f"--override=background_image={os.path.expanduser('~/.assets/app_switcher_background.png')}",
     ]
     # base64 encode 'CONTROL_SOCKET_PATH' so that it is safe for fzf to read
     control_message_cmd_template = f'socat - UNIX-CONNECT:"$(base64 --decode <<< "{base64.b64encode(CONTROL_SOCKET_PATH).decode("ascii")}")" <<< %s'

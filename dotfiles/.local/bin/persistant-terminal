@@ -1,0 +1,20 @@
+#!/bin/sh
+
+eval "$(swaymsg -t get_outputs | jq -r '.[] | first(select(.active == true)) | .current_mode | "width=\(.width); height=\(.height)"')"
+vertical_margin=$(($height/6))
+panel_height=$(($height-$vertical_margin*2))
+approximate_panel_width=$(($panel_height*2))
+horizontal_margin=$((($width-$approximate_panel_width)/2))
+kitten panel \
+    --single-instance \
+    --instance-group=persistant-terminal \
+    --toggle-visibility \
+    --layer=overlay \
+    --focus-policy=exclusive \
+    --edge=center \
+    --margin-top=$vertical_margin \
+    --margin-bot=$vertical_margin \
+    --margin-left=$horizontal_margin \
+    --margin-right=$horizontal_margin \
+    --override=window_padding_width=8 \
+    --override=background_image="~/.assets/persistant_terminal_background.png"
