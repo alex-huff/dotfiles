@@ -55,5 +55,8 @@
   },
   "terminal": {
     "button": false
+  },
+  "buffer_font_features": {
+    "calt": false
   }
 }
