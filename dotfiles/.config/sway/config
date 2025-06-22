@@ -48,7 +48,7 @@ bindsym $super+Control+l exec swaylock --color=000000 --font="Fira Code" --font-
 bindsym $super+Return exec kitty --single-instance
 
 # start a qutebrowser
-bindsym $super+i exec qutebrowser --qt-flag disable-http2
+bindsym $super+i exec qutebrowser --qt-flag disable-http2 --temp-basedir
 
 # search with qutebrowser
 bindsym $super+Alt+s exec query=$(rofi -dmenu -l 0 -p search) && qutebrowser --target=tab "$query"
