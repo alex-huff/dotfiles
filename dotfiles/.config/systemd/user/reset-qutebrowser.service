@@ -1,0 +1,8 @@
+[Unit]
+Description=Reset qutebrowser data
+
+[Service]
+ExecStart=reset-qutebrowser
+
+[Install]
+WantedBy=default.target
