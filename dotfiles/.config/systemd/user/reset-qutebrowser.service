@@ -2,7 +2,7 @@
 Description=Reset qutebrowser data
 
 [Service]
-ExecStart=reset-qutebrowser
+ExecStart=%h/.local/bin/reset-qutebrowser
 
 [Install]
 WantedBy=default.target
