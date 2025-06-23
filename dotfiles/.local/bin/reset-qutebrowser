@@ -1,0 +1,3 @@
+#!/bin/sh
+
+rm -rf ~/.local/share/qutebrowser/{cmd-history,history.sqlite,webengine}
