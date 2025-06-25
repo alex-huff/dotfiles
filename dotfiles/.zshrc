@@ -14,7 +14,6 @@ bindkey -M vicmd v edit-command-line
 
 alias cmus="PULSE_SINK=hush cmus"
 alias discord="PULSE_SINK=hush discord"
-alias webcord="PULSE_SINK=hush webcord"
 
 for color in $(color-manager list-colors)
 do
@@ -39,9 +38,6 @@ then
     alias ssh="kitty +kitten ssh"
 fi
 
-# if (( $+commands[nvim] ))
-# then
-#     EDITOR=nvim
 if (( $+commands[vim] ))
 then
     EDITOR=vim
@@ -56,8 +52,6 @@ alias ls="ls --hyperlink=auto"
 
 alias ff="fzf-find-files"
 alias fr="rg-fzf"
-
-alias browse="awrit"
 
 PS1='%m$ '
 
