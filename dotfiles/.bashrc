@@ -7,6 +7,7 @@ then
 fi
 
 set -o vi
+HISTCONTROL=ignoreboth:erasedups
 
 alias cmus="PULSE_SINK=hush cmus"
 alias discord="PULSE_SINK=hush discord"
