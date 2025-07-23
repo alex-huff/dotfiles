@@ -1,5 +1,6 @@
 // documentation: https://zed.dev/docs/configuring-zed
 {
+  "disable_ai": true,
   "autosave": "off",
   "format_on_save": "off",
   "ui_font_family": "Fira Code",
