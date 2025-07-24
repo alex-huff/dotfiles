@@ -354,7 +354,7 @@ async def main():
         "--bind=start:reload-sync(:)",
         f"--bind=start:+execute-silent:{initialize_message_cmd}",
         f"--bind=focus:execute-silent:{focus_message_cmd}",
-        "--bind=load:pos(2)",
+        "--bind=load:pos(1)",
         f"--bind=load:+execute-silent:{fzf_on_load_message_cmd}",
         "--bind=load:+enable-search",
         "--bind=load:+rebind(focus)",
