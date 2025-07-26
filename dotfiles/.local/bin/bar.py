@@ -2350,6 +2350,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     PLAYBACK_STATUS_SPECIFIER = {"Playing": "󰐊", "Paused": "󰏤", "Stopped": "󰓛"}
     LONDON_TIMEZONE = pytz.timezone("Europe/London")
     CHICAGO_TIMEZONE = pytz.timezone("America/Chicago")
+    NEW_YORK_TIMEZONE = pytz.timezone("America/New_York")
     UTC_TIMEZONE = pytz.utc
     TIMEZONES = [CHICAGO_TIMEZONE, LONDON_TIMEZONE, UTC_TIMEZONE]
 
