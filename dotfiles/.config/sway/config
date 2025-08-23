@@ -201,6 +201,7 @@ bindsym $super+Alt+9 move container to workspace number $ws9
 bindsym $super+Alt+0 move container to workspace number $ws10
 
 # focus last focused leaf container in nth child of farthest tabbed ancestor
+bindsym $super+Shift+Grave exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor -1 false
 bindsym $super+Shift+1 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 0 false
 bindsym $super+Shift+2 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 1 false
 bindsym $super+Shift+3 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 2 false
@@ -213,6 +214,7 @@ bindsym $super+Shift+9 exec focus-last-focused-leaf-container-in-nth-child-of-ta
 bindsym $super+Shift+0 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 9 false
 
 # focus last focused leaf container in nth child of closest tabbed ancestor
+bindsym $super+Control+Grave exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor -1 false
 bindsym $super+Control+1 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 0 true
 bindsym $super+Control+2 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 1 true
 bindsym $super+Control+3 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 2 true
