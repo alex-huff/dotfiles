@@ -11,6 +11,9 @@ exec ~/.config/sway/import-gsettings
 # eww
 exec eww daemon
 
+# foot
+exec foot --server
+
 # start XDG autostart .desktop files
 exec --no-startup-id dex --autostart --environment=sway
 

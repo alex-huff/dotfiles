@@ -51,7 +51,7 @@ if os.name == "nt":
     editor_command = ["wsl", "--exec", "sh",
                       "-c", editor_script, "_", "{file}"]
 else:
-    editor_command = ["kitty", "--app-id=kitty-dialogue",
+    editor_command = ["footclient", "--app-id=foot-dialogue",
                       "vim", "-c", "normal {line}G{column}|zz", "{file}"]
 c.editor.command = editor_command
 
