@@ -57,7 +57,7 @@ class RGOptions:
         return self
 
     def add_path(self, path):
-        return self.paths(path)
+        return self.add_paths(path)
 
     def help(self):
         raise Exception(help_message)
