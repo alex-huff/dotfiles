@@ -1,5 +1,6 @@
 syntax off
 filetype plugin on
+set autoread
 set lazyredraw
 set nowrap
 set number
