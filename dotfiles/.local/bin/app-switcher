@@ -323,6 +323,7 @@ async def main():
         f"--margin-right={app_switcher_right_margin}",
         "--override=font_size=14",
         "--override=window_padding_width=8",
+        "--override=placement_strategy=bottom",
         f"--override=background_image={os.path.expanduser('~/.assets/app_switcher_background.png')}",
     ]
     # base64 encode 'CONTROL_SOCKET_PATH' so that it is safe for fzf to read
