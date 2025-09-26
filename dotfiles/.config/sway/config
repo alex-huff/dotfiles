@@ -217,7 +217,7 @@ bindsym $super+Shift+9 exec focus-last-focused-leaf-container-in-nth-child-of-ta
 bindsym $super+Shift+0 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 9 false
 
 # focus last focused leaf container in nth child of closest tabbed ancestor
-bindsym $super+Control+Grave exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor -1 false
+bindsym $super+Control+Grave exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor -1 true
 bindsym $super+Control+1 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 0 true
 bindsym $super+Control+2 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 1 true
 bindsym $super+Control+3 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 2 true
