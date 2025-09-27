@@ -204,30 +204,36 @@ bindsym $super+Alt+9 move container to workspace number $ws9
 bindsym $super+Alt+0 move container to workspace number $ws10
 
 # focus last focused leaf container in nth child of farthest tabbed ancestor
-bindsym $super+Shift+Grave exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor -1 false
-bindsym $super+Shift+1 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 0 false
-bindsym $super+Shift+2 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 1 false
-bindsym $super+Shift+3 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 2 false
-bindsym $super+Shift+4 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 3 false
-bindsym $super+Shift+5 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 4 false
-bindsym $super+Shift+6 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 5 false
-bindsym $super+Shift+7 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 6 false
-bindsym $super+Shift+8 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 7 false
-bindsym $super+Shift+9 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 8 false
-bindsym $super+Shift+0 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 9 false
+bindsym $super+Shift+Grave exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false -1 false
+bindsym $super+Shift+1 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 0 false
+bindsym $super+Shift+2 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 1 false
+bindsym $super+Shift+3 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 2 false
+bindsym $super+Shift+4 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 3 false
+bindsym $super+Shift+5 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 4 false
+bindsym $super+Shift+6 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 5 false
+bindsym $super+Shift+7 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 6 false
+bindsym $super+Shift+8 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 7 false
+bindsym $super+Shift+9 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 8 false
+bindsym $super+Shift+0 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 9 false
 
 # focus last focused leaf container in nth child of closest tabbed ancestor
-bindsym $super+Control+Grave exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor -1 true
-bindsym $super+Control+1 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 0 true
-bindsym $super+Control+2 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 1 true
-bindsym $super+Control+3 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 2 true
-bindsym $super+Control+4 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 3 true
-bindsym $super+Control+5 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 4 true
-bindsym $super+Control+6 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 5 true
-bindsym $super+Control+7 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 6 true
-bindsym $super+Control+8 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 7 true
-bindsym $super+Control+9 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 8 true
-bindsym $super+Control+0 exec focus-last-focused-leaf-container-in-nth-child-of-tabbed-ancestor 9 true
+bindsym $super+Control+Grave exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false -1 true
+bindsym $super+Control+1 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 0 true
+bindsym $super+Control+2 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 1 true
+bindsym $super+Control+3 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 2 true
+bindsym $super+Control+4 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 3 true
+bindsym $super+Control+5 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 4 true
+bindsym $super+Control+6 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 5 true
+bindsym $super+Control+7 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 6 true
+bindsym $super+Control+8 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 7 true
+bindsym $super+Control+9 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 8 true
+bindsym $super+Control+0 exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor tabbed false 9 true
+
+# focus last focused leaf container in adjacent child of farthest non-tabbed ancestor
+bindsym $super+Alt+h exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splith true -1 false
+bindsym $super+Alt+j exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splitv true 1 false
+bindsym $super+Alt+k exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splitv true -1 false
+bindsym $super+Alt+l exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splith true 1 false
 
 # mark
 bindsym $super+Shift+apostrophe exec (mark_name="$(rofi -dmenu -l 0 -p 'mark name')" && swaymsg mark "$mark_name") || swaymsg '[con_id="__focused__"]' unmark

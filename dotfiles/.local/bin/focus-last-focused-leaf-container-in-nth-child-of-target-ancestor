@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if [ "$#" -lt 4 ]
+then
+    echo "Usage: $(basename "$0") <layout> <relative?> <n> <closest ancestor?>" 1>&2
+    exit 1
+fi
+
+con_id=$(
+    swaymsg -t get_tree |
+        jq \
+            --arg target_layout "$1" \
+            --argjson relative "$2" \
+            --argjson n "$3" \
+            --argjson closest_ancestor "$4" \
+            --from-file ~/.local/bin/extract-id-of-last-focused-leaf-container-in-nth-child-of-target-ancestor.jq
+)
+swaymsg "[con_id=$con_id]" focus
