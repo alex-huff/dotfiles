@@ -328,7 +328,7 @@ default_border normal 2
 default_floating_border normal 2
 titlebar_border_thickness 2
 hide_edge_borders --i3 horizontal
-smart_gaps on
+# smart_gaps on
 gaps inner 12
 gaps horizontal 0
 gaps top 0
