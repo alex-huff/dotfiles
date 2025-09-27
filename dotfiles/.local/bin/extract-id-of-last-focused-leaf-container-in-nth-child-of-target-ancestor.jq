@@ -14,13 +14,17 @@ def focused_container_target_ancestor:
             ) as $is_valid_ancestor |
             first(
                 . as $node |
-                (.nodes, .floating_nodes) |
-                . as $children |
+                ([.nodes, false], [.floating_nodes, true]) |
+                .[0] as $children |
+                .[1] as $is_floating_child |
                 range($children | length) |
                 . as $index |
                 $children[.] |
                 _focused_container_target_ancestor(
-                    if $is_valid_ancestor
+                    if $is_floating_child
+                    then
+                        [null, null]
+                    elif $is_valid_ancestor
                     then
                         [$node, $index]
                     else
