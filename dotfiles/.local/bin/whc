@@ -1,0 +1,3 @@
+#!/bin/sh
+
+git log --oneline --color -- "$@" | fzf --disabled --no-input --ansi --preview='git log --max-count=1 --patch --color {1} -- '"${*@Q}"
