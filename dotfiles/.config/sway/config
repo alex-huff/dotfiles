@@ -330,9 +330,7 @@ titlebar_border_thickness 2
 hide_edge_borders --i3 horizontal
 # smart_gaps on
 gaps inner 12
-gaps horizontal 0
-gaps top 0
-gaps bottom -12
+gaps outer -12
 titlebar_padding 15 5
 focus_follows_mouse no
 tiling_drag off

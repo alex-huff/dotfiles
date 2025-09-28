@@ -2,8 +2,8 @@
 
 kitten panel \
     --edge=bottom \
-    --lines=24px \
-    --override=placement_strategy=bottom \
+    --lines=26px \
+    --override=placement_strategy=center \
     --override=window_padding_width=0 \
     --override=font_size=14 \
     --override=background_image=~/.assets/bar_background.png \

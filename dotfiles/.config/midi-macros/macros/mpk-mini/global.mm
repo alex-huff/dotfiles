@@ -230,7 +230,7 @@ D3 MIDI{STATUS==cc}{CC_FUNCTION==75}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")
 # [BLOCK|DEBOUNCE]-> <init>; swaymsg gaps $gap_type current set $pixels
 
 MIDI{STATUS==cc}{CC_FUNCTION==76}("{}"->CC_VALUE)
-[BLOCK|DEBOUNCE]-> swaymsg -- gaps bottom current set -{}, gaps inner current set {}
+[BLOCK|DEBOUNCE]-> swaymsg -- gaps outer current set -{}, gaps inner current set {}
 
 * MIDI{
     (STATUS==pb and
