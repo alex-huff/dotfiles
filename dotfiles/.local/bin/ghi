@@ -4,7 +4,7 @@ issue_view_command_template=$(
 	cat <<-"EOF"
 		issue_number={1}
 		issue_number=${issue_number:1}
-		GH_ACCESSIBLE_COLORS=yes GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh issue view --<action> $issue_number
+		NO_COLOR=1 GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh issue view --<action> $issue_number
 	EOF
 )
 preview_command=${issue_view_command_template//<action>/comments}
