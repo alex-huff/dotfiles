@@ -9,7 +9,7 @@ issue_view_command_template=$(
 )
 preview_command=${issue_view_command_template//<action>/comments}
 open_in_web_command=${issue_view_command_template//<action>/web}
-formatted_issue_line_jq_query=$(
+formatted_issue_lines_jq_query=$(
 	cat <<-"EOF"
 		"\u001b[" as $csi |
 		"32" as $green |
@@ -20,18 +20,20 @@ formatted_issue_line_jq_query=$(
 		"\($csi)\($color)m#\(.number)\($csi)\($reset_foreground)m \(.title)"
 	EOF
 )
+quoted_formatted_issue_lines_jq_query=${formatted_issue_lines_jq_query@Q}
 issue_list_command=$(
 	cat <<-EOF
+		query={q}
 		gh issue list \
 		    --state=all \
 		    --limit=100 \
 		    --json=number,title,state \
-		    --jq=${formatted_issue_line_jq_query@Q}
+		    \${query:+--search="\$query"} \
+		    --jq=$quoted_formatted_issue_lines_jq_query
 	EOF
 )
 fzf --disabled \
-    --no-input \
     --ansi \
     --preview="$preview_command" \
-    --bind="start,ctrl-r:reload($issue_list_command)" \
+    --bind="start,enter:reload($issue_list_command)+first" \
     --bind="ctrl-space:execute-silent($open_in_web_command)"
