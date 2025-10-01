@@ -19,10 +19,9 @@ issue_list_command=$(
 		    --jq=${formatted_issue_line_jq_query@Q}
 	EOF
 )
-eval "$issue_list_command" |
 fzf --disabled \
     --no-input \
     --ansi \
     --preview="$preview_command" \
-    --bind="ctrl-space:execute-silent($open_in_web_command)" \
-    --bind="ctrl-r:reload($issue_list_command)"
+    --bind="start,ctrl-r:reload($issue_list_command)" \
+    --bind="ctrl-space:execute-silent($open_in_web_command)"
