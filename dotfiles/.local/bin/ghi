@@ -11,9 +11,13 @@ preview_command=${issue_view_command_template//<action>/comments}
 open_in_web_command=${issue_view_command_template//<action>/web}
 formatted_issue_line_jq_query=$(
 	cat <<-"EOF"
+		"\u001b[" as $csi |
+		"32" as $green |
+		"35" as $magenta |
+		"39" as $reset_foreground |
 		.[] |
-		(if .state == "CLOSED" then "35" else "32" end) as $color |
-		"\u001b[\($color)m#\(.number)\u001b[39m \(.title)"
+		(if .state == "CLOSED" then $magenta else $green end) as $color |
+		"\($csi)\($color)m#\(.number)\($csi)\($reset_foreground)m \(.title)"
 	EOF
 )
 issue_list_command=$(
