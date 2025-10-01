@@ -49,8 +49,7 @@
   "notification_panel": {
     "button": false
   },
-  "assistant": {
-    "version": "2",
+  "agent": {
     "enabled": false,
     "button": false
   },
