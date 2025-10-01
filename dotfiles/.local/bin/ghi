@@ -1,15 +1,22 @@
 #!/bin/sh
 
-issue_view_command_template=$(
-	cat <<-"EOF"
-		issue_number={1}
-		issue_number=${issue_number:1}
-		NO_COLOR=1 GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh issue view --<action> $issue_number
+basename=$(basename -- "$0")
+if [ "$basename" = ghp ]
+then
+    type="pr"
+else
+    type="issue"
+fi
+view_command_template=$(
+	cat <<-EOF
+		number={1}
+		number=\${number:1}
+		NO_COLOR=1 GH_FORCE_TTY=\$FZF_PREVIEW_COLUMNS gh $type view --<action> \$number
 	EOF
 )
-preview_command=${issue_view_command_template//<action>/comments}
-open_in_web_command=${issue_view_command_template//<action>/web}
-formatted_issue_lines_jq_query=$(
+preview_command=${view_command_template//<action>/comments}
+open_in_web_command=${view_command_template//<action>/web}
+formatted_lines_jq_query=$(
 	cat <<-"EOF"
 		"\u001b[" as $csi |
 		"32" as $green |
@@ -20,20 +27,20 @@ formatted_issue_lines_jq_query=$(
 		"\($csi)\($color)m#\(.number)\($csi)\($reset_foreground)m \(.title)"
 	EOF
 )
-quoted_formatted_issue_lines_jq_query=${formatted_issue_lines_jq_query@Q}
-issue_list_command=$(
+quoted_formatted_lines_jq_query=${formatted_lines_jq_query@Q}
+list_command=$(
 	cat <<-EOF
 		query={q}
-		gh issue list \
+		gh $type list \
 		    --state=all \
 		    --limit=100 \
 		    --json=number,title,state \
 		    \${query:+--search="\$query"} \
-		    --jq=$quoted_formatted_issue_lines_jq_query
+		    --jq=$quoted_formatted_lines_jq_query
 	EOF
 )
 fzf --disabled \
     --ansi \
     --preview="$preview_command" \
-    --bind="start,enter:reload($issue_list_command)+first" \
+    --bind="start,enter:reload($list_command)+first" \
     --bind="ctrl-space:execute-silent($open_in_web_command)"
