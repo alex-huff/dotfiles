@@ -21,10 +21,10 @@ formatted_lines_jq_query=$(
 		"\u001b[" as $csi |
 		"32" as $green |
 		"35" as $magenta |
-		"39" as $reset_foreground |
+		"39" as $reset |
 		.[] |
 		(if .state == "CLOSED" then $magenta else $green end) as $color |
-		"\($csi)\($color)m#\(.number)\($csi)\($reset_foreground)m \(.title)"
+		"\($csi)\($color)m#\(.number)\($csi)\($reset)m \(.title)"
 	EOF
 )
 quoted_formatted_lines_jq_query=${formatted_lines_jq_query@Q}
