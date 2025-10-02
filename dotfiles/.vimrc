@@ -33,9 +33,9 @@ if has("gui_running")
     set guioptions-=L
     set guioptions-=r
     if has("gui_gtk")
-        set guifont=Fira\ Code\ 18
+        set guifont=Cascadia\ Mono\ NF\ 18
     elseif has("gui_win32")
-        set guifont=Fira_Code:h18
+        set guifont=Cascadia_Mono_NF:h18
     endif
 endif
 try
