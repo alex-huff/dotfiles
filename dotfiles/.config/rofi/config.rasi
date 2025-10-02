@@ -1,7 +1,7 @@
 @theme "/usr/share/rofi/themes/gruvbox-light.rasi"
 
 * {
-    font: "Fira Code 14";
+    font: "Cascadia Mono NF 14";
     separatorcolor: #282828;
 }
 window {

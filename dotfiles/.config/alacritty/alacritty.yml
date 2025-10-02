@@ -5,16 +5,16 @@ window:
 
 font:
   normal:
-    family: Fira Code
+    family: Cascadia Mono NF
     style: Regular
   bold:
-    family: Fira Code
+    family: Cascadia Mono NF
     style: Bold
   italic:
-    family: Fira Code
+    family: Cascadia Mono NF
     style: Italic
   bold_italic:
-    family: Fira Code
+    family: Cascadia Mono NF
     style: Bold Italic
   size: 18.0
 

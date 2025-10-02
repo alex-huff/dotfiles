@@ -2,7 +2,7 @@
 
 kitten panel \
     --edge=bottom \
-    --lines=26px \
+    --lines=25px \
     --override=placement_strategy=center \
     --override=window_padding_width=0 \
     --override=font_size=14 \

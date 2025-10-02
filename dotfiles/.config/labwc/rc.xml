@@ -9,7 +9,7 @@
   <theme>
     <name>gruvbox</name>
     <cornerRadius>0</cornerRadius>
-    <font name="Fira Code" size="10" />
+    <font name="Cascadia Mono NF" size="10" />
   </theme>
 
   <keyboard>
