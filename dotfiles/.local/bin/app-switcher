@@ -13,6 +13,11 @@ FZF_PORT = 47426
 SOCKET_DIR = os.environb.get(b"XDG_RUNTIME_DIR", b"/tmp")
 PANEL_SOCKET_PATH = SOCKET_DIR + b"/kitty-app-switcher-panel"
 CONTROL_SOCKET_PATH = SOCKET_DIR + b"/kitty-app-switcher-control"
+ESCAPE = "\x1b"
+CSI_START = ESCAPE + "["
+CHARACTER_ATTRIBUTES_TEMPLATE = CSI_START + "%sm"
+BOLD_UNDERLINE = CHARACTER_ATTRIBUTES_TEMPLATE % "1;4"
+NOT_BOLD_NOT_UNDERLINE = CHARACTER_ATTRIBUTES_TEMPLATE % "22;24"
 
 
 async def run_server(task_group, focus_queue, server_initialized_signal):
@@ -103,7 +108,7 @@ async def run_server(task_group, focus_queue, server_initialized_signal):
                     panel_shown = not panel_shown
                     if panel_shown:
                         windows_string = "\0".join(
-                            f"{window['con_class']} - {window['con_title']}|{con_id}"
+                            f"{BOLD_UNDERLINE}{window['con_class']}{NOT_BOLD_NOT_UNDERLINE} - {window['con_title']}|{con_id}"
                             for con_id, window in sorted(
                                 windows.items(),
                                 key=lambda item: item[1]["last_focus"],
@@ -180,7 +185,12 @@ async def watch_i3_forever(task_group, focus_queue, tree_initialized_signal):
 
     MAGIC_BYTES = b"i3-ipc"
     MESSAGE_HEADER_STRUCT = struct.Struct(f"={len(MAGIC_BYTES)}sII")
-    CLASS_REPLACEMENTS = {"org.qutebrowser.qutebrowser": "qutebrowser"}
+    CLASS_REPLACEMENTS = {
+        "org.qutebrowser.qutebrowser": "qutebrowser",
+        "org.unmojang.FjordLauncher": "FjordLauncher",
+        "com.obsproject.Studio": "obs",
+        "org.gnome.Evolution": "evolution",
+    }
 
     async def read_message(reader):
         message_header_bytes = await reader.readexactly(MESSAGE_HEADER_STRUCT.size)
@@ -348,6 +358,7 @@ async def main():
         f"--listen=localhost:{FZF_PORT}",
         "--scheme=history",
         "--read0",
+        "--ansi",
         "--delimiter=|",
         "--wrap",
         "--color=bg:#fbf1c7,alt-bg:#f2e5bc,current-bg:#d5c4a1",
