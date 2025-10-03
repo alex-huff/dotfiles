@@ -1,5 +1,6 @@
 #!/bin/sh
 
+repo=$(gh repo set-default --view)
 basename=$(basename -- "$0")
 if [ "$basename" = ghp ]
 then
@@ -57,8 +58,19 @@ list_command=$(
 )
 list_command=${list_command//<type>/$type}
 list_command=${list_command//<jq_query>/${formatted_lines_jq_query@Q}}
+set_title_command=$(
+	cat <<-"EOF"
+		title=<repo>" <type> "{..}
+		title=${title//$'\a'/}
+		title=${title//$'\e\\'/}
+		printf '\e]2;%s\a' "$title" > /dev/tty
+	EOF
+)
+set_title_command=${set_title_command//<type>/$type}
+set_title_command=${set_title_command//<repo>/${repo@Q}}
 fzf --disabled \
     --ansi \
     --preview="$preview_command" \
     --bind="start,enter:reload($list_command)+first" \
-    --bind="ctrl-space:execute-silent($open_in_web_command)"
+    --bind="ctrl-space:execute-silent($open_in_web_command)" \
+    --bind="focus:execute-silent($set_title_command)"
