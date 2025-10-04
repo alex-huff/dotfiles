@@ -61,8 +61,18 @@ list_command=${list_command//<jq_query>/${formatted_lines_jq_query@Q}}
 set_title_command=$(
 	cat <<-"EOF"
 		title=<repo>" <type> "{..}
-		title=${title//$'\a'/}
-		title=${title//$'\e\\'/}
+		title=${title//$'\a'}
+		title_length=${#title}
+		while true
+		do
+			title=${title//$'\e\\'}
+			new_title_length=${#title}
+			if [ $new_title_length -eq $title_length ]
+			then
+				break
+			fi
+			title_length=$new_title_length
+		done
 		printf '\e]2;%s\a' "$title" > /dev/tty
 	EOF
 )
