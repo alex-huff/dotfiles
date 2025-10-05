@@ -7,7 +7,10 @@ then
 fi
 
 set -o vi
+
 HISTCONTROL=ignoreboth:erasedups
+HISTSIZE=100000
+shopt -s histappend
 
 alias cmus="PULSE_SINK=hush cmus"
 alias discord="PULSE_SINK=hush discord"
