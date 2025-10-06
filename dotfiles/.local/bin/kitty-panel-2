@@ -4,7 +4,7 @@ kitten panel \
     --edge=bottom \
     --lines=27px \
     --override=placement_strategy=center \
-    --override=window_padding_width=0 \
+    --override=window_padding_width="0 2" \
     --override=font_size=15 \
     --override=background_image=~/.assets/bar_background.png \
     bar.py
