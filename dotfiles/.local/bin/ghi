@@ -28,19 +28,19 @@ formatted_lines_jq_query=$(
 		.[] |
 		(.id | startswith("I")) as $is_issue |
 		(
-			if .state == "OPEN"
-			then
-				$green
-			else
-				(
-					if $is_issue or .state == "MERGED"
-					then
-						$magenta
-					else
-						$red
-					end
-				)
-			end
+		    if .state == "OPEN"
+		    then
+		        $green
+		    else
+		        (
+		            if $is_issue or .state == "MERGED"
+		            then
+		                $magenta
+		            else
+		                $red
+		            end
+		        )
+		    end
 		) as $color |
 		"\($csi)\($color)m#\(.number)\($csi)\($reset)m \(.title)"
 	EOF
@@ -65,13 +65,13 @@ set_title_command=$(
 		title_length=${#title}
 		while true
 		do
-			title=${title//$'\e\\'}
-			new_title_length=${#title}
-			if [ $new_title_length -eq $title_length ]
-			then
-				break
-			fi
-			title_length=$new_title_length
+		    title=${title//$'\e\\'}
+		    new_title_length=${#title}
+		    if [ $new_title_length -eq $title_length ]
+		    then
+		        break
+		    fi
+		    title_length=$new_title_length
 		done
 		printf '\e]2;%s\a' "$title" > /dev/tty
 	EOF
