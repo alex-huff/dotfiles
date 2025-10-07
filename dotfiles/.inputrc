@@ -1,2 +1,2 @@
 set editing-mode vi
-set show-mode-in-prompt On
+# set show-mode-in-prompt On
