@@ -9,10 +9,10 @@ import subprocess
 import struct
 from enum import IntEnum
 
-FZF_PORT = 47426
 SOCKET_DIR = os.environb.get(b"XDG_RUNTIME_DIR", b"/tmp")
 PANEL_SOCKET_PATH = SOCKET_DIR + b"/kitty-app-switcher-panel"
 CONTROL_SOCKET_PATH = SOCKET_DIR + b"/kitty-app-switcher-control"
+FZF_SOCKET_PATH = SOCKET_DIR + b"/fzf-app-switcher.sock"
 ESCAPE = "\x1b"
 CSI_START = ESCAPE + "["
 CHARACTER_ATTRIBUTES_TEMPLATE = CSI_START + "%sm"
@@ -27,7 +27,7 @@ async def run_server(task_group, focus_queue, server_initialized_signal):
         b"--to=unix:" + PANEL_SOCKET_PATH,
         "resize-os-window",
     ]
-    curl_args = ["curl", f"localhost:{FZF_PORT}", "--data"]
+    curl_args = ["curl", b"--unix-socket=" + FZF_SOCKET_PATH, "http", "--data"]
 
     async def handle_messages_forever():
         global panel_shown
@@ -355,7 +355,7 @@ async def main():
     fzf_on_load_message_cmd = control_message_cmd_template % quoted_fzf_on_load_message
     fzf_args = [
         "fzf",
-        f"--listen=localhost:{FZF_PORT}",
+        b"--listen=" + FZF_SOCKET_PATH,
         "--scheme=history",
         "--read0",
         "--ansi",
