@@ -53,7 +53,8 @@ fzf --height=${FZF_HEIGHT:-0} \
     --preview="$preview_command" \
     --preview-window="top,~1,+{5}+1/2" \
     --bind="start:reload-sync(:)" \
-    --bind="enter:reload(rg-fzf-rg-wrapper.py {q})" \
+    --bind="change:reload(rg-fzf-rg-wrapper.py {q})" \
+    --bind="enter:" \
     --bind="resize:refresh-preview" \
     --bind="ctrl-space:execute([ {1} = 'match' ] && $decode_field2 | xargs -0 vim --not-a-term -c 'goto '{3}'|normal zz')" \
     --bind="ctrl-q:execute-silent([ {1} = 'match' ] && $decode_field2 | xargs -0 printf %q | kitty +kitten clipboard)" \
