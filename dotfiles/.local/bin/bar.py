@@ -1,8 +1,10 @@
 #!/bin/python3
 
+import array
 import asyncio
 import bisect
 import datetime
+import fcntl
 import itertools
 import json
 import math
@@ -11,6 +13,7 @@ import re
 import shutil
 import signal
 import struct
+import termios
 import time
 import tty
 from copy import deepcopy
@@ -2331,7 +2334,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     CLEAR_LINE = CSI_START + b"2K"
     CURSOR_CHARACTER_ABSOLUTE_TEMPLATE = CSI_START + b"%bG"
     HIDE_CURSOR = CSI_START + b"?25l"
-    TRACK_MOUSE_MOTION = CSI_START + b"?1002h"
+    TRACK_MOUSE_MOTION_PIXELS = CSI_START + b"?1002;1016h"
     SYNCHRONIZED_UPDATE_TEMPLATE = CSI_START + b"?2026%b"
     BEGIN_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"h"
     END_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"l"
@@ -2378,27 +2381,56 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     def clamp(value, min_value, max_value):
         return max(min_value, min(max_value, value))
 
+    def get_terminal_dimensions():
+        buf = array.array("H", [0, 0, 0, 0])
+        fcntl.ioctl(tty_file, termios.TIOCGWINSZ, buf)
+        terminal_width, terminal_width_pixels = buf[1], buf[2]
+        return (
+            terminal_width,
+            terminal_width_pixels,
+            terminal_width_pixels // terminal_width,
+        )
+
     def on_resize(*args):
-        nonlocal terminal_width
-        old_terminal_width = terminal_width
-        terminal_width = shutil.get_terminal_size().columns
+        nonlocal terminal_width, terminal_width_pixels, terminal_cell_width_pixels
+        terminal_width, terminal_width_pixels, terminal_cell_width_pixels = (
+            get_terminal_dimensions()
+        )
         assert terminal_width > 0
         bar_event_queue.put_nowait(BarEvent(BarEventType.RESIZE))
 
     async def handle_mouse_updates_forever():
-        MOUSE_EVENT_START = CSI_START + b"M"
+        MOUSE_EVENT_START = CSI_START + b"<"
         LEFT_CLICK_EVENT = 0
         LEFT_CLICK_DRAG = 32
+        PRESS = b"M"
+        RELEASE = b"m"
 
+        is_motion = False
         last_click_region = None
+        last_motion_column = None
         while True:
-            mouse_event = await reader.readexactly(6)
+            mouse_event = await reader.readuntil((PRESS, RELEASE))
             assert mouse_event[0:3] == MOUSE_EVENT_START
-            event_type = mouse_event[3] - 32
-            if event_type != LEFT_CLICK_EVENT and event_type != LEFT_CLICK_DRAG:
+            is_press = mouse_event[-1] == PRESS[0]
+            event_type, event_px, event_py = map(
+                lambda num_bytes: int(num_bytes.decode("utf-8")),
+                mouse_event[3:-1].split(b";"),
+            )
+            if not is_press or (
+                event_type != LEFT_CLICK_EVENT and event_type != LEFT_CLICK_DRAG
+            ):
                 continue
+            column = (
+                clamp(event_px, 0, terminal_width_pixels - 1)
+                // terminal_cell_width_pixels
+            ) + 1
+            was_motion = is_motion
             is_motion = event_type == LEFT_CLICK_DRAG
-            column = mouse_event[4] - 32
+            if is_motion:
+                if was_motion and column == last_motion_column:
+                    continue
+                last_motion_column = column
             try:
                 mouse_event_region = next(
                     element_region
@@ -2452,7 +2484,9 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
 
     tty_file = open("/dev/tty", "r+b", buffering=0)
     tty.setraw(tty_file)
-    terminal_width = shutil.get_terminal_size().columns
+    terminal_width, terminal_width_pixels, terminal_cell_width_pixels = (
+        get_terminal_dimensions()
+    )
     loop = asyncio.get_running_loop()
     loop.add_signal_handler(signal.SIGWINCH, on_resize)
     reader = asyncio.StreamReader()
@@ -2473,7 +2507,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     current_timezone_index = 0
     current_timezone = TIMEZONES[current_timezone_index]
     writer.write(HIDE_CURSOR)
-    writer.write(TRACK_MOUSE_MOTION)
+    writer.write(TRACK_MOUSE_MOTION_PIXELS)
     writer.write(BLACK_FOREGROUND)
     writer.write(WHITE_BACKGROUND)
     await writer.drain()
