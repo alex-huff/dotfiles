@@ -118,7 +118,7 @@ async def run_server(task_group, focus_queue, server_initialized_signal):
                         windows_bytes = windows_string.encode("utf-8")
                         windows_base64 = base64.b64encode(windows_bytes).decode("ascii")
                         await send_message_to_fzf(
-                            f'disable-search+unbind(focus)+clear-query+reload-sync:base64 --decode <<< "{windows_base64}"'
+                            f'disable-search+unbind(focus)+clear-query+disable-raw+reload-sync:base64 --decode <<< "{windows_base64}"'
                         )
                         panel_show_in_progress = True
                     else:
