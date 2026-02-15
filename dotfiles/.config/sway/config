@@ -234,6 +234,10 @@ bindsym $super+Alt+h exec focus-last-focused-leaf-container-in-nth-child-of-targ
 bindsym $super+Alt+j exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splitv true 1 false
 bindsym $super+Alt+k exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splitv true -1 false
 bindsym $super+Alt+l exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splith true 1 false
+bindsym $super+Alt+Left exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splith true -1 false
+bindsym $super+Alt+Down exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splitv true 1 false
+bindsym $super+Alt+Up exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splitv true -1 false
+bindsym $super+Alt+Right exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splith true 1 false
 
 # mark
 bindsym $super+Shift+apostrophe exec (mark_name="$(rofi -dmenu -l 0 -p 'mark name')" && swaymsg mark "$mark_name") || swaymsg '[con_id="__focused__"]' unmark
