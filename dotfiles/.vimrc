@@ -42,6 +42,8 @@ try
     packadd comment
 catch /^Vim\%((\a\+)\)\?:E919:/
 endtry
+packadd osc52
+set clipmethod^=osc52
 function s:save_location_to_clipboard()
     let [bufnum, lnum, col, off, curswant] = getcurpos()
     let start_of_line_offset = line2byte(lnum)
