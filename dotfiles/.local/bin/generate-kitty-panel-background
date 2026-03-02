@@ -50,7 +50,7 @@ app_switcher_height = display_height - app_switcher_vertical_margin * 2
 app_switcher_width = round(app_switcher_height * 0.8)
 app_switcher_right_margin = 26
 app_switcher_left_margin = display_width - (app_switcher_width + app_switcher_right_margin)
-app_switcher_background_color = (251, 241, 199)
+app_switcher_background_color = (40, 40, 40)
 persistant_terminal_vertical_margin = app_switcher_vertical_margin
 persistant_terminal_height = app_switcher_height
 persistant_terminal_approximate_width = persistant_terminal_height * 2
@@ -58,11 +58,11 @@ persistant_terminal_horizontal_margin = (
     display_width - persistant_terminal_approximate_width
 ) // 2
 persistant_terminal_width = display_width - persistant_terminal_horizontal_margin * 2
-persistant_terminal_background_color = (249, 245, 215)
+persistant_terminal_background_color = (29, 32, 33)
 bar_width = display_width
 bar_height = 28
 bar_background_color = app_switcher_background_color
-border_color = (40, 40, 40)
+border_color = (235, 219, 178)
 generate_background(
     "app_switcher",
     app_switcher_width,

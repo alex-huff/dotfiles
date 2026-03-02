@@ -1,4 +1,4 @@
-syntax off
+syntax on
 filetype plugin on
 set autoread
 set lazyredraw
@@ -15,7 +15,7 @@ set title
 set laststatus=0
 set incsearch
 set nofixendofline
-set background=light
+set background=dark
 if (&term != "linux" && &term != "tmux-256color") || has("gui_running")
     set termguicolors
     set list
