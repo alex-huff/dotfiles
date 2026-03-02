@@ -50,9 +50,10 @@ function s:save_location_to_clipboard()
     let @+ = $"{fnamemodify(@%, ":p")}:{start_of_line_offset + (col - 1)}"
 endfunction
 function s:jump_to_clipboard_location(open_cmd)
-    let separator_idx = match(@+, ":\\d\\+$")
-    let file_path = @+[0:separator_idx - 1]
-    let byte_offset = @+[separator_idx + 1:]
+    let clipboard = trim(@+, "", 2)
+    let separator_idx = match(clipboard, ":\\d\\+$")
+    let file_path = clipboard[:separator_idx - 1]
+    let byte_offset = clipboard[separator_idx + 1:]
     execute a:open_cmd fnameescape(fnamemodify(file_path, ":~:."))
     execute "goto" byte_offset
     normal! zz
