@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 repo=$(gh repo set-default --view)
 basename=$(basename -- "$0")
