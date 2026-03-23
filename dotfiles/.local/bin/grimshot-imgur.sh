@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cd ~/screenshots
 current_time=$(date +%s%9N)
@@ -7,7 +7,8 @@ if [ $# -gt 0 ] && [ "$1" = "area" ]
 then
     temp_file=$(mktemp --suffix .png)
     grim -l 0 $temp_file
-    swayimg --config="info.show=no" --fullscreen $temp_file &
+    # swayimg has --execute but it segfaults :)
+    swayimg --config=<(echo 'swayimg.set_mode("viewer"); swayimg.viewer.set_default_scale(1.0); swayimg.text.hide()') --fullscreen $temp_file &
     swayimg_pid=$!
     region=$(slurp -f %w:%h:%x:%y)
     slurp_return_code=$?
