@@ -1,4 +1,4 @@
-syntax off
+syntax on
 filetype plugin on
 set autoread
 set lazyredraw
