@@ -7,11 +7,8 @@ if [ $# -gt 0 ] && [ "$1" = "area" ]
 then
     temp_file=$(mktemp --suffix .png)
     grim -l 0 $temp_file
-    swayimg --execute='swayimg.set_mode("viewer"); swayimg.viewer.set_default_scale(1.0); swayimg.text.hide()' --fullscreen $temp_file &
-    swayimg_pid=$!
-    region=$(slurp -f %w:%h:%x:%y)
+    region=$(slurp -f %w:%h:%x:%y -y $temp_file)
     slurp_return_code=$?
-    kill $swayimg_pid
     if [ $slurp_return_code -ne 0 ]
     then
         rm $temp_file
