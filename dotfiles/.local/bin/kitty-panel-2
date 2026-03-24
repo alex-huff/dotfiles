@@ -1,8 +1,10 @@
 #!/bin/sh
 
 kitten panel \
-    --edge=bottom \
+    --edge=top \
     --lines=27px \
+    --override-exclusive-zone \
+    --exclusive-zone=26 \
     --override=placement_strategy=center \
     --override=window_padding_width="0 2" \
     --override=font_size=15 \
