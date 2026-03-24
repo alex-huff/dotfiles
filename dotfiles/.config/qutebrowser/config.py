@@ -104,6 +104,9 @@ c.input.insert_mode.auto_enter = False
 c.input.insert_mode.auto_leave = False
 c.input.insert_mode.leave_on_load = False
 
+c.statusbar.position = "top"
+c.statusbar.show = "never"
+
 c.keyhint.delay = 0
 
 c.spellcheck.languages = ["en-US"]
