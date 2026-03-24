@@ -331,7 +331,7 @@ for_window [app_id=".*-overlay"]
 default_border normal 2
 default_floating_border normal 2
 titlebar_border_thickness 2
-hide_edge_borders --i3 horizontal
+# hide_edge_borders --i3 horizontal
 # smart_gaps on
 gaps inner 12
 gaps outer -12
