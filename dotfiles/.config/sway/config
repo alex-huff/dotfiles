@@ -64,6 +64,9 @@ bindsym $super+Shift+q kill
 # SIGKILL focused window
 bindsym $super+Shift+t exec wkill.sh
 
+# zoom
+bindsym $super+z exec yazu
+
 # take a rectangular screenshot
 bindsym $super+s exec grimshot-imgur.sh area
 
