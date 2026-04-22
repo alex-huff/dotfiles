@@ -81,6 +81,7 @@ set_title_command=${set_title_command//<repo>/${repo@Q}}
 fzf --disabled \
     --ansi \
     --preview="$preview_command" \
+    --preview-window="top" \
     --bind="start,enter:reload($list_command)+first" \
     --bind="ctrl-space:execute-silent($open_in_web_command)" \
     --bind="focus:execute-silent($set_title_command)"
