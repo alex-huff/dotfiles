@@ -59,6 +59,15 @@ class RGOptions:
     def add_path(self, path):
         return self.add_paths(path)
 
+    def u(self):
+        return self.push_arg("-u")
+
+    def uu(self):
+        return self.push_arg("-uu")
+
+    def uuu(self):
+        return self.push_arg("-uuu")
+
     def help(self):
         raise Exception(help_message)
 
@@ -364,6 +373,11 @@ ripgrep command manipulation:
     temporarily disable a path like so:
         rg.add_path("~/foo")   # ~/foo enabled
         rg.add_path("~/foo"*0) # ~/foo disabled
+
+    # various levels of filtering
+    rg.u()
+    rg.uu()
+    rg.uuu()
 
 Some useful ripgrep options:
     --regexp=PATTERN --file=PATTERNFILE
