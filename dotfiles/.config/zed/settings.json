@@ -1,10 +1,16 @@
 // documentation: https://zed.dev/docs/configuring-zed
 {
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
   "disable_ai": true,
   "autosave": "off",
   "format_on_save": "off",
-  "ui_font_family": "Cascadia Mono NF",
-  "buffer_font_family": "Cascadia Mono NF",
+  "ui_font_family": "Comic Code",
+  "buffer_font_family": "Comic Code",
   "base_keymap": "JetBrains",
   "theme": "Gruvbox Light Hard",
   "vim_mode": true,
@@ -41,15 +47,18 @@
     "show": "never"
   },
   "collaboration_panel": {
+    "dock": "left",
     "button": false
   },
   "git_panel": {
+    "dock": "left",
     "button": false
   },
   "notification_panel": {
     "button": false
   },
   "agent": {
+    "dock": "right",
     "enabled": false,
     "button": false
   },

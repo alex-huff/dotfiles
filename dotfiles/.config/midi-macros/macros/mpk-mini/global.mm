@@ -141,7 +141,7 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
         if duration < 0:
             return False, ""
         try:
-            clip_name = check_output('rofi -dmenu -l 0 -p "clip name"', shell=True, text=True).rstrip()
+            clip_name = check_output('fuzzel --dmenu --prompt-only="clip name: "', shell=True, text=True).rstrip()
         except CalledProcessError:
             return False, ""
         out_path = os.path.expanduser(f"~/clips/{clip_name}")
@@ -211,7 +211,7 @@ C5{v>64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg move container to workspa
 C5{v<=64} NOTES[1:]("{}"->[-]f"{72 - MIDI}") -> swaymsg workspace {}
 
 # lock/unlock
-(43+39){c==9} -> $(which kill) -USR1 swaylock || swaylock --color 000000 --font "Cascadia Mono NF" --font-size 20
+(43+39){c==9} -> $(which kill) -USR1 swaylock || swaylock --color 000000 --font "Comic Code" --font-size 20
 (39+43){c==9} -> swaymsg output '$main_display' toggle
 
 D3 MIDI{STATUS==cc}{CC_FUNCTION==75}("<opacity>"->f"{CC_VALUE_SCALED(0, 1)}")

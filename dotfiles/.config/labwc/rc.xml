@@ -9,7 +9,7 @@
   <theme>
     <name>gruvbox</name>
     <cornerRadius>0</cornerRadius>
-    <font name="Cascadia Mono NF" size="10" />
+    <font name="Comic Code" size="10" />
   </theme>
 
   <keyboard>
@@ -23,10 +23,10 @@
       <action name="PreviousWindow" />
     </keybind>
     <keybind key="W-Return">
-      <action name="Execute" command="kitty" />
+      <action name="Execute" command="kitty --single-instance" />
     </keybind>
     <keybind key="W-d">
-      <action name="Execute" command="rofi -show drun" />
+      <action name="Execute" command="fuzzel" />
     </keybind>
     <keybind key="W-S-q">
       <action name="Close" />

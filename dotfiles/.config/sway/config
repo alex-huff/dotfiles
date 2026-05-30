@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Cascadia Mono NF 12
+font pango:Comic Code 12
 
 # export environment
 exec hash systemctl 2>/dev/null && systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
@@ -43,16 +43,16 @@ bindsym Shift+Control+Alt+Page_Down workspace prev
 bindsym Shift+Control+Alt+Page_Up workspace next
 
 # lock the system
-bindsym $super+Control+l exec swaylock --color=000000 --font="Cascadia Mono NF" --font-size=20
+bindsym $super+Control+l exec swaylock --color=000000 --font="Comic Code" --font-size=20
 
 # start a terminal
 bindsym $super+Return exec kitty --single-instance
 
 # start a qutebrowser
-bindsym $super+i exec qutebrowser --qt-flag disable-http2
+bindsym $super+i exec qutebrowser-workaround --qt-flag disable-http2
 
 # search with qutebrowser
-bindsym $super+Alt+s exec query=$(rofi -dmenu -l 0 -p search) && qutebrowser --target=tab "$query"
+bindsym $super+Alt+s exec query=$(fuzzel --dmenu --prompt-only="search: ") && qutebrowser --target=tab "$query"
 
 # decode qrcode
 bindsym $super+q exec decode-qrcode-on-screen.sh | wl-copy
@@ -90,7 +90,7 @@ bindsym $super+g exec totp.sh
 
 # cmus
 bindsym $super+Shift+c exec cmus-play-playlist.zsh
-bindsym $super+c exec song="music/$(fuzzel --dmenu --delayed-filter-limit=-1 --dpi-aware=no --width=100 --lines=25 --border-width=2 --border-radius=0 --horizontal-pad=12 --vertical-pad=12 --prompt="song: " --font="Cascadia Mono NF:size=18" --background=fbf1c7ff --border-color=282828ff --text-color=282828ff --prompt-color=282828ff --input-color=282828ff --selection-color=d5c4a1ff --selection-text-color=282828ff --match-color=005f5fff --selection-match-color=005f5fff < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
+bindsym $super+c exec song="music/$(fuzzel --dmenu --width=100 --lines=25 --prompt="song: " < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
 
 # twitch
 bindsym $super+t exec twitch.sh
@@ -98,8 +98,8 @@ bindsym $super+t exec twitch.sh
 # nmcli
 bindsym $super+n exec switch-connection.sh
 
-# rofi
-bindsym $super+d exec rofi -show drun
+# application launcher
+bindsym $super+d exec fuzzel
 
 # app switcher
 exec app-switcher
@@ -243,8 +243,8 @@ bindsym $super+Alt+Up exec focus-last-focused-leaf-container-in-nth-child-of-tar
 bindsym $super+Alt+Right exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splith true 1 false
 
 # mark
-bindsym $super+Shift+apostrophe exec (mark_name="$(rofi -dmenu -l 0 -p 'mark name')" && swaymsg mark "$mark_name") || swaymsg '[con_id="__focused__"]' unmark
-bindsym $super+apostrophe exec to_focus="$(swaymsg --type=get_marks | jq -r '.[]' | rofi -dmenu -p 'jump to')" && swaymsg '[con_mark="'$to_focus'"]' focus
+bindsym $super+Shift+apostrophe exec (mark_name="$(fuzzel --dmenu --prompt-only="mark name: ")" && swaymsg mark "$mark_name") || swaymsg '[con_id="__focused__"]' unmark
+bindsym $super+apostrophe exec to_focus="$(swaymsg --type=get_marks | jq -r '.[]' | fuzzel --dmenu --prompt="jump to: ")" && swaymsg '[con_mark="'$to_focus'"]' focus
 
 # reload the configuration file
 bindsym $super+Alt+c reload
@@ -253,7 +253,7 @@ bindsym $super+Alt+c reload
 bindsym $super+Shift+r restart
 
 # exit sway
-bindsym $super+Shift+e exec swaynag --background=fabd2f --button-background=fabd2f --border=000000 --button-text=000000 --text=000000 --message-padding=5 --border-bottom-size=0 --button-border-size=1 --font="Cascadia Mono NF 15" --type=warning --message="Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
+bindsym $super+Shift+e exec swaynag --background=fabd2f --button-background=fabd2f --border=000000 --button-text=000000 --text=000000 --message-padding=5 --border-bottom-size=0 --button-border-size=1 --font="Comic Code 15" --type=warning --message="Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
 
 # resize window
 mode resize
