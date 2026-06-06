@@ -52,7 +52,7 @@ bindsym $super+Return exec kitty --single-instance
 bindsym $super+i exec qutebrowser-workaround --qt-flag disable-http2
 
 # search with qutebrowser
-bindsym $super+Alt+s exec query=$(fuzzel --dmenu --prompt-only="search: ") && qutebrowser --target=tab "$query"
+bindsym $super+Alt+s exec query=$(fuzzel --dmenu --prompt-only="search: " --width=20) && qutebrowser --target=tab "$query"
 
 # decode qrcode
 bindsym $super+q exec decode-qrcode-on-screen.sh | wl-copy
@@ -90,7 +90,7 @@ bindsym $super+g exec totp.sh
 
 # cmus
 bindsym $super+Shift+c exec cmus-play-playlist.zsh
-bindsym $super+c exec song="music/$(fuzzel --dmenu --width=100 --lines=25 --prompt="song: " < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
+bindsym $super+c exec song="music/$(fuzzel --dmenu --width=80 --lines=25 --prompt="song: " < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
 
 # twitch
 bindsym $super+t exec twitch.sh
@@ -243,8 +243,8 @@ bindsym $super+Alt+Up exec focus-last-focused-leaf-container-in-nth-child-of-tar
 bindsym $super+Alt+Right exec focus-last-focused-leaf-container-in-nth-child-of-target-ancestor splith true 1 false
 
 # mark
-bindsym $super+Shift+apostrophe exec (mark_name="$(fuzzel --dmenu --prompt-only="mark name: ")" && swaymsg mark "$mark_name") || swaymsg '[con_id="__focused__"]' unmark
-bindsym $super+apostrophe exec to_focus="$(swaymsg --type=get_marks | jq -r '.[]' | fuzzel --dmenu --prompt="jump to: ")" && swaymsg '[con_mark="'$to_focus'"]' focus
+bindsym $super+Shift+apostrophe exec (mark_name="$(fuzzel --dmenu --prompt-only="mark name: " --width=20)" && swaymsg mark "$mark_name") || swaymsg '[con_id="__focused__"]' unmark
+bindsym $super+apostrophe exec to_focus="$(swaymsg --type=get_marks | jq -r '.[]' | fuzzel --dmenu --prompt="jump to: " --width=20)" && swaymsg '[con_mark="'$to_focus'"]' focus
 
 # reload the configuration file
 bindsym $super+Alt+c reload

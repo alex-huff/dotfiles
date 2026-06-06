@@ -4,7 +4,7 @@
 playlists=$(ls ~/.config/cmus/playlists/ | LC_COLLATE=C sort | tail -n +2)
 
 # get selected playlist from user
-playlist=$(echo "$playlists" | fuzzel --dmenu)
+playlist=$(echo "$playlists" | fuzzel --dmenu --width=25)
 
 # get playlist's position in view 3
 playlist_position=$(echo "$playlists" | grep -n "^${playlist}$" | cut -d ":" -f 1)

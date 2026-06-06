@@ -1,3 +1,3 @@
 #!/bin/sh
 
-twitch-online-filter.py < $TWITCH_SUBS_FILE | rofi -dmenu -multi-select -i | twitch-watch-streams.py
+twitch-online-filter.py < $TWITCH_SUBS_FILE | fuzzel --dmenu --width=20 | twitch-watch-streams.py
