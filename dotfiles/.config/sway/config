@@ -1,9 +1,10 @@
 set $super Mod4
 font pango:Cascadia Mono NF 12
 
-# export environment
-exec hash systemctl 2>/dev/null && systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+# systemd
+exec hash systemctl 2>/dev/null && systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP && systemctl --user start sway-session.target
 exec hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+exec swaymsg --type=subscribe '["shutdown"]' && systemctl --user stop sway-session.target
 
 # gtk
 exec ~/.config/sway/import-gsettings
@@ -49,7 +50,7 @@ bindsym $super+Control+l exec swaylock --color=000000 --font="Cascadia Mono NF" 
 bindsym $super+Return exec kitty --single-instance
 
 # start a qutebrowser
-bindsym $super+i exec qutebrowser-workaround --qt-flag disable-http2
+bindsym $super+i exec qutebrowser --qt-flag disable-http2
 
 # search with qutebrowser
 bindsym $super+Alt+s exec query=$(fuzzel --dmenu --prompt-only="search: " --width=20) && qutebrowser --target=tab "$query"
