@@ -5,16 +5,16 @@ window:
 
 font:
   normal:
-    family: Comic Code
+    family: Cascadia Mono NF
     style: Regular
   bold:
-    family: Comic Code
+    family: Cascadia Mono NF
     style: Bold
   italic:
-    family: Comic Code
+    family: Cascadia Mono NF
     style: Italic
   bold_italic:
-    family: Comic Code
+    family: Cascadia Mono NF
     style: Bold Italic
   size: 18.0
 

@@ -33,11 +33,11 @@ c.colors.webpage.darkmode.policy.images = "never"
 c.colors.webpage.preferred_color_scheme = "light"
 
 # font
-c.fonts.default_family = "Comic Code"
+c.fonts.default_family = "Cascadia Mono NF"
 c.fonts.default_size = "14pt"
-c.fonts.hints = "10pt Cascadia Mono NF"
+c.fonts.hints = "10pt default_family"
 for font_type in ("cursive", "fantasy", "fixed", "sans_serif", "serif", "standard"):
-    config.set(f"fonts.web.family.{font_type}", "Comic Code")
+    config.set(f"fonts.web.family.{font_type}", "Cascadia Mono NF")
 
 # posix specific
 if os.name == "posix":

@@ -1,7 +1,7 @@
 #!/bin/sh
 
-from='Cascadia Mono NF'
-to='Comic Code'
+from='Comic Code'
+to='Cascadia Mono NF'
 
 find dotfiles -type f -exec file {} + | awk -F: '/ASCII text/ { print $1 }
                                                  /JSON text data/ { print $1 }
