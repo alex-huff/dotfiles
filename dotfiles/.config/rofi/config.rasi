@@ -1,7 +1,7 @@
 @theme "/usr/share/rofi/themes/gruvbox-light.rasi"
 
 * {
-    font: "Cascadia Mono Light 14";
+    font: "CommitMono 14";
     separatorcolor: #282828;
 }
 window {

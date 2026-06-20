@@ -2,9 +2,9 @@
 
 kitten panel \
     --edge=top \
-    --lines=27px \
+    --lines=25px \
     --override-exclusive-zone \
-    --exclusive-zone=26 \
+    --exclusive-zone=24 \
     --override=placement_strategy=center \
     --override=window_padding_width="0 2" \
     --override=font_size=15 \

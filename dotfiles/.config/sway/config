@@ -1,5 +1,5 @@
 set $super Mod4
-font pango:Cascadia Mono Light 12
+font pango:CommitMono 12
 
 # systemd
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP && systemctl --user start sway-session.target
@@ -44,7 +44,7 @@ bindsym Shift+Control+Alt+Page_Down workspace prev
 bindsym Shift+Control+Alt+Page_Up workspace next
 
 # lock the system
-bindsym $super+Control+l exec swaylock --color=000000 --font="Cascadia Mono Light" --font-size=20
+bindsym $super+Control+l exec swaylock --color=000000 --font="CommitMono" --font-size=20
 
 # start a terminal
 bindsym $super+Return exec kitty --single-instance
@@ -254,7 +254,7 @@ bindsym $super+Alt+c reload
 bindsym $super+Shift+r restart
 
 # exit sway
-bindsym $super+Shift+e exec swaynag --background=fabd2f --button-background=fabd2f --border=000000 --button-text=000000 --text=000000 --message-padding=5 --border-bottom-size=0 --button-border-size=1 --font="Cascadia Mono Light 15" --type=warning --message="Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
+bindsym $super+Shift+e exec swaynag --background=fabd2f --button-background=fabd2f --border=000000 --button-text=000000 --text=000000 --message-padding=5 --border-bottom-size=0 --button-border-size=1 --font="CommitMono 15" --type=warning --message="Do you really want to exit?" --button-no-terminal "Yes, exit" "swaymsg exit"
 
 # resize window
 mode resize
@@ -337,9 +337,9 @@ default_floating_border normal 2
 titlebar_border_thickness 2
 # hide_edge_borders --i3 horizontal
 # smart_gaps on
-gaps inner 12
-gaps outer -12
-titlebar_padding 15 5
+gaps inner 8
+gaps outer -8
+titlebar_padding 15 4
 focus_follows_mouse no
 tiling_drag off
 focus_on_window_activation none

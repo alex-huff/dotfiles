@@ -5,16 +5,16 @@ window:
 
 font:
   normal:
-    family: Cascadia Mono Light
+    family: CommitMono
     style: Regular
   bold:
-    family: Cascadia Mono Light
+    family: CommitMono
     style: Bold
   italic:
-    family: Cascadia Mono Light
+    family: CommitMono
     style: Italic
   bold_italic:
-    family: Cascadia Mono Light
+    family: CommitMono
     style: Bold Italic
   size: 18.0
 

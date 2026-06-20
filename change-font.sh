@@ -1,7 +1,7 @@
 #!/bin/sh
 
-from='Cascadia Mono NF'
-to='Cascadia Mono Light'
+from='Cascadia Mono Light'
+to='CommitMono'
 
 find dotfiles -type f -exec file {} + | awk -F: '/ASCII text/ { print $1 }
                                                  /JSON text data/ { print $1 }

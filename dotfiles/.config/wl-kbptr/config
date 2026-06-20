@@ -1,5 +1,5 @@
 [mode_tile]
-label_font_family=Cascadia Mono Light
+label_font_family=CommitMono
 
 [mode_bisect]
-label_font_family=Cascadia Mono Light
+label_font_family=CommitMono
