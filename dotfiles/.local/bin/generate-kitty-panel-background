@@ -60,7 +60,7 @@ persistant_terminal_horizontal_margin = (
 persistant_terminal_width = display_width - persistant_terminal_horizontal_margin * 2
 persistant_terminal_background_color = (249, 245, 215)
 bar_width = display_width
-bar_height = 26
+bar_height = 28
 bar_background_color = app_switcher_background_color
 border_color = (40, 40, 40)
 generate_background(
