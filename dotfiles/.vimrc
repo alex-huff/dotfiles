@@ -20,7 +20,7 @@ if (&term != "linux" && &term != "tmux-256color") || has("gui_running")
     set termguicolors
     set list
     set listchars=tab:<->,lead:·,trail:·,multispace:·
-    let g:gruvbox_italic = 1
+    "let g:gruvbox_italic = 1
     let g:gruvbox_contrast_dark = "hard"
     let g:gruvbox_contrast_light = "hard"
     colorscheme gruvbox
