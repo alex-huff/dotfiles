@@ -15,5 +15,5 @@ kitten panel \
     --margin-left=$horizontal_margin \
     --margin-right=$horizontal_margin \
     --override=window_padding_width=8 \
-    --override=background_image="~/.assets/persistant_terminal_background.png" \
+    --override=background_image="~/.assets/kitty_overlay_background.png" \
     "$@"
