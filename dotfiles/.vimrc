@@ -33,7 +33,7 @@ if has("gui_running")
     set guioptions-=L
     set guioptions-=r
     if has("gui_gtk")
-        set guifont=Cascadia\ Mono\ NF\ 18
+        set guifont=CommitMono\ 18
     elseif has("gui_win32")
         set guifont=Cascadia_Mono_NF:h18
     endif
