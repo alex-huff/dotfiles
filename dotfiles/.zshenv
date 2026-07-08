@@ -14,7 +14,7 @@ export EDITOR=vim
 export MANPAGER='nvim +Man!'
 
 export FZF_DEFAULT_OPTS="
---preview-window=up,border-sharp
+--preview-window=right,border-sharp
 --highlight-line
 
 --color=\
@@ -45,5 +45,5 @@ alt-s:jump,\
 home:preview-top,\
 end:preview-bottom,\
 ctrl-x:toggle-raw,\
-ctrl-v:change-preview-window'(right|up)'
+ctrl-v:change-preview-window'(up|right)'
 "
