@@ -15,7 +15,7 @@ export EDITOR=vim
 export MANPAGER='nvim +Man!'
 
 export FZF_DEFAULT_OPTS="
---preview-window=border-sharp,down
+--preview-window=up,border-sharp
 --highlight-line
 
 --color=\
@@ -29,7 +29,9 @@ pointer:7,\
 gap-line:7,\
 scrollbar:7,\
 separator:7,\
-preview-border:7
+preview-border:7,\
+info:7,\
+spinner:7
 
 --bind=\
 ctrl-n:down,\
