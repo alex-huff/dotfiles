@@ -35,7 +35,6 @@ def start_streamlinks(streams, stream_fifos):
         subprocess.Popen(
             (
                 "streamlink",
-                "--twitch-disable-ads",
                 "--output",
                 stream_fifo,
                 f"https://www.twitch.tv/{stream}",
@@ -51,7 +50,8 @@ num_streams = len(streams)
 if num_streams < 2:
     if not num_streams:
         sys.exit(0)
-    subprocess.run(("streamlink", "--player", "mpv", f"https://www.twitch.tv/{streams[0]}", "best"))
+    url = f"https://www.twitch.tv/{streams[0]}"
+    subprocess.run(f"streamlink --stdout '{url}' best | mpv --title='{url}' -", shell=True)
     sys.exit(0)
 fifo_dir_path = get_fifo_dir()
 try:
