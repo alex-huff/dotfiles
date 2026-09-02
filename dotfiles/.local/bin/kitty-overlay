@@ -13,7 +13,7 @@ fi
 
 if [ "$DARK_KITTY_OVERLAY" = "true" -o "$DARK_KITTY_OVERLAY" = "1" ]
 then
-    background_image_suffix="_darker_background"
+    background_image_suffix="_darker"
 else
     background_image_suffix=""
 fi
