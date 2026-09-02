@@ -6,9 +6,9 @@ import subprocess
 
 from PIL import Image
 
-
 def generate_background(
-    background_name, background_width, background_height, background_color, border_width
+    background_name, background_width, background_height, background_color,
+    border_color=(40, 40, 40), border_width=2
 ):
     bg = Image.new(
         "RGB",
@@ -45,12 +45,16 @@ current_display_information = json.loads(
 )
 display_width = current_display_information["width"]
 display_height = current_display_information["height"]
+
+background_color = (249, 245, 215)
+darker_background_color = (251, 241, 199)
+
 app_switcher_vertical_margin = display_height // 6
 app_switcher_height = display_height - app_switcher_vertical_margin * 2
 app_switcher_width = round(app_switcher_height * 0.8)
 app_switcher_right_margin = 26
 app_switcher_left_margin = display_width - (app_switcher_width + app_switcher_right_margin)
-app_switcher_background_color = (251, 241, 199)
+
 kitty_overlay_vertical_margin = app_switcher_vertical_margin
 kitty_overlay_height = app_switcher_height
 kitty_overlay_approximate_width = kitty_overlay_height * 2
@@ -58,29 +62,51 @@ kitty_overlay_horizontal_margin = (
     display_width - kitty_overlay_approximate_width
 ) // 2
 kitty_overlay_width = display_width - kitty_overlay_horizontal_margin * 2
-kitty_overlay_background_color = (249, 245, 215)
+
+small_kitty_overlay_vertical_margin = display_height // 3
+small_kitty_overlay_height = display_height - small_kitty_overlay_vertical_margin * 2
+small_kitty_overlay_approximate_width = small_kitty_overlay_height
+small_kitty_overlay_horizontal_margin = (
+    display_width - small_kitty_overlay_approximate_width
+) // 2
+small_kitty_overlay_width = display_width - small_kitty_overlay_horizontal_margin * 2
+
 bar_width = display_width
 bar_height = 28
-bar_background_color = app_switcher_background_color
-border_color = (40, 40, 40)
+
 generate_background(
     "app_switcher",
     app_switcher_width,
     app_switcher_height,
-    app_switcher_background_color,
-    2,
+    darker_background_color,
 )
 generate_background(
     "kitty_overlay",
     kitty_overlay_width,
     kitty_overlay_height,
-    kitty_overlay_background_color,
-    2,
+    background_color,
+)
+generate_background(
+    "kitty_overlay_darker",
+    kitty_overlay_width,
+    kitty_overlay_height,
+    darker_background_color,
+)
+generate_background(
+    "small_kitty_overlay",
+    small_kitty_overlay_width,
+    small_kitty_overlay_height,
+    background_color,
+)
+generate_background(
+    "small_kitty_overlay_darker",
+    small_kitty_overlay_width,
+    small_kitty_overlay_height,
+    darker_background_color,
 )
 generate_background(
     "bar",
     bar_width,
     bar_height,
-    bar_background_color,
-    2
+    darker_background_color,
 )
