@@ -51,7 +51,7 @@ if num_streams < 2:
     if not num_streams:
         sys.exit(0)
     url = f"https://www.twitch.tv/{streams[0]}"
-    subprocess.run(f"streamlink --stdout '{url}' best | mpv --title='{url}' -", shell=True)
+    subprocess.run(f"streamlink --stdout '{url}' best | mpv --force-media-title='{url}' -", shell=True)
     sys.exit(0)
 fifo_dir_path = get_fifo_dir()
 try:
