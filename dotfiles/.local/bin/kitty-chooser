@@ -1,0 +1,83 @@
+#!/bin/python3
+
+import asyncio
+import os
+import sys
+import tempfile
+
+async def connect_reader_and_writer_to_loop(read_file, write_file):
+    loop = asyncio.get_running_loop()
+
+    reader = asyncio.StreamReader()
+    read_protocol = asyncio.StreamReaderProtocol(reader)
+    await loop.connect_read_pipe(lambda: read_protocol, read_file)
+
+    write_transport, write_protocol = await loop.connect_write_pipe(
+        asyncio.streams.FlowControlMixin, write_file)
+    writer = asyncio.StreamWriter(write_transport, write_protocol, reader, loop)
+
+    return reader, writer
+
+async def forward_data(read_file, write_file):
+    reader, writer = await connect_reader_and_writer_to_loop(
+        read_file, write_file)
+
+    while len(bytes_read := await reader.read(n=2**10)):
+        writer.write(bytes_read)
+        await writer.drain()
+
+    writer.close()
+
+# kitty closes all inherited file descripters before spawning child.
+# Here is the failed attempt at using standard pipes (works with foot):
+
+# async def main():
+#     loop = asyncio.get_running_loop()
+
+#     input_pipe_read_fd, input_pipe_write_fd = os.pipe()
+#     output_pipe_read_fd, output_pipe_write_fd = os.pipe()
+#     for fd in (input_pipe_read_fd, output_pipe_write_fd):
+#         os.set_inheritable(fd, True)
+#     for fd in (input_pipe_write_fd, output_pipe_read_fd):
+#         os.set_inheritable(fd, False)
+
+#     kitty_process = await asyncio.subprocess.create_subprocess_exec(
+#         "kitty", "sh", "-c", f"fzf --multi 0<&{input_pipe_read_fd} 1>&{output_pipe_write_fd}",
+#         stdin=asyncio.subprocess.DEVNULL,
+#         stdout=asyncio.subprocess.DEVNULL,
+#         stderr=asyncio.subprocess.DEVNULL,
+#         close_fds=False)
+
+#     for fd in (input_pipe_read_fd, output_pipe_write_fd):
+#         os.close(fd)
+#     input_pipe_write_file = os.fdopen(input_pipe_write_fd, mode='w')
+#     output_pipe_read_file = os.fdopen(output_pipe_read_fd, mode='r')
+
+#     forward_stdin_task = loop.create_task(forward_data(sys.stdin, input_pipe_write_file))
+#     await forward_data(output_pipe_read_file, sys.stdout)
+
+async def main(temp_dir):
+    loop = asyncio.get_running_loop()
+
+    input_fifo_name = os.path.join(temp_dir, "input")
+    output_fifo_name = os.path.join(temp_dir, "output")
+    for fifo_name in (input_fifo_name, output_fifo_name):
+        os.mkfifo(fifo_name)
+
+    kitty_process = await asyncio.subprocess.create_subprocess_exec(
+        "kitty-overlay", "sh", "-c", f"fzf --multi < {input_fifo_name} > {output_fifo_name}",
+        stdin=asyncio.subprocess.DEVNULL,
+        stdout=asyncio.subprocess.DEVNULL,
+        stderr=asyncio.subprocess.DEVNULL)
+
+    input_fifo_file = open(input_fifo_name, "w")
+    output_fifo_file = open(output_fifo_name, "r")
+
+    forward_stdin_task = loop.create_task(forward_data(sys.stdin, input_fifo_file))
+    await forward_data(output_fifo_file, sys.stdout)
+
+with tempfile.TemporaryDirectory(prefix="kitty-chooser", ignore_cleanup_errors=True) as temp_dir:
+    try:
+        asyncio.run(main(temp_dir))
+    except KeyboardInterrupt:
+        ...
