@@ -31,7 +31,8 @@ scrollbar:7,\
 separator:7,\
 preview-border:7,\
 info:7,\
-spinner:7
+spinner:7,\
+marker:7\
 
 --bind=\
 ctrl-n:down,\
