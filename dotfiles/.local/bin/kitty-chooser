@@ -3,6 +3,7 @@
 import asyncio
 from asyncio.streams import StreamReader, StreamWriter
 import os
+import shlex
 import sys
 import tempfile
 
@@ -45,13 +46,16 @@ async def main(temp_dir):
 
     input_fifo_name = os.path.join(temp_dir, "input")
     output_fifo_name = os.path.join(temp_dir, "output")
-    for fifo_name in (input_fifo_name, output_fifo_name):
+    exit_code_fifo_name = os.path.join(temp_dir, "exit_code")
+    for fifo_name in (input_fifo_name, output_fifo_name, exit_code_fifo_name):
         os.mkfifo(fifo_name)
 
     os.environ["SMALL_KITTY_OVERLAY"] = "true"
     os.environ["DARK_KITTY_OVERLAY"] = "true"
     kitty_process = await asyncio.subprocess.create_subprocess_exec(
-        "kitty-overlay", "sh", "-c", f"fzf < {input_fifo_name} > {output_fifo_name}",
+        "kitty-overlay",
+        "sh", "-c",
+        f'fzf < {shlex.quote(input_fifo_name)} > {shlex.quote(output_fifo_name)}; echo -E "$?" > {shlex.quote(exit_code_fifo_name)}',
         stdin=asyncio.subprocess.DEVNULL,
         stdout=asyncio.subprocess.DEVNULL,
         stderr=asyncio.subprocess.DEVNULL)
@@ -84,9 +88,16 @@ async def main(temp_dir):
     forward_stdin_task = loop.create_task(forward_data(stdin_pipe, input_fifo_file))
     await forward_data(output_fifo_file, stdout_pipe)
 
+    exit_code_fifo_file = open(exit_code_fifo_name, "r")
+    exit_code_reader = await connect_reader_to_loop(exit_code_fifo_file)
+    exit_code_bytes = await exit_code_reader.read(n=-1)
+    exit_code_string = exit_code_bytes.decode("utf-8")
+
+    return int(exit_code_string)
+
 
 with tempfile.TemporaryDirectory(prefix="kitty-chooser", ignore_cleanup_errors=True) as temp_dir:
     try:
-        asyncio.run(main(temp_dir))
+        sys.exit(asyncio.run(main(temp_dir)))
     except KeyboardInterrupt:
         ...
