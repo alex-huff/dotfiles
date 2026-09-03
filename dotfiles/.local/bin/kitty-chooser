@@ -1,26 +1,37 @@
 #!/bin/python3
 
 import asyncio
+from asyncio.streams import StreamReader, StreamWriter
 import os
 import sys
 import tempfile
 
-async def connect_reader_and_writer_to_loop(read_file, write_file):
+
+async def connect_reader_to_loop(read_file):
     loop = asyncio.get_running_loop()
 
     reader = asyncio.StreamReader()
     read_protocol = asyncio.StreamReaderProtocol(reader)
     await loop.connect_read_pipe(lambda: read_protocol, read_file)
 
+    return reader
+
+
+async def connect_writer_to_loop(write_file, reader=None):
+    loop = asyncio.get_running_loop()
+
     write_transport, write_protocol = await loop.connect_write_pipe(
         asyncio.streams.FlowControlMixin, write_file)
     writer = asyncio.StreamWriter(write_transport, write_protocol, reader, loop)
 
-    return reader, writer
+    return writer
 
-async def forward_data(read_file, write_file):
-    reader, writer = await connect_reader_and_writer_to_loop(
-        read_file, write_file)
+
+async def forward_data(reader, writer):
+    if type(reader) is not StreamReader:
+        reader = await connect_reader_to_loop(reader)
+    if type(writer) is not StreamWriter:
+        writer = await connect_writer_to_loop(writer, reader=reader)
 
     while len(bytes_read := await reader.read(n=2**10)):
         writer.write(bytes_read)
@@ -28,33 +39,6 @@ async def forward_data(read_file, write_file):
 
     writer.close()
 
-# kitty closes all inherited file descripters before spawning child.
-# Here is the failed attempt at using standard pipes (works with foot):
-
-# async def main():
-#     loop = asyncio.get_running_loop()
-
-#     input_pipe_read_fd, input_pipe_write_fd = os.pipe()
-#     output_pipe_read_fd, output_pipe_write_fd = os.pipe()
-#     for fd in (input_pipe_read_fd, output_pipe_write_fd):
-#         os.set_inheritable(fd, True)
-#     for fd in (input_pipe_write_fd, output_pipe_read_fd):
-#         os.set_inheritable(fd, False)
-
-#     kitty_process = await asyncio.subprocess.create_subprocess_exec(
-#         "kitty", "sh", "-c", f"fzf --multi 0<&{input_pipe_read_fd} 1>&{output_pipe_write_fd}",
-#         stdin=asyncio.subprocess.DEVNULL,
-#         stdout=asyncio.subprocess.DEVNULL,
-#         stderr=asyncio.subprocess.DEVNULL,
-#         close_fds=False)
-
-#     for fd in (input_pipe_read_fd, output_pipe_write_fd):
-#         os.close(fd)
-#     input_pipe_write_file = os.fdopen(input_pipe_write_fd, mode='w')
-#     output_pipe_read_file = os.fdopen(output_pipe_read_fd, mode='r')
-
-#     forward_stdin_task = loop.create_task(forward_data(sys.stdin, input_pipe_write_file))
-#     await forward_data(output_pipe_read_file, sys.stdout)
 
 async def main(temp_dir):
     loop = asyncio.get_running_loop()
@@ -75,8 +59,31 @@ async def main(temp_dir):
     input_fifo_file = open(input_fifo_name, "w")
     output_fifo_file = open(output_fifo_name, "r")
 
-    forward_stdin_task = loop.create_task(forward_data(sys.stdin, input_fifo_file))
-    await forward_data(output_fifo_file, sys.stdout)
+    # You can only attach certain files like pipes, sockets, and other
+    # transports to an asyncio event loop (epoll limitation). Rather than
+    # writing seperate code paths for when stdin or stdout isn't one of the
+    # supported file types, launch a cat process to read/write from
+    # stdin/stdout directly and proxy all data through it. Is this insane?
+    # Doing blocking reads on the event loop is not an option since the user
+    # may select and item in fzf while we are still blocked on a read and we
+    # want to exit as soon as the user selects an item. As always, I now
+    # realize that using threads would have been easier than asyncio.
+    stdin_cat_proxy = await asyncio.subprocess.create_subprocess_exec(
+        "cat",
+        stdin=None,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.DEVNULL)
+    stdout_cat_proxy = await asyncio.subprocess.create_subprocess_exec(
+        "cat",
+        stdin=asyncio.subprocess.PIPE,
+        stdout=None,
+        stderr=asyncio.subprocess.DEVNULL)
+    stdin_pipe = stdin_cat_proxy.stdout
+    stdout_pipe = stdout_cat_proxy.stdin
+
+    forward_stdin_task = loop.create_task(forward_data(stdin_pipe, input_fifo_file))
+    await forward_data(output_fifo_file, stdout_pipe)
+
 
 with tempfile.TemporaryDirectory(prefix="kitty-chooser", ignore_cleanup_errors=True) as temp_dir:
     try:
