@@ -67,7 +67,7 @@ async def main(temp_dir):
     os.environ["SMALL_KITTY_OVERLAY"] = "true"
     os.environ["DARK_KITTY_OVERLAY"] = "true"
     kitty_process = await asyncio.subprocess.create_subprocess_exec(
-        "kitty-overlay", "sh", "-c", f"fzf --multi --layout=reverse < {input_fifo_name} > {output_fifo_name}",
+        "kitty-overlay", "sh", "-c", f"fzf < {input_fifo_name} > {output_fifo_name}",
         stdin=asyncio.subprocess.DEVNULL,
         stdout=asyncio.subprocess.DEVNULL,
         stderr=asyncio.subprocess.DEVNULL)

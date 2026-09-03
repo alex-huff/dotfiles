@@ -3,7 +3,7 @@
 if [ "$SMALL_KITTY_OVERLAY" = "true" -o "$SMALL_KITTY_OVERLAY" = "1" ]
 then
     vertical_margin_ratio=3
-    approximate_aspect_ratio=1
+    approximate_aspect_ratio=2
     background_image_prefix="small_"
 else
     vertical_margin_ratio=6
@@ -33,5 +33,5 @@ kitten panel \
     --margin-left=$horizontal_margin \
     --margin-right=$horizontal_margin \
     --override=window_padding_width=8 \
-    --override=background_image="~/.assets/${background_image_prefix}kitty_overlay${background_image_suffix}.png" \
+    --override=background_image="~/.assets/${background_image_prefix}kitty_overlay${background_image_suffix}_background.png" \
     "$@"
