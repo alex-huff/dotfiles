@@ -50,12 +50,11 @@ async def main(temp_dir):
     for fifo_name in (input_fifo_name, output_fifo_name, exit_code_fifo_name):
         os.mkfifo(fifo_name)
 
-    os.environ["SMALL_KITTY_OVERLAY"] = "true"
-    os.environ["DARK_KITTY_OVERLAY"] = "true"
     kitty_process = await asyncio.subprocess.create_subprocess_exec(
         "kitty-overlay",
         "sh", "-c",
-        f'fzf < {shlex.quote(input_fifo_name)} > {shlex.quote(output_fifo_name)}; echo -E "$?" > {shlex.quote(exit_code_fifo_name)}',
+        f'fzf "$@" < {shlex.quote(input_fifo_name)} > {shlex.quote(output_fifo_name)}; echo -E "$?" > {shlex.quote(exit_code_fifo_name)}',
+        *sys.argv,
         stdin=asyncio.subprocess.DEVNULL,
         stdout=asyncio.subprocess.DEVNULL,
         stderr=asyncio.subprocess.DEVNULL)

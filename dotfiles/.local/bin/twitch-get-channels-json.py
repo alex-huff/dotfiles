@@ -14,8 +14,13 @@ query($login: String!) {
     user(login: $login) {
         login,
         profileImageURL(width: 600),
-        stream {
+        broadcastSettings {
             title,
+            game {
+                displayName
+            }
+        },
+        stream {
             viewersCount,
             previewImageURL(width: 640, height: 360)
         }
