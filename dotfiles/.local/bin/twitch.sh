@@ -20,5 +20,5 @@ jq_build_fzf_item_script=$(
 )
 twitch-get-channels-json.py < $TWITCH_SUBS_FILE |
     jq --raw-output0 "$jq_build_fzf_item_script" |
-        kitty-chooser |
+        flock --nonblocking /tmp/twitch.sh-lockfile kitty-chooser |
             twitch-watch-streams.py
