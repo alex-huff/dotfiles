@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd ~/.assets/twitch
+twitch-get-channels-json.py < $TWITCH_SUBS_FILE | jq --raw-output '.[] | select(. != null) | "curl --location --ipv4 \(.profileImageURL | @sh) --output=\(.login).png"' | xargs -d "\n" -n 1 sh -c
