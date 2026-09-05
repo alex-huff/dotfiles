@@ -1,5 +1,8 @@
 #!/bin/sh
 
+export SMALL_KITTY_OVERLAY=true
+export DARK_KITTY_OVERLAY=true
+export KITTY_CONF_TWITCH_OVERLAY="placement_strategy top"
 jq_build_fzf_item_script=$(
 	cat <<-"EOF"
 		.[] |
@@ -7,11 +10,7 @@ jq_build_fzf_item_script=$(
 		        "\(.login)\n\(.broadcastSettings.game.displayName)\n\(.broadcastSettings.title)\n\(.stream.viewersCount)\n\(.stream.previewImageURL)"
 	EOF
 )
-
-export SMALL_KITTY_OVERLAY=true
-export DARK_KITTY_OVERLAY=true
-export KITTY_CONF_TWITCH_OVERLAY="placement_strategy top"
-twitch-get-channels-json.py < $TWITCH_SUBS_FILE |
+twitch-get-channels-json.py < "$TWITCH_SUBS_FILE" |
     jq --raw-output0 "$jq_build_fzf_item_script" |
         flock --nonblocking /tmp/twitch.sh-lockfile kitty-chooser \
                 --layout=reverse \
