@@ -53,7 +53,7 @@ bindsym $super+Return exec kitty --single-instance
 bindsym $super+i exec qutebrowser --qt-flag disable-http2
 
 # search with qutebrowser
-bindsym $super+Alt+s exec query=$(fuzzel --dmenu --prompt-only="search: " --width=20) && qutebrowser --target=tab "$query"
+bindsym $super+Alt+s exec query=$(fuzzel --dmenu --prompt-only="search: " --width=40) && qutebrowser --target=tab "$query"
 
 # decode qrcode
 bindsym $super+q exec decode-qrcode-on-screen.sh | wl-copy
