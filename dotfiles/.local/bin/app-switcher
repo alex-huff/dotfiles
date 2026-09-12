@@ -190,6 +190,7 @@ async def watch_i3_forever(task_group, focus_queue, tree_initialized_signal):
         "org.unmojang.FjordLauncher": "FjordLauncher",
         "com.obsproject.Studio": "obs",
         "org.gnome.Evolution": "evolution",
+        "org.mozilla.Thunderbird": "thunderbird",
     }
 
     async def read_message(reader):
