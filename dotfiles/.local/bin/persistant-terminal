@@ -4,4 +4,5 @@ LARGE_KITTY_OVERLAY=true kitty-overlay \
     --single-instance \
     --instance-group=persistant-terminal \
     --toggle-visibility \
-    --override="custom_shaders ~/.config/kitty/shaders/border"
+    --override="custom_shaders ~/.config/kitty/shaders/border" \
+    --override="background #f9f5d7"
