@@ -16,6 +16,7 @@ export MANPAGER='nvim +Man!'
 export FZF_DEFAULT_OPTS="
 --preview-window=right,border-sharp
 --highlight-line
+--info=right
 
 --color=\
 light,\
