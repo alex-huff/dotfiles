@@ -141,7 +141,7 @@ C4 NOTES[0:1](ASPN) (python $MM_SCRIPT)[BACKGROUND|INVOCATION_FORMAT=f"{a}\n"]->
         if duration < 0:
             return False, ""
         try:
-            clip_name = check_output('KITTY_OVERLAY_DIMENSIONS=1:40 kitty-chooser --prompt="clip name: " --print-query; exit 0', shell=True, text=True).rstrip()
+            clip_name = check_output('KITTY_OVERLAY_DIMENSIONS=1:40 fzf-panel --prompt="clip name: " --print-query; exit 0', shell=True, text=True).rstrip()
         except CalledProcessError:
             return False, ""
         out_path = os.path.expanduser(f"~/clips/{clip_name}")

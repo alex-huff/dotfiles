@@ -1,7 +1,7 @@
 #!/bin/sh
 
 twofa_dir=~/.2fa
-choosen_service=$(find $twofa_dir -type f -regex ".*\.key\.gpg" | sed "s|${twofa_dir}/\(.*\)\.key\.gpg|\1|" | KITTY_OVERLAY_DIMENSIONS=10:40 kitty-chooser --prompt="service: " --layout=reverse)
+choosen_service=$(find $twofa_dir -type f -regex ".*\.key\.gpg" | sed "s|${twofa_dir}/\(.*\)\.key\.gpg|\1|" | KITTY_OVERLAY_DIMENSIONS=10:40 fzf-panel --prompt="service: " --layout=reverse)
 if [ -z "$choosen_service" ]
 then
     exit 1

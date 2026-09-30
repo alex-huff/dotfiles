@@ -53,7 +53,7 @@ async def main(temp_dir):
     kitty_process = await asyncio.subprocess.create_subprocess_exec(
         "kitty-overlay",
         "sh", "-c",
-        f'fzf "$@" < {shlex.quote(input_fifo_name)} > {shlex.quote(output_fifo_name)}; echo -E "$?" > {shlex.quote(exit_code_fifo_name)}',
+        f'"$@" < {shlex.quote(input_fifo_name)} > {shlex.quote(output_fifo_name)}; echo -E "$?" > {shlex.quote(exit_code_fifo_name)}',
         *sys.argv,
         stdin=asyncio.subprocess.DEVNULL,
         stdout=asyncio.subprocess.DEVNULL,
@@ -66,11 +66,7 @@ async def main(temp_dir):
     # transports to an asyncio event loop (epoll limitation). Rather than
     # writing seperate code paths for when stdin or stdout isn't one of the
     # supported file types, launch a cat process to read/write from
-    # stdin/stdout directly and proxy all data through it. Is this insane?
-    # Doing blocking reads on the event loop is not an option since the user
-    # may select and item in fzf while we are still blocked on a read and we
-    # want to exit as soon as the user selects an item. As always, I now
-    # realize that using threads would have been easier than asyncio.
+    # stdin/stdout directly and proxy all data through it.
     stdin_cat_proxy = await asyncio.subprocess.create_subprocess_exec(
         "cat",
         stdin=None,
@@ -95,7 +91,7 @@ async def main(temp_dir):
     return int(exit_code_string)
 
 
-with tempfile.TemporaryDirectory(prefix="kitty-chooser", ignore_cleanup_errors=True) as temp_dir:
+with tempfile.TemporaryDirectory(prefix="fzf-panel", ignore_cleanup_errors=True) as temp_dir:
     try:
         sys.exit(asyncio.run(main(temp_dir)))
     except KeyboardInterrupt:
