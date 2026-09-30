@@ -25,7 +25,7 @@ twofa_key_file=$twofa_dir/"$label".key.gpg
 echo $secret |
     gpg --yes \
         --output="$twofa_key_file" \
-        --passphrase-file=<(fuzzel --dmenu --password --prompt-only="password: " --width=20) \
+        --passphrase-file=<(KITTY_OVERLAY_DIMENSIONS=1:30 kitty-overlay-piped password-prompt) \
         --pinentry-mode=loopback \
         --batch \
         --symmetric \

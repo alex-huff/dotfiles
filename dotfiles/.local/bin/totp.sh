@@ -6,7 +6,7 @@ if [ -z "$choosen_service" ]
 then
     exit 1
 fi
-fuzzel --dmenu --password --prompt-only="password: " --width=20 |
+KITTY_OVERLAY_DIMENSIONS=1:30 kitty-overlay-piped password-prompt |
     gpg --passphrase-fd=0 --pinentry-mode=loopback --batch --decrypt --no-symkey-cache ${twofa_dir}/"${choosen_service}".key.gpg |
         oathtool --base32 --totp - |
             wl-copy -n
