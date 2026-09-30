@@ -21,6 +21,10 @@ exec --no-startup-id dex --autostart --environment=sway
 # kitty-overlay single instance
 exec kitten panel --single-instance --instance-group=kitty-overlay --override="custom_shaders ~/.config/kitty/shaders/border" --start-as-hidden
 
+# application launcher
+exec j4-dmenu-desktop --dmenu="fzf-panel --layout=reverse" --term-mode=custom --term "kitty --single-instance --title {name} {cmdline@}" --wait-on=${XDG_RUNTIME_DIR:-/tmp}/j4-dmenu-desktop.sock
+bindsym $super+d exec echo > ${XDG_RUNTIME_DIR:-/tmp}/j4-dmenu-desktop.sock
+
 # use pactl to adjust volume in PulseAudio
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +1%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -1%
@@ -101,9 +105,6 @@ bindsym $super+t exec twitch.sh
 
 # nmcli
 bindsym $super+n exec switch-connection.sh
-
-# application launcher
-bindsym $super+d exec fuzzel
 
 # app switcher
 exec app-switcher
