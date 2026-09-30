@@ -1,6 +1,7 @@
 #!/bin/sh
 
-kitty-overlay \
+LARGE_KITTY_OVERLAY=true kitty-overlay \
     --single-instance \
     --instance-group=persistant-terminal \
-    --toggle-visibility
+    --toggle-visibility \
+    --override="custom_shaders ~/.config/kitty/shaders/border"

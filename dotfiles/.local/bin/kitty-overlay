@@ -1,37 +1,50 @@
 #!/bin/sh
 
-if [ "$SMALL_KITTY_OVERLAY" = "true" -o "$SMALL_KITTY_OVERLAY" = "1" ]
+if [ -n "$KITTY_OVERLAY_DIMENSIONS" ]
 then
-    vertical_margin_ratio=3
-    approximate_aspect_ratio=2
-    background_image_prefix="small_"
+    IFS=":" read lines columns <<-EOF
+		$KITTY_OVERLAY_DIMENSIONS
+	EOF
+    sizing_args=$(
+		cat <<-EOF
+			--edge=center-sized
+			--lines=$lines
+			--columns=$columns
+		EOF
+    )
 else
-    vertical_margin_ratio=6
-    approximate_aspect_ratio=2
-    background_image_prefix=""
+    if [ "$LARGE_KITTY_OVERLAY" = "true" -o "$LARGE_KITTY_OVERLAY" = "1" ]
+    then
+        vertical_margin_ratio=6
+        approximate_aspect_ratio=2
+    else
+        vertical_margin_ratio=3
+        approximate_aspect_ratio=2
+    fi
+    eval "$(swaymsg -t get_outputs | jq -r '.[] | first(select(.active == true)) | .current_mode | "width=\(.width); height=\(.height)"')"
+    vertical_margin=$(($height/$vertical_margin_ratio))
+    panel_height=$(($height-$vertical_margin*2))
+    approximate_panel_width=$(($panel_height*$approximate_aspect_ratio))
+    horizontal_margin=$((($width-$approximate_panel_width)/2))
+    sizing_args=$(
+		cat <<-EOF
+			--edge=center
+			--margin-top=$vertical_margin
+			--margin-bot=$vertical_margin
+			--margin-left=$horizontal_margin
+			--margin-right=$horizontal_margin
+		EOF
+    )
 fi
 
-if [ "$DARK_KITTY_OVERLAY" = "true" -o "$DARK_KITTY_OVERLAY" = "1" ]
-then
-    background_image_suffix="_darker"
-else
-    background_image_suffix=""
-fi
-
-eval "$(swaymsg -t get_outputs | jq -r '.[] | first(select(.active == true)) | .current_mode | "width=\(.width); height=\(.height)"')"
-vertical_margin=$(($height/$vertical_margin_ratio))
-panel_height=$(($height-$vertical_margin*2))
-approximate_panel_width=$(($panel_height*$approximate_aspect_ratio))
-horizontal_margin=$((($width-$approximate_panel_width)/2))
+background="#fbf1c7"
 
 kitten panel \
+    --single-instance \
+    --instance-group=kitty-overlay \
     --layer=overlay \
     --focus-policy=exclusive \
-    --edge=center \
-    --margin-top=$vertical_margin \
-    --margin-bot=$vertical_margin \
-    --margin-left=$horizontal_margin \
-    --margin-right=$horizontal_margin \
+    $sizing_args \
     --override=window_padding_width=8 \
-    --override=background_image="~/.assets/${background_image_prefix}kitty_overlay${background_image_suffix}_background.png" \
+    --override=background="$background" \
     "$@"

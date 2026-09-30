@@ -1,7 +1,5 @@
 #!/bin/sh
 
-export SMALL_KITTY_OVERLAY=true
-export DARK_KITTY_OVERLAY=true
 export KITTY_CONF_TWITCH_OVERLAY="placement_strategy top"
 jq_build_fzf_item_script=$(
 	cat <<-"EOF"

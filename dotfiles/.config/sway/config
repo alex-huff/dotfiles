@@ -18,6 +18,9 @@ exec foot --server
 # start XDG autostart .desktop files
 exec --no-startup-id dex --autostart --environment=sway
 
+# kitty-overlay single instance
+exec kitten panel --single-instance --instance-group=kitty-overlay --override="custom_shaders ~/.config/kitty/shaders/border" --start-as-hidden
+
 # use pactl to adjust volume in PulseAudio
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +1%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -1%
