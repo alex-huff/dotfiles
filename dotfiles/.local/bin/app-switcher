@@ -335,7 +335,8 @@ async def main():
         "--override=font_size=14",
         "--override=window_padding_width=8",
         "--override=placement_strategy=bottom",
-        f"--override=background_image={os.path.expanduser('~/.assets/app_switcher_background.png')}",
+        "--override=background=#fbf1c7",
+        "--override=custom_shaders ~/.config/kitty/shaders/border",
     ]
     # base64 encode 'CONTROL_SOCKET_PATH' so that it is safe for fzf to read
     control_message_cmd_template = f'socat - UNIX-CONNECT:"$(base64 --decode <<< "{base64.b64encode(CONTROL_SOCKET_PATH).decode("ascii")}")" <<< %s'
