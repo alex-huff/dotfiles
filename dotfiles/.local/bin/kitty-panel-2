@@ -9,5 +9,5 @@ kitten panel \
     --override=window_padding_width="0 2" \
     --override=font_size=15 \
     --override=modify_font="cell_height 110%" \
-    --override=background_image=~/.assets/bar_background.png \
+    --override="custom_shaders ~/.config/kitty/shaders/border" \
     bar.py

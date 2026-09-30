@@ -65,9 +65,6 @@ small_kitty_overlay_horizontal_margin = (
 ) // 2
 small_kitty_overlay_width = display_width - small_kitty_overlay_horizontal_margin * 2
 
-bar_width = display_width
-bar_height = 28
-
 generate_background(
     "kitty_overlay",
     kitty_overlay_width,
@@ -90,11 +87,5 @@ generate_background(
     "small_kitty_overlay_darker",
     small_kitty_overlay_width,
     small_kitty_overlay_height,
-    darker_background_color,
-)
-generate_background(
-    "bar",
-    bar_width,
-    bar_height,
     darker_background_color,
 )
