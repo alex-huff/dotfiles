@@ -4,7 +4,7 @@
 playlists=$(ls ~/.config/cmus/playlists/ | LC_COLLATE=C sort | tail -n +2)
 
 # get selected playlist from user
-playlist=$(echo "$playlists" | KITTY_OVERLAY_DIMENSIONS=15:30 fzf-panel --layout=reverse)
+playlist=$(echo "$playlists" | KITTY_OVERLAY_DIMENSIONS=15:30 fzf-panel)
 
 # get playlist's position in view 3
 playlist_position=$(echo "$playlists" | grep -n "^${playlist}$" | cut -d ":" -f 1)

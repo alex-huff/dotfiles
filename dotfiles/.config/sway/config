@@ -22,7 +22,7 @@ exec --no-startup-id dex --autostart --environment=sway
 exec kitten panel --single-instance --instance-group=kitty-overlay --override="custom_shaders ~/.config/kitty/shaders/border" --start-as-hidden
 
 # application launcher
-exec j4-dmenu-desktop --dmenu="fzf-panel --layout=reverse" --term-mode=custom --term "kitty --single-instance --title {name} {cmdline@}" --wait-on=${XDG_RUNTIME_DIR:-/tmp}/j4-dmenu-desktop.sock
+exec j4-dmenu-desktop --dmenu=fzf-panel --term-mode=custom --term "kitty --single-instance --title {name} {cmdline@}" --wait-on=${XDG_RUNTIME_DIR:-/tmp}/j4-dmenu-desktop.sock
 bindsym $super+d exec echo > ${XDG_RUNTIME_DIR:-/tmp}/j4-dmenu-desktop.sock
 
 # use pactl to adjust volume in PulseAudio
@@ -98,7 +98,7 @@ bindsym $super+g exec totp.sh
 
 # cmus
 bindsym $super+Shift+c exec cmus-play-playlist.zsh
-bindsym $super+c exec song="music/$(fzf-panel --prompt="song: " --layout=reverse < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
+bindsym $super+c exec song="music/$(fzf-panel --prompt="song: " < .music-cache).mp3" && [ -n "$song" ] && cmus-remote --file "$song"
 
 # twitch
 bindsym $super+t exec twitch.sh
@@ -249,7 +249,7 @@ bindsym $super+Alt+Right exec focus-last-focused-leaf-container-in-nth-child-of-
 
 # mark
 bindsym $super+Shift+apostrophe exec mark_name="$(KITTY_OVERLAY_DIMENSIONS=1:40 fzf-panel --prompt="mark name: " --print-query)" || ([ -n "$mark_name" ] && swaymsg mark "$mark_name") || swaymsg '[con_id="__focused__"]' unmark
-bindsym $super+apostrophe exec to_focus="$(swaymsg --type=get_marks | jq -r '.[]' | KITTY_OVERLAY_DIMENSIONS=10:40 fzf-panel --prompt="jump to: " --layout=reverse)" || [ -n "$to_focus" ] && swaymsg '[con_mark="'$to_focus'"]' focus
+bindsym $super+apostrophe exec to_focus="$(swaymsg --type=get_marks | jq -r '.[]' | KITTY_OVERLAY_DIMENSIONS=10:40 fzf-panel --prompt="jump to: ")" || [ -n "$to_focus" ] && swaymsg '[con_mark="'$to_focus'"]' focus
 
 # reload the configuration file
 bindsym $super+Alt+c reload

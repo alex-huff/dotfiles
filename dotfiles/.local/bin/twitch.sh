@@ -11,7 +11,6 @@ jq_build_fzf_item_script=$(
 twitch-get-channels-json.py < "$TWITCH_SUBS_FILE" |
     jq --raw-output0 "$jq_build_fzf_item_script" |
         flock --nonblocking /tmp/twitch.sh-lockfile fzf-panel \
-                --layout=reverse \
                 --multi \
                 --read0 \
                 --delimiter="\n" \
