@@ -305,7 +305,8 @@ bindsym $super+m mode mouse
 # toggle border style
 bindsym $super+Alt+b border toggle
 
-# toggle top panel
+# panel
+exec kitty-panel-2
 bindsym $super+Shift+b exec killall --process-group kitty-panel-2 || kitty-panel-2
 
 # colors                border  bg      text    ind     child_b
