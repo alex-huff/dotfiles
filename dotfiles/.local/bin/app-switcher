@@ -319,24 +319,15 @@ async def main():
         app_switcher_width + app_switcher_right_margin
     )
     panel_args = [
-        "kitten",
-        "panel",
-        "--single-instance",
+        "kitty-overlay",
         "--instance-group=app-switcher",
         b"--listen-on=unix:" + PANEL_SOCKET_PATH,
         "--start-as-hidden",
-        "--layer=overlay",
-        "--focus-policy=exclusive",
-        "--edge=center",
         f"--margin-top={app_switcher_vertical_margin}",
         f"--margin-bottom={app_switcher_vertical_margin}",
         f"--margin-left={app_switcher_left_margin}",
         f"--margin-right={app_switcher_right_margin}",
-        "--override=font_size=14",
-        "--override=window_padding_width=8",
         "--override=placement_strategy=bottom",
-        "--override=background=#fbf1c7",
-        "--override=custom_shaders ~/.config/kitty/shaders/border",
     ]
     # base64 encode 'CONTROL_SOCKET_PATH' so that it is safe for fzf to read
     control_message_cmd_template = f'socat - UNIX-CONNECT:"$(base64 --decode <<< "{base64.b64encode(CONTROL_SOCKET_PATH).decode("ascii")}")" <<< %s'
