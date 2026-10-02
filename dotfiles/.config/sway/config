@@ -19,7 +19,7 @@ exec foot --server
 exec --no-startup-id dex --autostart --environment=sway
 
 # kitty-overlay single instance
-exec kitten panel --single-instance --instance-group=kitty-overlay --override="custom_shaders ~/.config/kitty/shaders/border" --start-as-hidden
+exec kitty-overlay --start-as-hidden
 
 # application launcher
 exec j4-dmenu-desktop --dmenu="KITTY_OVERLAY_DIMENSIONS=20:40 fzf-panel" --term-mode=custom --term "kitty --single-instance --title {name} {cmdline@}" --wait-on=${XDG_RUNTIME_DIR:-/tmp}/j4-dmenu-desktop.sock

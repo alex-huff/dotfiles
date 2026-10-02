@@ -37,8 +37,6 @@ else
     )
 fi
 
-background="#fbf1c7"
-
 kitten panel \
     --single-instance \
     --instance-group=kitty-overlay \
@@ -46,5 +44,6 @@ kitten panel \
     --focus-policy=exclusive \
     $sizing_args \
     --override=window_padding_width=8 \
-    --override=background="$background" \
+    --override="custom_shaders ~/.config/kitty/shaders/border" \
+    --override=background="#fbf1c7" \
     "$@"

@@ -1,14 +1,14 @@
 #!/bin/sh
 
-kitten panel \
+KITTY_OVERLAY_DIMENSIONS=27px: kitty-overlay \
+    --instance-group=bar \
     --edge=top \
-    --lines=27px \
+    --layer=bottom \
+    --focus-policy=not-allowed \
     --override-exclusive-zone \
     --exclusive-zone=26 \
     --override=placement_strategy=center \
     --override=window_padding_width="0 2" \
     --override=font_size=15 \
     --override=modify_font="cell_height 110%" \
-    --override="background #fbf1c7" \
-    --override="custom_shaders ~/.config/kitty/shaders/border" \
     bar.py
