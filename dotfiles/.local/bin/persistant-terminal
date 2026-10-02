@@ -1,6 +1,7 @@
 #!/bin/sh
 
 LARGE_KITTY_OVERLAY=true kitty-overlay \
+    --start-as-hidden \
     --instance-group=persistant-terminal \
-    --toggle-visibility \
-    --override="background #f9f5d7"
+    --override="background #f9f5d7" \
+    "$@"

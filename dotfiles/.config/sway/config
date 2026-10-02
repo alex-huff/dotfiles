@@ -116,7 +116,8 @@ bindsym Alt+Tab $panel_show_or_next
 bindsym Alt+Shift+Tab $panel_show_or_previous
 
 # persistant terminal
-bindsym $super+u exec persistant-terminal
+exec persistant-terminal
+bindsym $super+u exec persistant-terminal --toggle-visibility
 
 # change focus
 bindsym $super+h focus left
