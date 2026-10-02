@@ -11,4 +11,5 @@ KITTY_OVERLAY_DIMENSIONS=27px: kitty-overlay \
     --override=window_padding_width="0 2" \
     --override=font_size=15 \
     --override=modify_font="cell_height 110%" \
+    "$@" \
     bar.py

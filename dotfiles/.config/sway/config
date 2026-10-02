@@ -306,9 +306,9 @@ bindsym $super+m mode mouse
 # toggle border style
 bindsym $super+Alt+b border toggle
 
-# panel
-exec kitty-panel-2
-bindsym $super+Shift+b exec killall --process-group kitty-panel-2 || kitty-panel-2
+# kitty bar
+exec kitty-bar
+bindsym $super+Shift+b exec kitty-bar --toggle-visibility
 
 # colors                border  bg      text    ind     child_b
 client.focused          #282828 #ebdbb2 #282828 #282828 #282828
