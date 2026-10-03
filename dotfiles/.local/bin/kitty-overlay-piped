@@ -93,6 +93,7 @@ async def main(temp_dir):
 
 with tempfile.TemporaryDirectory(prefix="fzf-panel", ignore_cleanup_errors=True) as temp_dir:
     try:
+        os.environ["FZF_PANEL_TEMPDIR"] = temp_dir
         sys.exit(asyncio.run(main(temp_dir)))
     except KeyboardInterrupt:
         ...
