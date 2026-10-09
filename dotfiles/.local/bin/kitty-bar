@@ -1,15 +1,15 @@
 #!/bin/sh
 
-KITTY_OVERLAY_DIMENSIONS=27px: kitty-overlay \
+KITTY_OVERLAY_DIMENSIONS=26px: kitty-overlay \
     --instance-group=bar \
     --edge=top \
     --layer=bottom \
     --focus-policy=not-allowed \
     --override-exclusive-zone \
-    --exclusive-zone=26 \
+    --exclusive-zone=25 \
     --override=placement_strategy=center \
     --override=window_padding_width="0 2" \
-    --override=font_size=15 \
+    --override=font_size=14 \
     --override=modify_font="cell_height 110%" \
     "$@" \
     bar.py
