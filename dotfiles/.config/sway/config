@@ -311,9 +311,9 @@ exec kitty-bar
 bindsym $super+Shift+b exec kitty-bar --toggle-visibility
 
 # colors                border  bg      text    ind     child_b
-client.focused          #282828 #ebdbb2 #282828 #282828 #282828
-client.unfocused        #282828 #928374 #fbf1c7 #282828 #282828
-client.focused_inactive #282828 #bdae93 #282828 #282828 #282828
+client.focused          #282828 #665c54 #f9f5d7 #282828 #282828
+client.unfocused        #282828 #ebdbb2 #282828 #282828 #282828
+client.focused_inactive #282828 #928374 #f9f5d7 #282828 #282828
 
 # include device specific configuration and overrides
 include device/*

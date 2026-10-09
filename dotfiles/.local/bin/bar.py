@@ -2339,7 +2339,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     BEGIN_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"h"
     END_SYNCHRONIZED_UPDATE = SYNCHRONIZED_UPDATE_TEMPLATE % b"l"
     CHARACTER_ATTRIBUTES_TEMPLATE = CSI_START + b"%bm"
-    DARK_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;40;40;40"
+    DARK_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;102;92;84"
     GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;213;196;161"
     LIGHT_GRAY_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;242;229;188"
     WHITE_BACKGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"48;2;251;241;199"
@@ -2347,6 +2347,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
     DARK_GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;60;56;54"
     GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;146;131;116"
     LIGHT_GRAY_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;235;219;178"
+    WHITE_FOREGROUND = CHARACTER_ATTRIBUTES_TEMPLATE % b"38;2;249;245;215"
     BOLD = CHARACTER_ATTRIBUTES_TEMPLATE % b"1"
     NOT_BOLD = CHARACTER_ATTRIBUTES_TEMPLATE % b"22"
     PLAYBACK_STATUS_PRIORITY = {"Playing": 0, "Paused": 1, "Stopped": 2}
@@ -2545,7 +2546,7 @@ async def update_bar_forever(task_group, bar_event_queue, workspace_switch_queue
                         formatted_workspaces_bytes.extend(GRAY_BACKGROUND)
                     formatted_workspaces_bytes.extend(THIN_LEFT_SEPARATOR_BYTES)
                     if focused:
-                        formatted_workspaces_bytes.extend(LIGHT_GRAY_FOREGROUND)
+                        formatted_workspaces_bytes.extend(WHITE_FOREGROUND)
                     elif i % 2 == 1:
                         formatted_workspaces_bytes.extend(DARK_GRAY_FOREGROUND)
                     formatted_workspaces_bytes.extend(workspace["name"].encode("utf-8"))
