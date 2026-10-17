@@ -9,11 +9,16 @@ preview_command=$(
 	cat <<-"EOF"
 		eval "$(printf "%s" {1} | jq --raw-output '"user=\(.user | @sh); type=\(.type | @sh); uris=\(.uris | join("\n") | @sh)"')"
 
-		printf "type: %s\nuser: %s" "$type" "$user"
+		printf "type: %s\n" "$type"
+
+		if [ "$type" = "Login" ]
+		then
+		    printf "user: %s\n" "$user"
+		fi
 
 		if [ -z "$uris" ]
 		then
-			exit 0
+		    exit 0
 		fi
 
 		printf "\n\n%s" "$uris"
