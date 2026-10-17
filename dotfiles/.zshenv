@@ -23,6 +23,7 @@ hl:#665c54:reverse,\
 current-hl:#665c54:reverse,\
 gutter:#d5c4a1,\
 current-bg:0,\
+header:7,\
 prompt:7,\
 pointer:7,\
 gap-line:7,\
