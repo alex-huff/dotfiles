@@ -1,0 +1,49 @@
+#!/bin/sh
+
+search_command=$(
+	cat <<-EOF
+		rbw search {q} --raw | jq --raw-output0 '.[] | select(.type == "Note" or .type == "Login") | "\(. | @json)\n\(.name)"'
+	EOF
+)
+preview_command=$(
+	cat <<-"EOF"
+		eval "$(printf "%s" {1} | jq --raw-output '"user=\(.user | @sh); type=\(.type | @sh); uris=\(.uris | join("\n") | @sh)"')"
+
+		printf "type: %s\nuser: %s" "$type" "$user"
+
+		if [ -z "$uris" ]
+		then
+			exit 0
+		fi
+
+		printf "\n\n%s" "$uris"
+	EOF
+)
+
+rbw unlock
+item_json=$(
+    fzf-panel \
+        --disabled \
+        --read0 \
+        --delimiter="\n" \
+        --with-nth=2 \
+        --accept-nth=1 \
+        --preview-window=bottom \
+        --preview="$preview_command" \
+        --bind="start:reload-sync(:)" \
+        --bind="change:reload:$search_command"
+)
+if [ -z "$item_json" ]
+then
+    exit 1
+fi
+
+item_id=$(printf "%s" "$item_json" | jq --raw-output '.id')
+
+copy_type=$(rbw get --list-fields "$item_id" | KITTY_OVERLAY_DIMENSIONS=5:11 fzf-panel --no-input --header="copy: ")
+if [ -z "$copy_type" ]
+then
+    exit 1
+fi
+
+rbw get --field="$copy_type" "$item_id" | wl-copy -n
