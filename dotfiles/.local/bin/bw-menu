@@ -40,7 +40,15 @@ fi
 
 item_id=$(printf "%s" "$item_json" | jq --raw-output '.id')
 
-copy_type=$(rbw get --list-fields "$item_id" | KITTY_OVERLAY_DIMENSIONS=5:11 fzf-panel --no-input --header="copy: ")
+fields=$(rbw get --list-fields "$item_id")
+num_fields=$(rbw get --list-fields "$item_id" | wc -l)
+num_rows=$(($num_fields + 1))
+if [ "$num_rows" -gt 20 ]
+then
+    num_rows=20
+fi
+
+copy_type=$(printf "%s" "$fields" | KITTY_OVERLAY_DIMENSIONS=${num_rows}:20 fzf-panel --no-input --header="field to copy: ")
 if [ -z "$copy_type" ]
 then
     exit 1
