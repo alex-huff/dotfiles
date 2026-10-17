@@ -22,7 +22,7 @@ fi
 
 twofa_dir=~/.2fa
 twofa_key_file="${twofa_dir}/${label}.key.gpg"
-password=$(KITTY_OVERLAY_DIMENSIONS=1:30 kitty-overlay-piped password-prompt)
+password=$(password-overlay)
 printf "%s" "$secret" |
     gpg --yes \
         --output="$twofa_key_file" \
