@@ -1,0 +1,3 @@
+#!/bin/sh
+
+KITTY_OVERLAY_DIMENSIONS=2:35 kitty-overlay-piped pinentry-tty "$@" --ttyname=/dev/tty
