@@ -26,6 +26,11 @@ preview_command=$(
 )
 
 rbw unlock
+if [ $? -ne 0 ]
+then
+    exit 1
+fi
+
 item_json=$(
     fzf-panel \
         --disabled \
