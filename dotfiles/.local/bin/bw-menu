@@ -41,7 +41,8 @@ item_json=$(
         --preview-window=bottom \
         --preview="$preview_command" \
         --bind="start:reload-sync(:)" \
-        --bind="change:reload:$search_command"
+        --bind="change:reload:$search_command" \
+        --bind="ctrl-r:execute-silent(rbw sync)+reload:$search_command"
 )
 if [ -z "$item_json" ]
 then
