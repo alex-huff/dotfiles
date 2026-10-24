@@ -2,7 +2,7 @@
 
 search_command=$(
 	cat <<-EOF
-		rbw search {q} --raw | jq --raw-output0 '.[] | select(.type == "Note" or .type == "Login") | "\(. | @json)\n\(.name)"'
+		rbw search --raw {q} | jq --raw-output0 '.[] | select(.type == "Note" or .type == "Login") | "\(. | @json)\n\(.name)"'
 	EOF
 )
 preview_command=$(
