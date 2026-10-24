@@ -31,6 +31,7 @@ then
     exit 1
 fi
 
+rbw sync
 item_json=$(
     fzf-panel \
         --disabled \
