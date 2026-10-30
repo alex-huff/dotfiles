@@ -45,6 +45,7 @@ if remotes:
         "ssh",
         "-p", "2222",
         "-t",
+        "--",
         "root@kindle",
         f"cd /mnt/us/books; curl --location --ipv4 --remote-name-all -- {" ".join(map(shlex.quote, remotes))}"
     )
