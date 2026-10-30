@@ -1,3 +1,55 @@
-#!/bin/sh
+#!/bin/python3
 
-scp -P 2222 "$@" root@kindle:/mnt/us/books
+import os
+import shlex
+import subprocess
+import sys
+import urllib, urllib3
+
+remotes = []
+local_files = []
+invalid_url_found = False
+
+urls = sys.argv[1:]
+for url in urls:
+    parse_result = urllib.parse.urlsplit(url)
+    if os.path.isfile(url):
+        local_files.append(url)
+    elif parse_result.scheme in ("http", "https", "ftp") and parse_result.netloc:
+        remotes.append(url)
+    else:
+        print(f"'{url}' is not a valid file or url")
+        invalid_url_found = True
+
+if invalid_url_found:
+    sys.exit(1)
+
+if local_files:
+    print("uploading local files...")
+    scp_command = (
+        "scp",
+        "-P", "2222",
+        "--",
+        *local_files,
+        "root@kindle:/mnt/us/books"
+    )
+    scp_process = subprocess.run(scp_command)
+    if scp_process.returncode != 0:
+        print("failed to upload files", file=sys.stderr)
+
+        sys.exit(1)
+
+if remotes:
+    print("downloading remote files on kindle...")
+    ssh_command = (
+        "ssh",
+        "-p", "2222",
+        "-t",
+        "root@kindle",
+        f"cd /mnt/us/books; curl --location --ipv4 --remote-name-all -- {" ".join(map(shlex.quote, remotes))}"
+    )
+    ssh_process = subprocess.run(ssh_command)
+    if ssh_process.returncode != 0:
+        print("failed to download files on kindle", file=sys.stderr)
+
+        sys.exit(1)
