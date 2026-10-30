@@ -15,7 +15,7 @@ for url in urls:
     parse_result = urllib.parse.urlsplit(url)
     if os.path.isfile(url):
         local_files.append(url)
-    elif parse_result.scheme in ("http", "https", "ftp") and parse_result.netloc:
+    elif parse_result.scheme in ("http", "https", "ftp", "sftp") and parse_result.netloc:
         remotes.append(url)
     else:
         print(f"'{url}' is not a valid file or url")
