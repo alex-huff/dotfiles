@@ -5,6 +5,8 @@ config.load_autoconfig(False)
 # bindings
 config.bind(",M", "hint links spawn mpv {hint-url}")
 config.bind(",m", "spawn mpv {url}")
+config.bind(",K", "hint links spawn kitty --single-instance --app-id=kitty-dialogue send-to-kindle {hint-url}")
+config.bind(",k", "spawn kitty --single-instance --app-id=kitty-dialogue send-to-kindle {url}")
 config.bind("<Ctrl+Shift+h>", "tab-prev")
 config.bind("<Ctrl+Shift+l>", "tab-next")
 config.bind("<Ctrl+d>", "jseval --quiet scrollHelper.scrollPage(0.8)")
