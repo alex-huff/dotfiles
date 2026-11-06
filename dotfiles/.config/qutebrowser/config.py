@@ -69,7 +69,7 @@ if os.name == "nt":
                               "sh", "-c", file_selection_script, "_", "{}", home_path]
 else:
     file_selection_command = ["env", f"--chdir={home_path}", "CHOICE={}",
-                              r'CHOOSER=xargs -d "\n" realpath >> "$CHOICE"', "kitty", "--single-instance", "--app-id=kitty-dialogue"]
+                              r'CHOOSER=xargs -d "\n" realpath >> "$CHOICE"', "kitty", "--app-id=kitty-dialogue"]
 for selection_type in ("single_file", "multiple_files", "folder"):
     config.set(f"fileselect.{selection_type}.command", file_selection_command)
 
