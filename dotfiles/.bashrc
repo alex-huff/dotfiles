@@ -23,7 +23,7 @@ done
 alias cmcd="color-manager cycle dark"
 alias cmcl="color-manager cycle light"
 
-if [ ! -z ${CHOOSER+_} ]
+if [ ! -z "${CHOOSER+_}" ]
 then
     alias choose="$CHOOSER"
 fi
@@ -55,26 +55,30 @@ alias fr="rg-fzf"
 
 PS1='\h$ '
 
-export PYENV_ROOT="$HOME/.pyenv"
-if [ -d $PYENV_ROOT/bin ]
+export PYENV_ROOT="${HOME}/.pyenv"
+if [ -d "${PYENV_ROOT}/bin" ]
 then
-    PATH="$PYENV_ROOT/bin:$PATH"
-    export PATH
+    export PATH="${PYENV_ROOT}/bin:$PATH"
     eval "$(pyenv init -)"
 fi
-export GOENV_ROOT="$HOME/.goenv"
-if [ -d $GOENV_ROOT/bin ]
+export GOENV_ROOT="${HOME}/.goenv"
+if [ -d "${GOENV_ROOT}/bin" ]
 then
-    PATH="$GOENV_ROOT/bin:$PATH"
-    export PATH
+    export PATH="${GOENV_ROOT}/bin:$PATH"
     eval "$(goenv init -)"
+fi
+export ZVM_INSTALL="${HOME}/.zvm/self"
+if [ -d "$ZVM_INSTALL" ]; then
+    export PATH="${HOME}/.zvm/bin:$PATH"
+    export PATH="$ZVM_INSTALL:$PATH"
+    eval "$(zvm completion bash)"
 fi
 
 shopt -s nullglob
 for file in ~/.bash/conf.bash.d/*.bash
 do
-    if [ -f $file ]
+    if [ -f "$file" ]
     then
-        source $file
+        source "$file"
     fi
 done
