@@ -25,11 +25,7 @@ preview_command=$(
 	EOF
 )
 
-rbw unlock
-if [ $? -ne 0 ]
-then
-    exit 1
-fi
+rbw unlock || exit 1
 
 item_json=$(
     fzf-panel \
